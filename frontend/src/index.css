@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "ol/ol.css";
+
+/* Modern Clean GIS Theme */
+:root {
+  --app-bg: #f8fafc;
+  --panel-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --accent-blue: #2563eb;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
+}
+
+/* OpenLayers custom overrides */
+.ol-zoom {
+  top: 1rem !important;
+  left: 1rem !important;
+}
+
+.ol-zoom button {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0.5rem !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
+}
+
+.ol-zoom button:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+}
+
+.ol-attribution {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  bottom: 0.5rem !important;
+  right: 0.5rem !important;
+  font-size: 0.7rem !important;
+  color: #475569 !important;
+}
+
+.ol-attribution a {
+  color: #2563eb !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
