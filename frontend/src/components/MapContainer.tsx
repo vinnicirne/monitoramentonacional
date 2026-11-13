@@ -40,9 +40,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
 
-  // Toggle for opening and closing the floating faction legend card
-  const [isFactionLegendOpen, setIsFactionLegendOpen] = useState(true);
-
   // Dynamic Refs for real-time styling without recreating map
   const choroplethMetricRef = useRef(choroplethMetric);
   const layerOpacityRef = useRef(layerOpacity);
@@ -654,73 +651,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     <div className="relative w-full h-full bg-slate-900 overflow-hidden">
       {/* OpenLayers Map Canvas */}
       <div ref={mapElement} className="w-full h-full" />
-
-      {/* Floating Faction Map On-Screen Legend with Open/Close Toggle */}
-      {choroplethMetric === 'faccao' && (
-        isFactionLegendOpen ? (
-          <div className="absolute top-4 right-4 z-20 bg-slate-900/95 border border-slate-700/80 rounded-xl p-3 shadow-2xl backdrop-blur-md text-xs space-y-2 max-w-[230px] transition-all animate-in fade-in zoom-in-95 duration-150">
-            <div className="font-bold text-slate-100 flex items-center justify-between pb-1.5 border-b border-slate-800">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shrink-0" />
-                <span className="text-xs font-bold text-slate-100">Quadro de Facções</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] text-red-400 font-mono">RJ GIS</span>
-                <button
-                  onClick={() => setIsFactionLegendOpen(false)}
-                  title="Fechar quadro"
-                  className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-1 cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2 text-[11px] text-slate-200">
-                <span className="w-3.5 h-3.5 rounded bg-red-500 border border-red-300 shrink-0" />
-                <span className="font-semibold">Comando Vermelho (CV)</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px] text-slate-200">
-                <span className="w-3.5 h-3.5 rounded bg-blue-500 border border-blue-300 shrink-0" />
-                <span className="font-semibold">Terceiro Comando (TCP)</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px] text-slate-200">
-                <span className="w-3.5 h-3.5 rounded bg-purple-500 border border-purple-300 shrink-0" />
-                <span className="font-semibold">Milícia Paramilitar</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px] text-slate-200">
-                <span className="w-3.5 h-3.5 rounded bg-orange-500 border border-orange-300 shrink-0" />
-                <span className="font-semibold">Área em Disputa Bélica</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px] text-slate-200">
-                <span className="w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-300 shrink-0" />
-                <span className="font-semibold">Controle Institucional</span>
-              </div>
-            </div>
-
-            <div className="pt-1.5 text-[9px] text-slate-400 border-t border-slate-800/80 flex items-center justify-between">
-              <span>GENI-UFF • MP-RJ</span>
-              <button
-                onClick={() => setIsFactionLegendOpen(false)}
-                className="text-[9.5px] text-blue-400 hover:text-blue-300 font-semibold cursor-pointer"
-              >
-                Recolher ▲
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsFactionLegendOpen(true)}
-            title="Abrir quadro das facções"
-            className="absolute top-4 right-4 z-20 bg-slate-900/95 hover:bg-slate-800 border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-xl backdrop-blur-md text-xs font-semibold text-slate-200 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
-          >
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 group-hover:animate-ping shrink-0" />
-            <span>Quadro de Facções</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-200" />
-          </button>
-        )
-      )}
 
       {/* Floating Tactical Tooltip */}
       {tooltip.visible && (
