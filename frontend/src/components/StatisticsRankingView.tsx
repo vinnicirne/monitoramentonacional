@@ -69,9 +69,9 @@ export const StatisticsRankingView: React.FC<StatisticsRankingProps> = ({
   const maxValue = rankedCisps.length > 0 ? rankedCisps[0].value : 1;
 
   return (
-    <div className="flex-1 h-[calc(100vh-4rem)] bg-slate-950 overflow-y-auto p-6 space-y-6">
+    <div className="flex-1 h-full bg-slate-950 overflow-y-auto p-3.5 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
-      <div className="p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 md:p-6 bg-slate-900 border border-slate-800 rounded-xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">

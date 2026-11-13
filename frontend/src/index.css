@@ -1,77 +1,107 @@
 @import "tailwindcss";
 @import "ol/ol.css";
 
-/* Modern Clean GIS Theme */
-:root {
-  --app-bg: #f8fafc;
-  --panel-bg: #ffffff;
-  --border-color: #e2e8f0;
-  --accent-blue: #2563eb;
-}
-
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  user-select: none;
+  background-color: #020617;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* OpenLayers custom overrides */
+.ol-viewport {
+  background-color: #090d16 !important;
+}
+
 .ol-zoom {
-  top: 1rem !important;
-  left: 1rem !important;
+  top: 4.5rem !important;
+  right: 0.75rem !important;
+  left: auto !important;
+  background-color: transparent !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .ol-zoom button {
-  background-color: #ffffff !important;
-  color: #1e293b !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 0.5rem !important;
-  width: 2.25rem !important;
-  height: 2.25rem !important;
+  background-color: rgba(15, 23, 42, 0.94) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 0.625rem !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
   font-weight: bold !important;
-  font-size: 1.1rem !important;
+  font-size: 1.15rem !important;
   cursor: pointer !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.45) !important;
   transition: all 0.2s ease !important;
+}
+
+@media (min-width: 768px) {
+  .ol-zoom {
+    top: 1rem !important;
+    right: 1rem !important;
+    gap: 4px;
+  }
+
+  .ol-zoom button {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    border-radius: 0.5rem !important;
+    font-size: 1.1rem !important;
+  }
 }
 
 .ol-zoom button:hover {
   background-color: #2563eb !important;
   color: #ffffff !important;
-  border-color: #1d4ed8 !important;
+  border-color: #3b82f6 !important;
 }
 
 .ol-attribution {
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: 1px solid #cbd5e1 !important;
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 1px solid #334155 !important;
   border-radius: 6px !important;
-  padding: 2px 8px !important;
-  bottom: 0.5rem !important;
+  padding: 2px 6px !important;
+  bottom: 3.25rem !important;
   right: 0.5rem !important;
-  font-size: 0.7rem !important;
-  color: #475569 !important;
+  font-size: 0.65rem !important;
+  color: #94a3b8 !important;
+}
+
+@media (min-width: 768px) {
+  .ol-attribution {
+    bottom: 0.5rem !important;
+    padding: 2px 8px !important;
+    font-size: 0.7rem !important;
+  }
 }
 
 .ol-attribution a {
-  color: #2563eb !important;
+  color: #60a5fa !important;
 }
 
-/* Custom scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0f172a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
 }

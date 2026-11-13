@@ -1,0 +1,6457 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 9,
+        "delegaciaNome": "009ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 2,
+        "risp": 1,
+        "batalhaoPMERJ": "2º BPM (Botafogo)",
+        "unidadeTerritorial": "Catete, Cosme Velho, Flamengo, Glória e Laranjeiras",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.1396,
+              -22.9246
+            ],
+            [
+              -43.14328,
+              -22.91918
+            ],
+            [
+              -43.18118,
+              -22.92135
+            ],
+            [
+              -43.19555,
+              -22.93715
+            ],
+            [
+              -43.13374,
+              -22.95187
+            ],
+            [
+              -43.13033,
+              -22.95205
+            ],
+            [
+              -43.1396,
+              -22.9246
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 10,
+        "delegaciaNome": "010ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 2,
+        "risp": 1,
+        "batalhaoPMERJ": "2º BPM (Botafogo)",
+        "unidadeTerritorial": "Botafogo, Humaitá e Urca",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.20663,
+              -22.9393
+            ],
+            [
+              -43.21267,
+              -22.94892
+            ],
+            [
+              -43.21285,
+              -22.94983
+            ],
+            [
+              -43.20833,
+              -22.95792
+            ],
+            [
+              -43.20562,
+              -22.9597
+            ],
+            [
+              -43.19518,
+              -22.96211
+            ],
+            [
+              -43.13374,
+              -22.95187
+            ],
+            [
+              -43.19555,
+              -22.93715
+            ],
+            [
+              -43.20663,
+              -22.9393
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 23,
+        "delegaciaNome": "023ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 3,
+        "risp": 1,
+        "batalhaoPMERJ": "3º BPM (Méier)",
+        "unidadeTerritorial": "Cachambi, Méier (parte) e Todos os Santos (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.27082,
+              -22.86685
+            ],
+            [
+              -43.27289,
+              -22.86689
+            ],
+            [
+              -43.29065,
+              -22.88465
+            ],
+            [
+              -43.28909,
+              -22.89668
+            ],
+            [
+              -43.27398,
+              -22.90329
+            ],
+            [
+              -43.2603,
+              -22.88339
+            ],
+            [
+              -43.27082,
+              -22.86685
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 24,
+        "delegaciaNome": "024ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 3,
+        "risp": 1,
+        "batalhaoPMERJ": "3º BPM (Méier)",
+        "unidadeTerritorial": "Abolição, Água Santa (parte), Encantado, Engenho de Dentro (parte), Pilares e Piedade",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.32785,
+              -22.89934
+            ],
+            [
+              -43.32683,
+              -22.90851
+            ],
+            [
+              -43.31095,
+              -22.9236
+            ],
+            [
+              -43.28909,
+              -22.89668
+            ],
+            [
+              -43.29065,
+              -22.88465
+            ],
+            [
+              -43.31846,
+              -22.88103
+            ],
+            [
+              -43.32785,
+              -22.89934
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 25,
+        "delegaciaNome": "025ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 3,
+        "risp": 1,
+        "batalhaoPMERJ": "3º BPM (Méier)",
+        "unidadeTerritorial": "Engenho Novo, Jacaré, Jacarezinho, Riachuelo, Rocha, Sampaio e São Francisco Xavier",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.24171,
+              -22.8935
+            ],
+            [
+              -43.24174,
+              -22.89325
+            ],
+            [
+              -43.2603,
+              -22.88339
+            ],
+            [
+              -43.27398,
+              -22.90329
+            ],
+            [
+              -43.26915,
+              -22.92551
+            ],
+            [
+              -43.24171,
+              -22.8935
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 26,
+        "delegaciaNome": "026ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 3,
+        "risp": 1,
+        "batalhaoPMERJ": "3º BPM (Méier)",
+        "unidadeTerritorial": "Água Santa (parte), Engenho de Dentro (parte), Lins de Vasconcelos e Todos os Santos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.31095,
+              -22.9236
+            ],
+            [
+              -43.29255,
+              -22.96041
+            ],
+            [
+              -43.29105,
+              -22.96102
+            ],
+            [
+              -43.2876,
+              -22.9593
+            ],
+            [
+              -43.27117,
+              -22.9362
+            ],
+            [
+              -43.26915,
+              -22.92551
+            ],
+            [
+              -43.27398,
+              -22.90329
+            ],
+            [
+              -43.28909,
+              -22.89668
+            ],
+            [
+              -43.31095,
+              -22.9236
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 44,
+        "delegaciaNome": "044ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 3,
+        "risp": 1,
+        "batalhaoPMERJ": "3º BPM (Méier)",
+        "unidadeTerritorial": "Del Castilho, Engenho da Rainha, Inhaúma, Maria da Graça e Tomás Coelho",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.31941,
+              -22.86777
+            ],
+            [
+              -43.31846,
+              -22.88103
+            ],
+            [
+              -43.29065,
+              -22.88465
+            ],
+            [
+              -43.27289,
+              -22.86689
+            ],
+            [
+              -43.29942,
+              -22.85008
+            ],
+            [
+              -43.31941,
+              -22.86777
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 6,
+        "delegaciaNome": "006ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 4,
+        "risp": 1,
+        "batalhaoPMERJ": "4º BPM (São Cristóvão)",
+        "unidadeTerritorial": "Catumbi, Cidade Nova, Estácio, Rio Comprido e Centro (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.20666,
+              -22.93901
+            ],
+            [
+              -43.19297,
+              -22.90934
+            ],
+            [
+              -43.19331,
+              -22.90836
+            ],
+            [
+              -43.2045,
+              -22.89856
+            ],
+            [
+              -43.21742,
+              -22.9132
+            ],
+            [
+              -43.20666,
+              -22.93901
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 17,
+        "delegaciaNome": "017ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 4,
+        "risp": 1,
+        "batalhaoPMERJ": "4º BPM (São Cristóvão)",
+        "unidadeTerritorial": "Caju, Mangueira, São Cristóvão e Vasco da Gama",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.20571,
+              -22.86108
+            ],
+            [
+              -43.24174,
+              -22.89325
+            ],
+            [
+              -43.24171,
+              -22.8935
+            ],
+            [
+              -43.23294,
+              -22.90886
+            ],
+            [
+              -43.21742,
+              -22.9132
+            ],
+            [
+              -43.2045,
+              -22.89856
+            ],
+            [
+              -43.20571,
+              -22.86108
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 1,
+        "delegaciaNome": "001ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 5,
+        "risp": 1,
+        "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+        "unidadeTerritorial": "Centro (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.15616,
+              -22.87965
+            ],
+            [
+              -43.19331,
+              -22.90836
+            ],
+            [
+              -43.19297,
+              -22.90934
+            ],
+            [
+              -43.18796,
+              -22.9123
+            ],
+            [
+              -43.15118,
+              -22.8981
+            ],
+            [
+              -43.15616,
+              -22.87965
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 4,
+        "delegaciaNome": "004ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 5,
+        "risp": 1,
+        "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+        "unidadeTerritorial": "Centro (parte), Gamboa, Santo Cristo e Saúde",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.16022,
+              -22.84463
+            ],
+            [
+              -43.20266,
+              -22.85475
+            ],
+            [
+              -43.20571,
+              -22.86108
+            ],
+            [
+              -43.2045,
+              -22.89856
+            ],
+            [
+              -43.19331,
+              -22.90836
+            ],
+            [
+              -43.15616,
+              -22.87965
+            ],
+            [
+              -43.16022,
+              -22.84463
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 5,
+        "delegaciaNome": "005ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 5,
+        "risp": 1,
+        "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+        "unidadeTerritorial": "Centro (parte), Lapa e Paquetá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.15118,
+              -22.8981
+            ],
+            [
+              -43.18796,
+              -22.9123
+            ],
+            [
+              -43.18118,
+              -22.92135
+            ],
+            [
+              -43.14328,
+              -22.91918
+            ],
+            [
+              -43.15118,
+              -22.8981
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 7,
+        "delegaciaNome": "007ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 5,
+        "risp": 1,
+        "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+        "unidadeTerritorial": "Santa Teresa",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.18796,
+              -22.9123
+            ],
+            [
+              -43.19297,
+              -22.90934
+            ],
+            [
+              -43.20666,
+              -22.93901
+            ],
+            [
+              -43.20663,
+              -22.9393
+            ],
+            [
+              -43.19555,
+              -22.93715
+            ],
+            [
+              -43.18118,
+              -22.92135
+            ],
+            [
+              -43.18796,
+              -22.9123
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 18,
+        "delegaciaNome": "018ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 6,
+        "risp": 1,
+        "batalhaoPMERJ": "6º BPM (Tijuca)",
+        "unidadeTerritorial": "Maracanã, Praça da Bandeira e Tijuca (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.20666,
+              -22.93901
+            ],
+            [
+              -43.21742,
+              -22.9132
+            ],
+            [
+              -43.23294,
+              -22.90886
+            ],
+            [
+              -43.24044,
+              -22.92636
+            ],
+            [
+              -43.21267,
+              -22.94892
+            ],
+            [
+              -43.20663,
+              -22.9393
+            ],
+            [
+              -43.20666,
+              -22.93901
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 19,
+        "delegaciaNome": "019ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 6,
+        "risp": 1,
+        "batalhaoPMERJ": "6º BPM (Tijuca)",
+        "unidadeTerritorial": "Alto da Boa Vista e Tijuca (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.24044,
+              -22.92636
+            ],
+            [
+              -43.27117,
+              -22.9362
+            ],
+            [
+              -43.2876,
+              -22.9593
+            ],
+            [
+              -43.24914,
+              -22.96331
+            ],
+            [
+              -43.21285,
+              -22.94983
+            ],
+            [
+              -43.21267,
+              -22.94892
+            ],
+            [
+              -43.24044,
+              -22.92636
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 20,
+        "delegaciaNome": "020ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 6,
+        "risp": 1,
+        "batalhaoPMERJ": "6º BPM (Tijuca)",
+        "unidadeTerritorial": "Andaraí, Grajaú e Vila Isabel",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.24044,
+              -22.92636
+            ],
+            [
+              -43.23294,
+              -22.90886
+            ],
+            [
+              -43.24171,
+              -22.8935
+            ],
+            [
+              -43.26915,
+              -22.92551
+            ],
+            [
+              -43.27117,
+              -22.9362
+            ],
+            [
+              -43.24044,
+              -22.92636
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 22,
+        "delegaciaNome": "022ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 16,
+        "risp": 1,
+        "batalhaoPMERJ": "16º BPM (Olaria)",
+        "unidadeTerritorial": "Brás de Pina (parte), Olaria, Penha e Penha Circular (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.2415,
+              -22.83247
+            ],
+            [
+              -43.25915,
+              -22.79441
+            ],
+            [
+              -43.30046,
+              -22.83917
+            ],
+            [
+              -43.29942,
+              -22.85008
+            ],
+            [
+              -43.27289,
+              -22.86689
+            ],
+            [
+              -43.27082,
+              -22.86685
+            ],
+            [
+              -43.2415,
+              -22.83247
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 38,
+        "delegaciaNome": "038ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 16,
+        "risp": 1,
+        "batalhaoPMERJ": "16º BPM (Olaria)",
+        "unidadeTerritorial": "Brás de Pina (parte), Cordovil, Jardim América, Parada de Lucas,Penha Circular (parte) e Vigário Geral",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.32406,
+              -22.80401
+            ],
+            [
+              -43.32562,
+              -22.82479
+            ],
+            [
+              -43.30046,
+              -22.83917
+            ],
+            [
+              -43.25915,
+              -22.79441
+            ],
+            [
+              -43.25917,
+              -22.79418
+            ],
+            [
+              -43.32406,
+              -22.80401
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 37,
+        "delegaciaNome": "037ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 17,
+        "risp": 1,
+        "batalhaoPMERJ": "17º BPM (Ilha do Governador)",
+        "unidadeTerritorial": "Bancários, Cacuia, Cidade Universitária, Cocotá, Freguesia, Galeão, Jardim Carioca, Jardim Guanabara, Moneró, Pitangueiras, Portuguesa, Praia da Bandeira, Ribeira, Tauá e Zumbi",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.15008,
+              -22.83322
+            ],
+            [
+              -43.12641,
+              -22.77145
+            ],
+            [
+              -43.12234,
+              -22.73387
+            ],
+            [
+              -43.12822,
+              -22.72754
+            ],
+            [
+              -43.15658,
+              -22.71751
+            ],
+            [
+              -43.19857,
+              -22.72387
+            ],
+            [
+              -43.25217,
+              -22.76619
+            ],
+            [
+              -43.25917,
+              -22.79418
+            ],
+            [
+              -43.25915,
+              -22.79441
+            ],
+            [
+              -43.2415,
+              -22.83247
+            ],
+            [
+              -43.20266,
+              -22.85475
+            ],
+            [
+              -43.16022,
+              -22.84463
+            ],
+            [
+              -43.15008,
+              -22.83322
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 12,
+        "delegaciaNome": "012ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 19,
+        "risp": 1,
+        "batalhaoPMERJ": "19º BPM (Copacabana)",
+        "unidadeTerritorial": "Copacabana (parte) e Leme",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.09921,
+              -23.07008
+            ],
+            [
+              -43.10275,
+              -23.01071
+            ],
+            [
+              -43.12613,
+              -22.95704
+            ],
+            [
+              -43.13033,
+              -22.95205
+            ],
+            [
+              -43.13374,
+              -22.95187
+            ],
+            [
+              -43.19518,
+              -22.96211
+            ],
+            [
+              -43.09921,
+              -23.07008
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 13,
+        "delegaciaNome": "013ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 19,
+        "risp": 1,
+        "batalhaoPMERJ": "19º BPM (Copacabana)",
+        "unidadeTerritorial": "Copacabana (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.1495,
+              -23.1
+            ],
+            [
+              -43.09603,
+              -23.1
+            ],
+            [
+              -43.09921,
+              -23.07008
+            ],
+            [
+              -43.19518,
+              -22.96211
+            ],
+            [
+              -43.20562,
+              -22.9597
+            ],
+            [
+              -43.1495,
+              -23.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 21,
+        "delegaciaNome": "021ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 22,
+        "risp": 1,
+        "batalhaoPMERJ": "22º BPM (Maré)",
+        "unidadeTerritorial": "Benfica, Bonsucesso, Higienópolis, Manguinhos, Maré e Ramos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.2415,
+              -22.83247
+            ],
+            [
+              -43.27082,
+              -22.86685
+            ],
+            [
+              -43.2603,
+              -22.88339
+            ],
+            [
+              -43.24174,
+              -22.89325
+            ],
+            [
+              -43.20571,
+              -22.86108
+            ],
+            [
+              -43.20266,
+              -22.85475
+            ],
+            [
+              -43.2415,
+              -22.83247
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 11,
+        "delegaciaNome": "011ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 23,
+        "risp": 1,
+        "batalhaoPMERJ": "23º BPM (Leblon)",
+        "unidadeTerritorial": "Rocinha",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.2233,
+              -22.99908
+            ],
+            [
+              -43.24914,
+              -22.96331
+            ],
+            [
+              -43.2876,
+              -22.9593
+            ],
+            [
+              -43.29105,
+              -22.96102
+            ],
+            [
+              -43.26466,
+              -23.1
+            ],
+            [
+              -43.21069,
+              -23.1
+            ],
+            [
+              -43.2233,
+              -22.99908
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 14,
+        "delegaciaNome": "014ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 23,
+        "risp": 1,
+        "batalhaoPMERJ": "23º BPM (Leblon)",
+        "unidadeTerritorial": "Ipanema e Leblon",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.2233,
+              -22.99908
+            ],
+            [
+              -43.21069,
+              -23.1
+            ],
+            [
+              -43.1495,
+              -23.1
+            ],
+            [
+              -43.20562,
+              -22.9597
+            ],
+            [
+              -43.20833,
+              -22.95792
+            ],
+            [
+              -43.2233,
+              -22.99908
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 15,
+        "delegaciaNome": "015ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 23,
+        "risp": 1,
+        "batalhaoPMERJ": "23º BPM (Leblon)",
+        "unidadeTerritorial": "Gávea, Jardim Botânico, Lagoa, São Conrado e Vidigal",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.24914,
+              -22.96331
+            ],
+            [
+              -43.2233,
+              -22.99908
+            ],
+            [
+              -43.20833,
+              -22.95792
+            ],
+            [
+              -43.21285,
+              -22.94983
+            ],
+            [
+              -43.24914,
+              -22.96331
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 29,
+        "delegaciaNome": "029ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 9,
+        "risp": 2,
+        "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+        "unidadeTerritorial": "Cavalcanti, Engenheiro Leal, Madureira, Turiaçu, Vaz Lobo, Oswaldo Cruz (parte), Cascadura e Quintino Bocaiúva",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.33432,
+              -22.85799
+            ],
+            [
+              -43.3547,
+              -22.87022
+            ],
+            [
+              -43.3575,
+              -22.88223
+            ],
+            [
+              -43.32785,
+              -22.89934
+            ],
+            [
+              -43.31846,
+              -22.88103
+            ],
+            [
+              -43.31941,
+              -22.86777
+            ],
+            [
+              -43.33432,
+              -22.85799
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 30,
+        "delegaciaNome": "030ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 9,
+        "risp": 2,
+        "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+        "unidadeTerritorial": "Bento Ribeiro, Campinho, Marechal Hermes e Oswaldo Cruz (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.40452,
+              -22.85986
+            ],
+            [
+              -43.39823,
+              -22.90074
+            ],
+            [
+              -43.3575,
+              -22.88223
+            ],
+            [
+              -43.3547,
+              -22.87022
+            ],
+            [
+              -43.37572,
+              -22.84111
+            ],
+            [
+              -43.40452,
+              -22.85986
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 40,
+        "delegaciaNome": "040ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 9,
+        "risp": 2,
+        "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+        "unidadeTerritorial": "Coelho Neto, Colégio (parte), Honório Gurgel e Rocha Miranda",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.36936,
+              -22.83135
+            ],
+            [
+              -43.37572,
+              -22.84111
+            ],
+            [
+              -43.3547,
+              -22.87022
+            ],
+            [
+              -43.33432,
+              -22.85799
+            ],
+            [
+              -43.3406,
+              -22.83638
+            ],
+            [
+              -43.36936,
+              -22.83135
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 33,
+        "delegaciaNome": "033ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 14,
+        "risp": 2,
+        "batalhaoPMERJ": "14º BPM (Bangu)",
+        "unidadeTerritorial": "Campo dos Afonsos, Deodoro, Jardim Sulacap, Magalhães Bastos, Realengo e Vila Militar",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.43459,
+              -22.83887
+            ],
+            [
+              -43.45426,
+              -22.83348
+            ],
+            [
+              -43.44741,
+              -22.94652
+            ],
+            [
+              -43.43537,
+              -22.94871
+            ],
+            [
+              -43.39956,
+              -22.90536
+            ],
+            [
+              -43.39823,
+              -22.90074
+            ],
+            [
+              -43.40452,
+              -22.85986
+            ],
+            [
+              -43.43459,
+              -22.83887
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 34,
+        "delegaciaNome": "034ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 14,
+        "risp": 2,
+        "batalhaoPMERJ": "14º BPM (Bangu)",
+        "unidadeTerritorial": "Bangu, Gericinó, Padre Miguel e Senador Camará",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.46977,
+              -22.82252
+            ],
+            [
+              -43.48759,
+              -22.81517
+            ],
+            [
+              -43.53007,
+              -22.81871
+            ],
+            [
+              -43.49986,
+              -22.94962
+            ],
+            [
+              -43.44741,
+              -22.94652
+            ],
+            [
+              -43.45426,
+              -22.83348
+            ],
+            [
+              -43.46977,
+              -22.82252
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 28,
+        "delegaciaNome": "028ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "risp": 2,
+        "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+        "unidadeTerritorial": "Vila Valqueire, Praça Seca e Tanque (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.39823,
+              -22.90074
+            ],
+            [
+              -43.39956,
+              -22.90536
+            ],
+            [
+              -43.3525,
+              -22.92059
+            ],
+            [
+              -43.32683,
+              -22.90851
+            ],
+            [
+              -43.32785,
+              -22.89934
+            ],
+            [
+              -43.3575,
+              -22.88223
+            ],
+            [
+              -43.39823,
+              -22.90074
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 32,
+        "delegaciaNome": "032ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "risp": 2,
+        "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+        "unidadeTerritorial": "Anil, Cidade de Deus, Curicica, Gardênia Azul, Jacarepaguá e Taquara",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.39292,
+              -22.9986
+            ],
+            [
+              -43.3525,
+              -22.97363
+            ],
+            [
+              -43.3525,
+              -22.92059
+            ],
+            [
+              -43.39956,
+              -22.90536
+            ],
+            [
+              -43.43537,
+              -22.94871
+            ],
+            [
+              -43.39292,
+              -22.9986
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 41,
+        "delegaciaNome": "041ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "risp": 2,
+        "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+        "unidadeTerritorial": "Freguesia (Jacarepaguá), Pechincha e Tanque (parte)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.3525,
+              -22.92059
+            ],
+            [
+              -43.3525,
+              -22.97363
+            ],
+            [
+              -43.29255,
+              -22.96041
+            ],
+            [
+              -43.31095,
+              -22.9236
+            ],
+            [
+              -43.32683,
+              -22.90851
+            ],
+            [
+              -43.3525,
+              -22.92059
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 36,
+        "delegaciaNome": "036ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 27,
+        "risp": 2,
+        "batalhaoPMERJ": "27º BPM (Santa Cruz)",
+        "unidadeTerritorial": "Paciência e Santa Cruz",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.81882,
+              -23.05024
+            ],
+            [
+              -43.61705,
+              -22.92607
+            ],
+            [
+              -43.63239,
+              -22.82839
+            ],
+            [
+              -43.69596,
+              -22.83802
+            ],
+            [
+              -43.81882,
+              -23.05024
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 43,
+        "delegaciaNome": "043ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 27,
+        "risp": 2,
+        "batalhaoPMERJ": "27º BPM (Santa Cruz)",
+        "unidadeTerritorial": "Guaratiba, Pedra de Guaratiba e Sepetiba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.61705,
+              -22.92607
+            ],
+            [
+              -43.81882,
+              -23.05024
+            ],
+            [
+              -43.84852,
+              -23.08365
+            ],
+            [
+              -43.84975,
+              -23.1
+            ],
+            [
+              -43.56667,
+              -23.1
+            ],
+            [
+              -43.54867,
+              -22.99202
+            ],
+            [
+              -43.61705,
+              -22.92607
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 16,
+        "delegaciaNome": "016ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 31,
+        "risp": 2,
+        "batalhaoPMERJ": "31º BPM (Recreio / Barra)",
+        "unidadeTerritorial": "Barra da Tijuca, Itanhangá, Joá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.3525,
+              -22.97363
+            ],
+            [
+              -43.39292,
+              -22.9986
+            ],
+            [
+              -43.38397,
+              -23.1
+            ],
+            [
+              -43.26466,
+              -23.1
+            ],
+            [
+              -43.29105,
+              -22.96102
+            ],
+            [
+              -43.29255,
+              -22.96041
+            ],
+            [
+              -43.3525,
+              -22.97363
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 42,
+        "delegaciaNome": "042ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 31,
+        "risp": 2,
+        "batalhaoPMERJ": "31º BPM (Recreio / Barra)",
+        "unidadeTerritorial": "Recreio dos Bandeirantes, Barra de Guaratiba, Camorim, Grumari, Vargem Grande e Vargem Pequena",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.54867,
+              -22.99202
+            ],
+            [
+              -43.56667,
+              -23.1
+            ],
+            [
+              -43.38397,
+              -23.1
+            ],
+            [
+              -43.39292,
+              -22.9986
+            ],
+            [
+              -43.43537,
+              -22.94871
+            ],
+            [
+              -43.44741,
+              -22.94652
+            ],
+            [
+              -43.49986,
+              -22.94962
+            ],
+            [
+              -43.54867,
+              -22.99202
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 35,
+        "delegaciaNome": "035ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 40,
+        "risp": 2,
+        "batalhaoPMERJ": "40º BPM (Campo Grande)",
+        "unidadeTerritorial": "Campo Grande, Cosmos, Inhoaíba, Santíssimo e Senador Vasconcelos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.5909,
+              -22.7869
+            ],
+            [
+              -43.63239,
+              -22.82839
+            ],
+            [
+              -43.61705,
+              -22.92607
+            ],
+            [
+              -43.54867,
+              -22.99202
+            ],
+            [
+              -43.49986,
+              -22.94962
+            ],
+            [
+              -43.53007,
+              -22.81871
+            ],
+            [
+              -43.5909,
+              -22.7869
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 27,
+        "delegaciaNome": "027ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 41,
+        "risp": 2,
+        "batalhaoPMERJ": "41º BPM (Irajá)",
+        "unidadeTerritorial": "Colégio (parte), Irajá, Vicente de Carvalho, Vila Kosmos, Vila da Penha e Vista Alegre",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.3406,
+              -22.83638
+            ],
+            [
+              -43.33432,
+              -22.85799
+            ],
+            [
+              -43.31941,
+              -22.86777
+            ],
+            [
+              -43.29942,
+              -22.85008
+            ],
+            [
+              -43.30046,
+              -22.83917
+            ],
+            [
+              -43.32562,
+              -22.82479
+            ],
+            [
+              -43.3406,
+              -22.83638
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 31,
+        "delegaciaNome": "031ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 41,
+        "risp": 2,
+        "batalhaoPMERJ": "41º BPM (Irajá)",
+        "unidadeTerritorial": "Anchieta, Guadalupe, Parque Anchieta e Ricardo de Albuquerque",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.39347,
+              -22.80392
+            ],
+            [
+              -43.43459,
+              -22.83887
+            ],
+            [
+              -43.40452,
+              -22.85986
+            ],
+            [
+              -43.37572,
+              -22.84111
+            ],
+            [
+              -43.36936,
+              -22.83135
+            ],
+            [
+              -43.3694,
+              -22.83114
+            ],
+            [
+              -43.39347,
+              -22.80392
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 39,
+        "delegaciaNome": "039ª DP - Rio de Janeiro",
+        "municipio": "Rio de Janeiro",
+        "aisp": 41,
+        "risp": 2,
+        "batalhaoPMERJ": "41º BPM (Irajá)",
+        "unidadeTerritorial": "Acari, Barros Filho, Costa Barros, Parque Colúmbia e Pavuna",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.34473,
+              -22.7799
+            ],
+            [
+              -43.3694,
+              -22.83114
+            ],
+            [
+              -43.36936,
+              -22.83135
+            ],
+            [
+              -43.3406,
+              -22.83638
+            ],
+            [
+              -43.32562,
+              -22.82479
+            ],
+            [
+              -43.32406,
+              -22.80401
+            ],
+            [
+              -43.34473,
+              -22.7799
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 59,
+        "delegaciaNome": "059ª DP - Duque de Caxias",
+        "municipio": "Duque de Caxias",
+        "aisp": 15,
+        "risp": 3,
+        "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+        "unidadeTerritorial": "Duque de Caxias (Centro)",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.34442,
+              -22.73324
+            ],
+            [
+              -43.35063,
+              -22.75836
+            ],
+            [
+              -43.34473,
+              -22.7799
+            ],
+            [
+              -43.32406,
+              -22.80401
+            ],
+            [
+              -43.25917,
+              -22.79418
+            ],
+            [
+              -43.25217,
+              -22.76619
+            ],
+            [
+              -43.34442,
+              -22.73324
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 60,
+        "delegaciaNome": "060ª DP - Duque de Caxias",
+        "municipio": "Duque de Caxias",
+        "aisp": 15,
+        "risp": 3,
+        "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+        "unidadeTerritorial": "Campos Elyseos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.30076,
+              -22.65089
+            ],
+            [
+              -43.355,
+              -22.65923
+            ],
+            [
+              -43.355,
+              -22.70813
+            ],
+            [
+              -43.34442,
+              -22.73324
+            ],
+            [
+              -43.25217,
+              -22.76619
+            ],
+            [
+              -43.19857,
+              -22.72387
+            ],
+            [
+              -43.30076,
+              -22.65089
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 61,
+        "delegaciaNome": "061ª DP - Duque de Caxias",
+        "municipio": "Duque de Caxias",
+        "aisp": 15,
+        "risp": 3,
+        "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+        "unidadeTerritorial": "Xerém",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.32689,
+              -22.41314
+            ],
+            [
+              -43.44027,
+              -22.57886
+            ],
+            [
+              -43.43537,
+              -22.58505
+            ],
+            [
+              -43.355,
+              -22.65923
+            ],
+            [
+              -43.30076,
+              -22.65089
+            ],
+            [
+              -43.22861,
+              -22.56671
+            ],
+            [
+              -43.32689,
+              -22.41314
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 62,
+        "delegaciaNome": "062ª DP - Duque de Caxias",
+        "municipio": "Duque de Caxias",
+        "aisp": 15,
+        "risp": 3,
+        "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+        "unidadeTerritorial": "Imbariê",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.20586,
+              -22.57564
+            ],
+            [
+              -43.22861,
+              -22.56671
+            ],
+            [
+              -43.30076,
+              -22.65089
+            ],
+            [
+              -43.19857,
+              -22.72387
+            ],
+            [
+              -43.15658,
+              -22.71751
+            ],
+            [
+              -43.20586,
+              -22.57564
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 52,
+        "delegaciaNome": "052ª DP - Nova Iguaçu",
+        "municipio": "Nova Iguaçu",
+        "aisp": 20,
+        "risp": 3,
+        "batalhaoPMERJ": "20º BPM (Mesquita)",
+        "unidadeTerritorial": "Centro",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.42305,
+              -22.74498
+            ],
+            [
+              -43.44626,
+              -22.73026
+            ],
+            [
+              -43.46004,
+              -22.73465
+            ],
+            [
+              -43.47981,
+              -22.80384
+            ],
+            [
+              -43.42464,
+              -22.75684
+            ],
+            [
+              -43.42305,
+              -22.74498
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 53,
+        "delegaciaNome": "053ª DP - Mesquita",
+        "municipio": "Mesquita",
+        "aisp": 20,
+        "risp": 3,
+        "batalhaoPMERJ": "20º BPM (Mesquita)",
+        "unidadeTerritorial": "Mesquita, Chatuba e Banco de Areia",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.42464,
+              -22.75684
+            ],
+            [
+              -43.47981,
+              -22.80384
+            ],
+            [
+              -43.48759,
+              -22.81517
+            ],
+            [
+              -43.46977,
+              -22.82252
+            ],
+            [
+              -43.40553,
+              -22.78456
+            ],
+            [
+              -43.42464,
+              -22.75684
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 56,
+        "delegaciaNome": "056ª DP - Nova Iguaçu",
+        "municipio": "Nova Iguaçu",
+        "aisp": 20,
+        "risp": 3,
+        "batalhaoPMERJ": "20º BPM (Mesquita)",
+        "unidadeTerritorial": "Comendador Soares, Cabuçú e Km32",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.56536,
+              -22.69369
+            ],
+            [
+              -43.59236,
+              -22.73984
+            ],
+            [
+              -43.5909,
+              -22.7869
+            ],
+            [
+              -43.53007,
+              -22.81871
+            ],
+            [
+              -43.48759,
+              -22.81517
+            ],
+            [
+              -43.47981,
+              -22.80384
+            ],
+            [
+              -43.46004,
+              -22.73465
+            ],
+            [
+              -43.56536,
+              -22.69369
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 57,
+        "delegaciaNome": "057ª DP - Nilópolis",
+        "municipio": "Nilópolis",
+        "aisp": 20,
+        "risp": 3,
+        "batalhaoPMERJ": "20º BPM (Mesquita)",
+        "unidadeTerritorial": "Nilópolis e Olinda",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.39453,
+              -22.78875
+            ],
+            [
+              -43.40553,
+              -22.78456
+            ],
+            [
+              -43.46977,
+              -22.82252
+            ],
+            [
+              -43.45426,
+              -22.83348
+            ],
+            [
+              -43.43459,
+              -22.83887
+            ],
+            [
+              -43.39347,
+              -22.80392
+            ],
+            [
+              -43.39453,
+              -22.78875
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 58,
+        "delegaciaNome": "058ª DP - Nova Iguaçu",
+        "municipio": "Nova Iguaçu",
+        "aisp": 20,
+        "risp": 3,
+        "batalhaoPMERJ": "20º BPM (Mesquita)",
+        "unidadeTerritorial": "Posse, Austin, Miguel Couto, Vila de Cava e Tinguá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.5285,
+              -22.58916
+            ],
+            [
+              -43.56536,
+              -22.69369
+            ],
+            [
+              -43.46004,
+              -22.73465
+            ],
+            [
+              -43.44626,
+              -22.73026
+            ],
+            [
+              -43.43537,
+              -22.58505
+            ],
+            [
+              -43.44027,
+              -22.57886
+            ],
+            [
+              -43.5285,
+              -22.58916
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 64,
+        "delegaciaNome": "064ª DP - São João de Meriti",
+        "municipio": "São João de Meriti",
+        "aisp": 21,
+        "risp": 3,
+        "batalhaoPMERJ": "21º BPM (São João de Meriti)",
+        "unidadeTerritorial": "São João de Meriti, Coelho da Rocha e São Mateus",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.39453,
+              -22.78875
+            ],
+            [
+              -43.39347,
+              -22.80392
+            ],
+            [
+              -43.3694,
+              -22.83114
+            ],
+            [
+              -43.34473,
+              -22.7799
+            ],
+            [
+              -43.35063,
+              -22.75836
+            ],
+            [
+              -43.39453,
+              -22.78875
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 48,
+        "delegaciaNome": "048ª DP - Seropédica",
+        "municipio": "Seropédica",
+        "aisp": 24,
+        "risp": 3,
+        "batalhaoPMERJ": "24º BPM (Queimados)",
+        "unidadeTerritorial": "Seropédica",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.71772,
+              -22.68285
+            ],
+            [
+              -43.79762,
+              -22.68561
+            ],
+            [
+              -43.83831,
+              -22.74744
+            ],
+            [
+              -43.69596,
+              -22.83802
+            ],
+            [
+              -43.63239,
+              -22.82839
+            ],
+            [
+              -43.5909,
+              -22.7869
+            ],
+            [
+              -43.59236,
+              -22.73984
+            ],
+            [
+              -43.71772,
+              -22.68285
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 50,
+        "delegaciaNome": "050ª DP - Itaguaí",
+        "municipio": "Itaguaí",
+        "aisp": 24,
+        "risp": 3,
+        "batalhaoPMERJ": "24º BPM (Queimados)",
+        "unidadeTerritorial": "Itaguaí e Ibituporanga",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.84852,
+              -23.08365
+            ],
+            [
+              -43.81882,
+              -23.05024
+            ],
+            [
+              -43.69596,
+              -22.83802
+            ],
+            [
+              -43.83831,
+              -22.74744
+            ],
+            [
+              -43.94407,
+              -22.80233
+            ],
+            [
+              -43.84852,
+              -23.08365
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 51,
+        "delegaciaNome": "051ª DP - Paracambi",
+        "municipio": "Paracambi",
+        "aisp": 24,
+        "risp": 3,
+        "batalhaoPMERJ": "24º BPM (Queimados)",
+        "unidadeTerritorial": "Paracambi",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.71899,
+              -22.56747
+            ],
+            [
+              -43.77912,
+              -22.58322
+            ],
+            [
+              -43.80418,
+              -22.61713
+            ],
+            [
+              -43.79762,
+              -22.68561
+            ],
+            [
+              -43.71772,
+              -22.68285
+            ],
+            [
+              -43.66396,
+              -22.59836
+            ],
+            [
+              -43.71899,
+              -22.56747
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 55,
+        "delegaciaNome": "055ª DP - Queimados",
+        "municipio": "Queimados",
+        "aisp": 24,
+        "risp": 3,
+        "batalhaoPMERJ": "24º BPM (Queimados)",
+        "unidadeTerritorial": "Centro, Norte, Sul. Leste, Oeste e Nordeste",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.44626,
+              -22.73026
+            ],
+            [
+              -43.42305,
+              -22.74498
+            ],
+            [
+              -43.355,
+              -22.70813
+            ],
+            [
+              -43.355,
+              -22.65923
+            ],
+            [
+              -43.43537,
+              -22.58505
+            ],
+            [
+              -43.44626,
+              -22.73026
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 63,
+        "delegaciaNome": "063ª DP - Japeri",
+        "municipio": "Japeri",
+        "aisp": 24,
+        "risp": 3,
+        "batalhaoPMERJ": "24º BPM (Queimados)",
+        "unidadeTerritorial": "Japeri, Engenheiro Pedreira, Marajoara, Pedra Lisa e Rio D`Ouro",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.55108,
+              -22.57014
+            ],
+            [
+              -43.66396,
+              -22.59836
+            ],
+            [
+              -43.71772,
+              -22.68285
+            ],
+            [
+              -43.59236,
+              -22.73984
+            ],
+            [
+              -43.56536,
+              -22.69369
+            ],
+            [
+              -43.5285,
+              -22.58916
+            ],
+            [
+              -43.55108,
+              -22.57014
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 65,
+        "delegaciaNome": "065ª DP - Magé",
+        "municipio": "Magé",
+        "aisp": 34,
+        "risp": 3,
+        "batalhaoPMERJ": "34º BPM (Magé)",
+        "unidadeTerritorial": "Magé, Santo Aleixo e Suruí",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.05025,
+              -22.73922
+            ],
+            [
+              -42.9519,
+              -22.70217
+            ],
+            [
+              -42.91968,
+              -22.63982
+            ],
+            [
+              -43.0636,
+              -22.56601
+            ],
+            [
+              -43.12822,
+              -22.72754
+            ],
+            [
+              -43.12234,
+              -22.73387
+            ],
+            [
+              -43.05025,
+              -22.73922
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 66,
+        "delegaciaNome": "066ª DP - Magé",
+        "municipio": "Magé",
+        "aisp": 34,
+        "risp": 3,
+        "batalhaoPMERJ": "34º BPM (Magé)",
+        "unidadeTerritorial": "Inhomirim e Guia de Copaíba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.08137,
+              -22.5291
+            ],
+            [
+              -43.20586,
+              -22.57564
+            ],
+            [
+              -43.15658,
+              -22.71751
+            ],
+            [
+              -43.12822,
+              -22.72754
+            ],
+            [
+              -43.0636,
+              -22.56601
+            ],
+            [
+              -43.08137,
+              -22.5291
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 67,
+        "delegaciaNome": "067ª DP - Guapimirim",
+        "municipio": "Guapimirim",
+        "aisp": 34,
+        "risp": 3,
+        "batalhaoPMERJ": "34º BPM (Magé)",
+        "unidadeTerritorial": "Guapimirim",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.81918,
+              -22.4922
+            ],
+            [
+              -43.04514,
+              -22.46464
+            ],
+            [
+              -43.07816,
+              -22.5077
+            ],
+            [
+              -43.08137,
+              -22.5291
+            ],
+            [
+              -43.0636,
+              -22.56601
+            ],
+            [
+              -42.91968,
+              -22.63982
+            ],
+            [
+              -42.80188,
+              -22.5725
+            ],
+            [
+              -42.81918,
+              -22.4922
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 54,
+        "delegaciaNome": "054ª DP - Belford Roxo",
+        "municipio": "Belford Roxo",
+        "aisp": 39,
+        "risp": 3,
+        "batalhaoPMERJ": "39º BPM (Belford Roxo)",
+        "unidadeTerritorial": "Areia Branca, Jardim Redentor, Parque São José, Nova Aurora e Lote XV",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.42305,
+              -22.74498
+            ],
+            [
+              -43.42464,
+              -22.75684
+            ],
+            [
+              -43.40553,
+              -22.78456
+            ],
+            [
+              -43.39453,
+              -22.78875
+            ],
+            [
+              -43.35063,
+              -22.75836
+            ],
+            [
+              -43.34442,
+              -22.73324
+            ],
+            [
+              -43.355,
+              -22.70813
+            ],
+            [
+              -43.42305,
+              -22.74498
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 72,
+        "delegaciaNome": "072ª DP - São Gonçalo",
+        "municipio": "São Gonçalo",
+        "aisp": 1,
+        "risp": 4,
+        "batalhaoPMERJ": "7º BPM (São Gonçalo - 1ª Cia)",
+        "unidadeTerritorial": "São Gonçalo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.04857,
+              -22.86532
+            ],
+            [
+              -43.01343,
+              -22.82556
+            ],
+            [
+              -43.05025,
+              -22.73922
+            ],
+            [
+              -43.12234,
+              -22.73387
+            ],
+            [
+              -43.12641,
+              -22.77145
+            ],
+            [
+              -43.05695,
+              -22.86006
+            ],
+            [
+              -43.04857,
+              -22.86532
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 73,
+        "delegaciaNome": "073ª DP - São Gonçalo",
+        "municipio": "São Gonçalo",
+        "aisp": 1,
+        "risp": 4,
+        "batalhaoPMERJ": "7º BPM (São Gonçalo - 1ª Cia)",
+        "unidadeTerritorial": "Neves",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.10682,
+              -22.87139
+            ],
+            [
+              -43.05695,
+              -22.86006
+            ],
+            [
+              -43.12641,
+              -22.77145
+            ],
+            [
+              -43.15008,
+              -22.83322
+            ],
+            [
+              -43.10682,
+              -22.87139
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 74,
+        "delegaciaNome": "074ª DP - São Gonçalo",
+        "municipio": "São Gonçalo",
+        "aisp": 7,
+        "risp": 4,
+        "batalhaoPMERJ": "7º BPM (São Gonçalo)",
+        "unidadeTerritorial": "Monjolo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.89148,
+              -22.84467
+            ],
+            [
+              -42.9519,
+              -22.70217
+            ],
+            [
+              -43.05025,
+              -22.73922
+            ],
+            [
+              -43.01343,
+              -22.82556
+            ],
+            [
+              -42.90653,
+              -22.86544
+            ],
+            [
+              -42.89148,
+              -22.84467
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 75,
+        "delegaciaNome": "075ª DP - São Gonçalo",
+        "municipio": "São Gonçalo",
+        "aisp": 7,
+        "risp": 4,
+        "batalhaoPMERJ": "7º BPM (São Gonçalo)",
+        "unidadeTerritorial": "Ipiiba e Sete Pontes",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.92537,
+              -22.93242
+            ],
+            [
+              -42.90653,
+              -22.86544
+            ],
+            [
+              -43.01343,
+              -22.82556
+            ],
+            [
+              -43.04857,
+              -22.86532
+            ],
+            [
+              -43.04303,
+              -22.8973
+            ],
+            [
+              -43.0322,
+              -22.90993
+            ],
+            [
+              -42.92537,
+              -22.93242
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 76,
+        "delegaciaNome": "076ª DP - Niterói",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Centro, Ponta da Areia, Ilha da Conceição, São Lourenço, Fátima, Morro do Estado, Ingá, São Domingos, Gragoatá e Boa Viagem",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.10161,
+              -22.88661
+            ],
+            [
+              -43.10682,
+              -22.87139
+            ],
+            [
+              -43.15008,
+              -22.83322
+            ],
+            [
+              -43.16022,
+              -22.84463
+            ],
+            [
+              -43.15616,
+              -22.87965
+            ],
+            [
+              -43.15118,
+              -22.8981
+            ],
+            [
+              -43.14328,
+              -22.91918
+            ],
+            [
+              -43.1396,
+              -22.9246
+            ],
+            [
+              -43.10161,
+              -22.88661
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 77,
+        "delegaciaNome": "077ª DP - Niterói",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Santa Rosa, Icaraí, Vital Brasil, Pé Pequeno, Viradouro e Cubango",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.08163,
+              -22.90141
+            ],
+            [
+              -43.10161,
+              -22.88661
+            ],
+            [
+              -43.1396,
+              -22.9246
+            ],
+            [
+              -43.13033,
+              -22.95205
+            ],
+            [
+              -43.12613,
+              -22.95704
+            ],
+            [
+              -43.08163,
+              -22.90141
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 78,
+        "delegaciaNome": "078ª DP - Niterói",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Fonseca, Viçoso Jardim, Caramujo, Baldeador, Santa Bárbara, Tenente Jardim, Engenhoca, Santana e Barreto",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.08163,
+              -22.90141
+            ],
+            [
+              -43.04303,
+              -22.8973
+            ],
+            [
+              -43.04857,
+              -22.86532
+            ],
+            [
+              -43.05695,
+              -22.86006
+            ],
+            [
+              -43.10682,
+              -22.87139
+            ],
+            [
+              -43.10161,
+              -22.88661
+            ],
+            [
+              -43.08163,
+              -22.90141
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 79,
+        "delegaciaNome": "079ª DP - Niterói",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Jurujuba, Charitas, São Francisco, Cachoeiras, Maceió, Largo da Batalha, Ititioca, Badu, Sapê, Matapaca, Vila Progresso, Muriqui, Maria Paula e Cantagalo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.0322,
+              -22.90993
+            ],
+            [
+              -43.04303,
+              -22.8973
+            ],
+            [
+              -43.08163,
+              -22.90141
+            ],
+            [
+              -43.12613,
+              -22.95704
+            ],
+            [
+              -43.10275,
+              -23.01071
+            ],
+            [
+              -43.0322,
+              -22.90993
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 81,
+        "delegaciaNome": "081ª DP - Niterói",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Itaipu, Camboinhas, Itacoatiara, Piratininga, Cafubá, Jacaré, Rio do Ouro, Engenho do Mato, Várzea das Moças e Jardim Imbuí",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.92537,
+              -22.93242
+            ],
+            [
+              -43.0322,
+              -22.90993
+            ],
+            [
+              -43.10275,
+              -23.01071
+            ],
+            [
+              -43.09921,
+              -23.07008
+            ],
+            [
+              -43.09603,
+              -23.1
+            ],
+            [
+              -43.0,
+              -23.1
+            ],
+            [
+              -42.89466,
+              -23.09122
+            ],
+            [
+              -42.92537,
+              -22.93242
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 82,
+        "delegaciaNome": "082ª DP - Maricá",
+        "municipio": "Maricá",
+        "aisp": 12,
+        "risp": 4,
+        "batalhaoPMERJ": "12º BPM (Niterói)",
+        "unidadeTerritorial": "Maricá e Inoã",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.66219,
+              -22.88268
+            ],
+            [
+              -42.77705,
+              -22.81705
+            ],
+            [
+              -42.89148,
+              -22.84467
+            ],
+            [
+              -42.90653,
+              -22.86544
+            ],
+            [
+              -42.92537,
+              -22.93242
+            ],
+            [
+              -42.89466,
+              -23.09122
+            ],
+            [
+              -42.67021,
+              -23.07252
+            ],
+            [
+              -42.66219,
+              -22.88268
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 118,
+        "delegaciaNome": "118ª DP - Araruama",
+        "municipio": "Araruama",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Araruama, Morro Grande e São Vicente de Paula",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.28442,
+              -22.74152
+            ],
+            [
+              -42.46727,
+              -22.78498
+            ],
+            [
+              -42.37493,
+              -23.04791
+            ],
+            [
+              -42.22456,
+              -23.03538
+            ],
+            [
+              -42.28442,
+              -22.74152
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 124,
+        "delegaciaNome": "124ª DP - Saquarema",
+        "municipio": "Saquarema",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Saquarema, Bacaxá e Sampaio Correia",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.46727,
+              -22.78498
+            ],
+            [
+              -42.48614,
+              -22.77728
+            ],
+            [
+              -42.62868,
+              -22.84949
+            ],
+            [
+              -42.66219,
+              -22.88268
+            ],
+            [
+              -42.67021,
+              -23.07252
+            ],
+            [
+              -42.37493,
+              -23.04791
+            ],
+            [
+              -42.46727,
+              -22.78498
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 125,
+        "delegaciaNome": "125ª DP - São Pedro da Aldeia",
+        "municipio": "São Pedro da Aldeia",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "São Pedro da Aldeia",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.06024,
+              -22.66505
+            ],
+            [
+              -42.07661,
+              -22.65704
+            ],
+            [
+              -42.13588,
+              -22.676
+            ],
+            [
+              -42.14279,
+              -22.95246
+            ],
+            [
+              -42.0874,
+              -22.91868
+            ],
+            [
+              -42.01433,
+              -22.76485
+            ],
+            [
+              -42.06024,
+              -22.66505
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 126,
+        "delegaciaNome": "126ª DP - Cabo Frio",
+        "municipio": "Cabo Frio",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Cabo Frio e Tamoios",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.83136,
+              -22.93374
+            ],
+            [
+              -42.01433,
+              -22.76485
+            ],
+            [
+              -42.0874,
+              -22.91868
+            ],
+            [
+              -41.83136,
+              -22.93374
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 127,
+        "delegaciaNome": "127ª DP - Armação dos Búzios",
+        "municipio": "Armação dos Búzios",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Armação dos Búzios",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.73189,
+              -22.59938
+            ],
+            [
+              -42.06024,
+              -22.66505
+            ],
+            [
+              -42.01433,
+              -22.76485
+            ],
+            [
+              -41.83136,
+              -22.93374
+            ],
+            [
+              -41.77163,
+              -22.96847
+            ],
+            [
+              -41.50337,
+              -22.67041
+            ],
+            [
+              -41.73189,
+              -22.59938
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 129,
+        "delegaciaNome": "129ª DP - Iguaba Grande",
+        "municipio": "Iguaba Grande",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Iguaba Grande",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.14279,
+              -22.95246
+            ],
+            [
+              -42.13588,
+              -22.676
+            ],
+            [
+              -42.23267,
+              -22.68296
+            ],
+            [
+              -42.28442,
+              -22.74152
+            ],
+            [
+              -42.22456,
+              -23.03538
+            ],
+            [
+              -42.20859,
+              -23.03405
+            ],
+            [
+              -42.14279,
+              -22.95246
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 132,
+        "delegaciaNome": "132ª DP - Arraial do Cabo",
+        "municipio": "Arraial do Cabo",
+        "aisp": 25,
+        "risp": 4,
+        "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+        "unidadeTerritorial": "Arraial do Cabo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.83136,
+              -22.93374
+            ],
+            [
+              -42.0874,
+              -22.91868
+            ],
+            [
+              -42.14279,
+              -22.95246
+            ],
+            [
+              -42.20859,
+              -23.03405
+            ],
+            [
+              -41.8,
+              -23.0
+            ],
+            [
+              -41.77163,
+              -22.96847
+            ],
+            [
+              -41.83136,
+              -22.93374
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 70,
+        "delegaciaNome": "070ª DP - Tanguá",
+        "municipio": "Tanguá",
+        "aisp": 35,
+        "risp": 4,
+        "batalhaoPMERJ": "35º BPM (Itaboraí)",
+        "unidadeTerritorial": "Tanguá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.62868,
+              -22.84949
+            ],
+            [
+              -42.70411,
+              -22.59301
+            ],
+            [
+              -42.80147,
+              -22.57281
+            ],
+            [
+              -42.77705,
+              -22.81705
+            ],
+            [
+              -42.66219,
+              -22.88268
+            ],
+            [
+              -42.62868,
+              -22.84949
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 71,
+        "delegaciaNome": "071ª DP - Itaboraí",
+        "municipio": "Itaboraí",
+        "aisp": 35,
+        "risp": 4,
+        "batalhaoPMERJ": "35º BPM (Itaboraí)",
+        "unidadeTerritorial": "Itaboraí, Cabuçú, Itambí, Porto das Caixas e Sambaetiba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.80147,
+              -22.57281
+            ],
+            [
+              -42.80188,
+              -22.5725
+            ],
+            [
+              -42.91968,
+              -22.63982
+            ],
+            [
+              -42.9519,
+              -22.70217
+            ],
+            [
+              -42.89148,
+              -22.84467
+            ],
+            [
+              -42.77705,
+              -22.81705
+            ],
+            [
+              -42.80147,
+              -22.57281
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 119,
+        "delegaciaNome": "119ª DP - Rio Bonito",
+        "municipio": "Rio Bonito",
+        "aisp": 35,
+        "risp": 4,
+        "batalhaoPMERJ": "35º BPM (Itaboraí)",
+        "unidadeTerritorial": "Rio Bonito e Boa Esperança",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.53525,
+              -22.57191
+            ],
+            [
+              -42.70411,
+              -22.59301
+            ],
+            [
+              -42.62868,
+              -22.84949
+            ],
+            [
+              -42.48614,
+              -22.77728
+            ],
+            [
+              -42.53525,
+              -22.57191
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 120,
+        "delegaciaNome": "120ª DP - Silva Jardim",
+        "municipio": "Silva Jardim",
+        "aisp": 35,
+        "risp": 4,
+        "batalhaoPMERJ": "35º BPM (Itaboraí)",
+        "unidadeTerritorial": "Silva Jardim, Aldeia Velha, Correntezas e Gaviões",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.39537,
+              -22.44267
+            ],
+            [
+              -42.46041,
+              -22.46673
+            ],
+            [
+              -42.53525,
+              -22.57191
+            ],
+            [
+              -42.48614,
+              -22.77728
+            ],
+            [
+              -42.46727,
+              -22.78498
+            ],
+            [
+              -42.28442,
+              -22.74152
+            ],
+            [
+              -42.23267,
+              -22.68296
+            ],
+            [
+              -42.39537,
+              -22.44267
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 88,
+        "delegaciaNome": "088ª DP - Barra do Piraí",
+        "municipio": "Barra do Piraí",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Barra do Piraí, Dorandia, Ipiabas, São José do Turvo e Vargem Alegre",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.91451,
+              -22.53893
+            ],
+            [
+              -43.80418,
+              -22.61713
+            ],
+            [
+              -43.77912,
+              -22.58322
+            ],
+            [
+              -43.77736,
+              -22.4197
+            ],
+            [
+              -43.82184,
+              -22.36064
+            ],
+            [
+              -43.8989,
+              -22.32761
+            ],
+            [
+              -43.91451,
+              -22.53893
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 91,
+        "delegaciaNome": "091ª DP - Valença",
+        "municipio": "Valença",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Valença, Barão de Juparana, Conservatória, Parapeúna, Pentagna e Santa Isabel do Rio Preto",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.8989,
+              -22.32761
+            ],
+            [
+              -43.82184,
+              -22.36064
+            ],
+            [
+              -43.58812,
+              -22.29851
+            ],
+            [
+              -43.72538,
+              -22.07888
+            ],
+            [
+              -44.02779,
+              -22.18473
+            ],
+            [
+              -43.8989,
+              -22.32761
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 92,
+        "delegaciaNome": "092ª DP - Rio das Flores",
+        "municipio": "Rio das Flores",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Rio das Flores, Manuel Duarte, Abarracamento e Taboas",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.58812,
+              -22.29851
+            ],
+            [
+              -43.54326,
+              -22.31353
+            ],
+            [
+              -43.43364,
+              -22.27891
+            ],
+            [
+              -43.44446,
+              -21.95961
+            ],
+            [
+              -43.5,
+              -22.0
+            ],
+            [
+              -43.72538,
+              -22.07888
+            ],
+            [
+              -43.58812,
+              -22.29851
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 94,
+        "delegaciaNome": "094ª DP - Piraí",
+        "municipio": "Piraí",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Piraí, Arrozal, Monumento e Santanésia",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.02935,
+              -22.6409
+            ],
+            [
+              -43.97127,
+              -22.79051
+            ],
+            [
+              -43.94407,
+              -22.80233
+            ],
+            [
+              -43.83831,
+              -22.74744
+            ],
+            [
+              -43.79762,
+              -22.68561
+            ],
+            [
+              -43.80418,
+              -22.61713
+            ],
+            [
+              -43.91451,
+              -22.53893
+            ],
+            [
+              -44.02935,
+              -22.6409
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 95,
+        "delegaciaNome": "095ª DP - Vassouras",
+        "municipio": "Vassouras",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Vassouras, Andrade Pinto, São Sebastião dos Ferreiros e Sebastião de Lacerda",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.67407,
+              -22.47764
+            ],
+            [
+              -43.59646,
+              -22.4854
+            ],
+            [
+              -43.54326,
+              -22.31353
+            ],
+            [
+              -43.58812,
+              -22.29851
+            ],
+            [
+              -43.82184,
+              -22.36064
+            ],
+            [
+              -43.77736,
+              -22.4197
+            ],
+            [
+              -43.67407,
+              -22.47764
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 96,
+        "delegaciaNome": "096ª DP - Miguel Pereira",
+        "municipio": "Miguel Pereira",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Miguel Pereira, Governador Portela e Conrado",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.31937,
+              -22.36581
+            ],
+            [
+              -43.32014,
+              -22.35778
+            ],
+            [
+              -43.43364,
+              -22.27891
+            ],
+            [
+              -43.54326,
+              -22.31353
+            ],
+            [
+              -43.59646,
+              -22.4854
+            ],
+            [
+              -43.55108,
+              -22.57014
+            ],
+            [
+              -43.5285,
+              -22.58916
+            ],
+            [
+              -43.44027,
+              -22.57886
+            ],
+            [
+              -43.32689,
+              -22.41314
+            ],
+            [
+              -43.31937,
+              -22.36581
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 97,
+        "delegaciaNome": "097ª DP - Mendes",
+        "municipio": "Mendes",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Mendes",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.67407,
+              -22.47764
+            ],
+            [
+              -43.77736,
+              -22.4197
+            ],
+            [
+              -43.77912,
+              -22.58322
+            ],
+            [
+              -43.71899,
+              -22.56747
+            ],
+            [
+              -43.67407,
+              -22.47764
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 98,
+        "delegaciaNome": "098ª DP - Engenheiro Paulo de Frontin",
+        "municipio": "Engenheiro Paulo de Frontin",
+        "aisp": 10,
+        "risp": 5,
+        "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+        "unidadeTerritorial": "Engenheiro Paulo de Frontin e Sacra Família do Tinguá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.59646,
+              -22.4854
+            ],
+            [
+              -43.67407,
+              -22.47764
+            ],
+            [
+              -43.71899,
+              -22.56747
+            ],
+            [
+              -43.66396,
+              -22.59836
+            ],
+            [
+              -43.55108,
+              -22.57014
+            ],
+            [
+              -43.59646,
+              -22.4854
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 90,
+        "delegaciaNome": "090ª DP - Barra Mansa",
+        "municipio": "Barra Mansa",
+        "aisp": 28,
+        "risp": 5,
+        "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+        "unidadeTerritorial": "Antonio Rocha, Floriano, Nossa Senhora do Amparo, Rialto e Regiões Administrativas I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.32989,
+              -22.58174
+            ],
+            [
+              -44.35429,
+              -22.67286
+            ],
+            [
+              -44.10286,
+              -22.62257
+            ],
+            [
+              -44.19038,
+              -22.395
+            ],
+            [
+              -44.32989,
+              -22.58174
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 93,
+        "delegaciaNome": "093ª DP - Volta Redonda",
+        "municipio": "Volta Redonda",
+        "aisp": 28,
+        "risp": 5,
+        "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+        "unidadeTerritorial": "Volta Redonda",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.19038,
+              -22.395
+            ],
+            [
+              -44.10286,
+              -22.62257
+            ],
+            [
+              -44.04412,
+              -22.63138
+            ],
+            [
+              -44.07715,
+              -22.202
+            ],
+            [
+              -44.11189,
+              -22.21416
+            ],
+            [
+              -44.19038,
+              -22.395
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 101,
+        "delegaciaNome": "101ª DP - Pinheiral",
+        "municipio": "Pinheiral",
+        "aisp": 28,
+        "risp": 5,
+        "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+        "unidadeTerritorial": "Pinheiral",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.04412,
+              -22.63138
+            ],
+            [
+              -44.02935,
+              -22.6409
+            ],
+            [
+              -43.91451,
+              -22.53893
+            ],
+            [
+              -43.8989,
+              -22.32761
+            ],
+            [
+              -44.02779,
+              -22.18473
+            ],
+            [
+              -44.07715,
+              -22.202
+            ],
+            [
+              -44.04412,
+              -22.63138
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 168,
+        "delegaciaNome": "168ª DP - Rio Claro",
+        "municipio": "Rio Claro",
+        "aisp": 28,
+        "risp": 5,
+        "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+        "unidadeTerritorial": "Rio Claro, Getulândia, Lídice, Passa Três e São João Marcos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.41138,
+              -22.74479
+            ],
+            [
+              -44.19547,
+              -22.88115
+            ],
+            [
+              -43.97127,
+              -22.79051
+            ],
+            [
+              -44.02935,
+              -22.6409
+            ],
+            [
+              -44.04412,
+              -22.63138
+            ],
+            [
+              -44.10286,
+              -22.62257
+            ],
+            [
+              -44.35429,
+              -22.67286
+            ],
+            [
+              -44.41138,
+              -22.74479
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 165,
+        "delegaciaNome": "165ª DP - Mangaratiba",
+        "municipio": "Mangaratiba",
+        "aisp": 33,
+        "risp": 5,
+        "batalhaoPMERJ": "33º BPM (Angra dos Reis)",
+        "unidadeTerritorial": "Mangaratiba, Conceição de Jacareí, Vila Muriquí, Itacuruçá",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.14723,
+              -23.14649
+            ],
+            [
+              -44.0,
+              -23.1
+            ],
+            [
+              -43.84975,
+              -23.1
+            ],
+            [
+              -43.84852,
+              -23.08365
+            ],
+            [
+              -43.94407,
+              -22.80233
+            ],
+            [
+              -43.97127,
+              -22.79051
+            ],
+            [
+              -44.19547,
+              -22.88115
+            ],
+            [
+              -44.14723,
+              -23.14649
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 166,
+        "delegaciaNome": "166ª DP - Angra dos Reis",
+        "municipio": "Angra dos Reis",
+        "aisp": 33,
+        "risp": 5,
+        "batalhaoPMERJ": "33º BPM (Angra dos Reis)",
+        "unidadeTerritorial": "Angra dos Reis, Jacuecanga, Cunhambebe, Mambucaba, Abraão e Praia de Araçatiba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.44601,
+              -23.24085
+            ],
+            [
+              -44.14723,
+              -23.14649
+            ],
+            [
+              -44.19547,
+              -22.88115
+            ],
+            [
+              -44.41138,
+              -22.74479
+            ],
+            [
+              -44.44354,
+              -22.7529
+            ],
+            [
+              -44.65395,
+              -22.85398
+            ],
+            [
+              -44.44601,
+              -23.24085
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 89,
+        "delegaciaNome": "089ª DP - Resende",
+        "municipio": "Resende",
+        "aisp": 37,
+        "risp": 5,
+        "batalhaoPMERJ": "37º BPM (Resende)",
+        "unidadeTerritorial": "Resende, Engenheiro Passos, Agulhas Negras, Pedra Selada e Fumaça",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.44354,
+              -22.7529
+            ],
+            [
+              -44.41138,
+              -22.74479
+            ],
+            [
+              -44.35429,
+              -22.67286
+            ],
+            [
+              -44.32989,
+              -22.58174
+            ],
+            [
+              -44.44803,
+              -22.33181
+            ],
+            [
+              -44.5,
+              -22.35
+            ],
+            [
+              -44.52501,
+              -22.39446
+            ],
+            [
+              -44.44354,
+              -22.7529
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 99,
+        "delegaciaNome": "099ª DP - Itatiaia",
+        "municipio": "Itatiaia",
+        "aisp": 37,
+        "risp": 5,
+        "batalhaoPMERJ": "37º BPM (Resende)",
+        "unidadeTerritorial": "Itatiaia",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.65395,
+              -22.85398
+            ],
+            [
+              -44.44354,
+              -22.7529
+            ],
+            [
+              -44.52501,
+              -22.39446
+            ],
+            [
+              -44.76958,
+              -22.82926
+            ],
+            [
+              -44.65395,
+              -22.85398
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 100,
+        "delegaciaNome": "100ª DP - Porto Real",
+        "municipio": "Porto Real",
+        "aisp": 37,
+        "risp": 5,
+        "batalhaoPMERJ": "37º BPM (Resende)",
+        "unidadeTerritorial": "Porto Real",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.32989,
+              -22.58174
+            ],
+            [
+              -44.19038,
+              -22.395
+            ],
+            [
+              -44.11189,
+              -22.21416
+            ],
+            [
+              -44.44803,
+              -22.33181
+            ],
+            [
+              -44.32989,
+              -22.58174
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 167,
+        "delegaciaNome": "167ª DP - Paraty",
+        "municipio": "Paraty",
+        "aisp": 43,
+        "risp": 5,
+        "batalhaoPMERJ": "33º BPM (2ª Cia Paraty)",
+        "unidadeTerritorial": "Paraty, Paraty-Mirim e Tarituba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.95,
+              -23.4
+            ],
+            [
+              -44.44601,
+              -23.24085
+            ],
+            [
+              -44.65395,
+              -22.85398
+            ],
+            [
+              -44.76958,
+              -22.82926
+            ],
+            [
+              -44.95,
+              -23.15
+            ],
+            [
+              -44.95,
+              -23.4
+            ],
+            [
+              -44.95,
+              -23.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 134,
+        "delegaciaNome": "134ª DP - Campos dos Goytacazes",
+        "municipio": "Campos dos Goytacazes",
+        "aisp": 8,
+        "risp": 6,
+        "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+        "unidadeTerritorial": "Campos dos Goytacazes (Primeiro Subdistrito, Segundo Subdistrito e Quarto Subdistrito), Ibitioca, Dores de Macabu, Morangaba, Mussurepe, Serrinha, Santo Amaro de Campos, São Sebastião de Campos e Tocos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.22586,
+              -21.60578
+            ],
+            [
+              -41.48594,
+              -21.5692
+            ],
+            [
+              -41.51061,
+              -21.59613
+            ],
+            [
+              -41.59787,
+              -21.93326
+            ],
+            [
+              -41.11968,
+              -22.24409
+            ],
+            [
+              -41.00992,
+              -22.12214
+            ],
+            [
+              -41.22586,
+              -21.60578
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 141,
+        "delegaciaNome": "141ª DP - São Fidélis",
+        "municipio": "São Fidélis",
+        "aisp": 8,
+        "risp": 6,
+        "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+        "unidadeTerritorial": "São Fidelis, Cambiasca, Colonia, Ipuca e Pureza",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.78807,
+              -21.51415
+            ],
+            [
+              -41.90278,
+              -21.77636
+            ],
+            [
+              -41.73876,
+              -21.9135
+            ],
+            [
+              -41.63228,
+              -21.9389
+            ],
+            [
+              -41.59787,
+              -21.93326
+            ],
+            [
+              -41.51061,
+              -21.59613
+            ],
+            [
+              -41.78807,
+              -21.51415
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 145,
+        "delegaciaNome": "145ª DP - São João da Barra",
+        "municipio": "São João da Barra",
+        "aisp": 8,
+        "risp": 6,
+        "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+        "unidadeTerritorial": "Barcelos, Atafona, São João da Barra, Grussaí, Cajueiro e Pipeiras",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.15764,
+              -21.52924
+            ],
+            [
+              -41.22586,
+              -21.60578
+            ],
+            [
+              -41.00992,
+              -22.12214
+            ],
+            [
+              -40.9,
+              -22.0
+            ],
+            [
+              -40.84203,
+              -21.59421
+            ],
+            [
+              -41.15764,
+              -21.52924
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 146,
+        "delegaciaNome": "146ª DP - Campos dos Goytacazes",
+        "municipio": "Campos dos Goytacazes",
+        "aisp": 8,
+        "risp": 6,
+        "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+        "unidadeTerritorial": "Campos dos Goytacazes (Terceiro Subdistrito), Santa Maria, Morro do Coco, Santo Eduardo, Travessão e Vila Nova de Campos",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.47897,
+              -21.28693
+            ],
+            [
+              -41.48594,
+              -21.5692
+            ],
+            [
+              -41.22586,
+              -21.60578
+            ],
+            [
+              -41.15764,
+              -21.52924
+            ],
+            [
+              -41.0683,
+              -20.85284
+            ],
+            [
+              -41.1,
+              -20.8
+            ],
+            [
+              -41.10915,
+              -20.8
+            ],
+            [
+              -41.47897,
+              -21.28693
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 147,
+        "delegaciaNome": "147ª DP - São Francisco de Itabapoana",
+        "municipio": "São Francisco de Itabapoana",
+        "aisp": 8,
+        "risp": 6,
+        "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+        "unidadeTerritorial": "São Francisco de Itabapoana, Maniva e Barra Seca",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.15764,
+              -21.52924
+            ],
+            [
+              -40.84203,
+              -21.59421
+            ],
+            [
+              -40.8,
+              -21.3
+            ],
+            [
+              -41.0683,
+              -20.85284
+            ],
+            [
+              -41.15764,
+              -21.52924
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 138,
+        "delegaciaNome": "138ª DP - Laje do Muriaé",
+        "municipio": "Laje do Muriaé",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Laje do Muriaé",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.01094,
+              -21.35969
+            ],
+            [
+              -42.00453,
+              -21.35919
+            ],
+            [
+              -42.00742,
+              -21.13051
+            ],
+            [
+              -42.03097,
+              -21.09801
+            ],
+            [
+              -42.16858,
+              -21.01487
+            ],
+            [
+              -42.4,
+              -21.2
+            ],
+            [
+              -42.42829,
+              -21.22057
+            ],
+            [
+              -42.01094,
+              -21.35969
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 139,
+        "delegaciaNome": "139ª DP - Porciúncula",
+        "municipio": "Porciúncula",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Porciúncula, Purilândia e Santa Clara",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.03097,
+              -21.09801
+            ],
+            [
+              -41.74413,
+              -20.8
+            ],
+            [
+              -41.9,
+              -20.8
+            ],
+            [
+              -42.16858,
+              -21.01487
+            ],
+            [
+              -42.03097,
+              -21.09801
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 140,
+        "delegaciaNome": "140ª DP - Natividade",
+        "municipio": "Natividade",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Natividade, Ourania e Bom Jesus do Querendo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.03097,
+              -21.09801
+            ],
+            [
+              -42.00742,
+              -21.13051
+            ],
+            [
+              -41.79838,
+              -21.11483
+            ],
+            [
+              -41.66825,
+              -20.8
+            ],
+            [
+              -41.74413,
+              -20.8
+            ],
+            [
+              -42.03097,
+              -21.09801
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 143,
+        "delegaciaNome": "143ª DP - Itaperuna",
+        "municipio": "Itaperuna",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Itaperuna, Boaventura, Nossa Senhora da Penha, Itajara, Retiro do Muriaé, Raposo e Comendador Venâncio",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.96523,
+              -21.38459
+            ],
+            [
+              -41.87072,
+              -21.39017
+            ],
+            [
+              -41.74716,
+              -21.27768
+            ],
+            [
+              -41.79838,
+              -21.11483
+            ],
+            [
+              -42.00742,
+              -21.13051
+            ],
+            [
+              -42.00453,
+              -21.35919
+            ],
+            [
+              -41.96523,
+              -21.38459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 144,
+        "delegaciaNome": "144ª DP - Bom Jesus de Itabapoana",
+        "municipio": "Bom Jesus de Itabapoana",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Bom Jesus de Itabapoana, Carabuçú, Calheiros, Pirapetinga de Bom Jesus, Rosal e Serrinha",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.79838,
+              -21.11483
+            ],
+            [
+              -41.74716,
+              -21.27768
+            ],
+            [
+              -41.47897,
+              -21.28693
+            ],
+            [
+              -41.10915,
+              -20.8
+            ],
+            [
+              -41.66825,
+              -20.8
+            ],
+            [
+              -41.79838,
+              -21.11483
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 148,
+        "delegaciaNome": "148ª DP - Italva",
+        "municipio": "Italva",
+        "aisp": 29,
+        "risp": 6,
+        "batalhaoPMERJ": "29º BPM (Itaperuna)",
+        "unidadeTerritorial": "Italva",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.74716,
+              -21.27768
+            ],
+            [
+              -41.87072,
+              -21.39017
+            ],
+            [
+              -41.78807,
+              -21.51415
+            ],
+            [
+              -41.51061,
+              -21.59613
+            ],
+            [
+              -41.48594,
+              -21.5692
+            ],
+            [
+              -41.47897,
+              -21.28693
+            ],
+            [
+              -41.74716,
+              -21.27768
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 121,
+        "delegaciaNome": "121ª DP - Casimiro de Abreu",
+        "municipio": "Casimiro de Abreu",
+        "aisp": 32,
+        "risp": 6,
+        "batalhaoPMERJ": "32º BPM (Macaé)",
+        "unidadeTerritorial": "Casimiro de Abreu, Professor Souza, Barra de São João e Rio Dourado",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.06987,
+              -22.30916
+            ],
+            [
+              -42.19389,
+              -22.27061
+            ],
+            [
+              -42.33269,
+              -22.35545
+            ],
+            [
+              -42.39537,
+              -22.44267
+            ],
+            [
+              -42.23267,
+              -22.68296
+            ],
+            [
+              -42.13588,
+              -22.676
+            ],
+            [
+              -42.07661,
+              -22.65704
+            ],
+            [
+              -42.06987,
+              -22.30916
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 122,
+        "delegaciaNome": "122ª DP - Conceição de Macabú",
+        "municipio": "Conceição de Macabú",
+        "aisp": 32,
+        "risp": 6,
+        "batalhaoPMERJ": "32º BPM (Macaé)",
+        "unidadeTerritorial": "Conceição de Macabú e Macabuzinho",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.63228,
+              -21.9389
+            ],
+            [
+              -41.73876,
+              -21.9135
+            ],
+            [
+              -41.94046,
+              -22.05102
+            ],
+            [
+              -42.05875,
+              -22.30641
+            ],
+            [
+              -41.9839,
+              -22.3213
+            ],
+            [
+              -41.78235,
+              -22.24746
+            ],
+            [
+              -41.63228,
+              -21.9389
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 123,
+        "delegaciaNome": "123ª DP - Macaé",
+        "municipio": "Macaé",
+        "aisp": 32,
+        "risp": 6,
+        "batalhaoPMERJ": "32º BPM (Macaé)",
+        "unidadeTerritorial": "Centro, Cabiúnas, Barra de Macaé, Aeroporto e Imboassica",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.78235,
+              -22.24746
+            ],
+            [
+              -41.9839,
+              -22.3213
+            ],
+            [
+              -41.73189,
+              -22.59938
+            ],
+            [
+              -41.50337,
+              -22.67041
+            ],
+            [
+              -41.44785,
+              -22.60872
+            ],
+            [
+              -41.78235,
+              -22.24746
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 128,
+        "delegaciaNome": "128ª DP - Rio das Ostras",
+        "municipio": "Rio das Ostras",
+        "aisp": 32,
+        "risp": 6,
+        "batalhaoPMERJ": "32º BPM (Macaé)",
+        "unidadeTerritorial": "Rio das Ostras",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.9839,
+              -22.3213
+            ],
+            [
+              -42.05875,
+              -22.30641
+            ],
+            [
+              -42.06987,
+              -22.30916
+            ],
+            [
+              -42.07661,
+              -22.65704
+            ],
+            [
+              -42.06024,
+              -22.66505
+            ],
+            [
+              -41.73189,
+              -22.59938
+            ],
+            [
+              -41.9839,
+              -22.3213
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 130,
+        "delegaciaNome": "130ª DP - Carapebus",
+        "municipio": "Carapebus",
+        "aisp": 32,
+        "risp": 6,
+        "batalhaoPMERJ": "32º BPM (Macaé)",
+        "unidadeTerritorial": "Centro, UB-S, Rodagem, Carapebus e Praia de Carapebus",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.59787,
+              -21.93326
+            ],
+            [
+              -41.63228,
+              -21.9389
+            ],
+            [
+              -41.78235,
+              -22.24746
+            ],
+            [
+              -41.44785,
+              -22.60872
+            ],
+            [
+              -41.11968,
+              -22.24409
+            ],
+            [
+              -41.59787,
+              -21.93326
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 135,
+        "delegaciaNome": "135ª DP - Itaocara",
+        "municipio": "Itaocara",
+        "aisp": 36,
+        "risp": 6,
+        "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+        "unidadeTerritorial": "Itaocara, Portela, Batatal, Laranjais, Jaguarembe e Estrada Nova",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.90411,
+              -21.77603
+            ],
+            [
+              -42.0131,
+              -21.58671
+            ],
+            [
+              -42.36095,
+              -21.64883
+            ],
+            [
+              -42.38885,
+              -21.66196
+            ],
+            [
+              -42.29752,
+              -21.7488
+            ],
+            [
+              -42.04122,
+              -21.81031
+            ],
+            [
+              -41.90411,
+              -21.77603
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 136,
+        "delegaciaNome": "136ª DP - Aperibé",
+        "municipio": "Aperibé",
+        "aisp": 36,
+        "risp": 6,
+        "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+        "unidadeTerritorial": "Aperibé",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.36095,
+              -21.64883
+            ],
+            [
+              -42.0131,
+              -21.58671
+            ],
+            [
+              -41.96523,
+              -21.38459
+            ],
+            [
+              -42.00453,
+              -21.35919
+            ],
+            [
+              -42.01094,
+              -21.35969
+            ],
+            [
+              -42.36095,
+              -21.64883
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 137,
+        "delegaciaNome": "137ª DP - Miracema",
+        "municipio": "Miracema",
+        "aisp": 36,
+        "risp": 6,
+        "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+        "unidadeTerritorial": "Miracema, Venda das Flores e Paraíso do Tobias",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.43256,
+              -21.64869
+            ],
+            [
+              -42.38885,
+              -21.66196
+            ],
+            [
+              -42.36095,
+              -21.64883
+            ],
+            [
+              -42.01094,
+              -21.35969
+            ],
+            [
+              -42.42829,
+              -21.22057
+            ],
+            [
+              -42.71105,
+              -21.42622
+            ],
+            [
+              -42.43256,
+              -21.64869
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 142,
+        "delegaciaNome": "142ª DP - Cambuci",
+        "municipio": "Cambuci",
+        "aisp": 36,
+        "risp": 6,
+        "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+        "unidadeTerritorial": "Cambuci, Três Irmãos, Funil, Monte Verde e São João do Paraíso",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.87072,
+              -21.39017
+            ],
+            [
+              -41.96523,
+              -21.38459
+            ],
+            [
+              -42.0131,
+              -21.58671
+            ],
+            [
+              -41.90411,
+              -21.77603
+            ],
+            [
+              -41.90278,
+              -21.77636
+            ],
+            [
+              -41.78807,
+              -21.51415
+            ],
+            [
+              -41.87072,
+              -21.39017
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 155,
+        "delegaciaNome": "155ª DP - São Sebastião do Alto",
+        "municipio": "São Sebastião do Alto",
+        "aisp": 36,
+        "risp": 6,
+        "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+        "unidadeTerritorial": "São Sebastião do Alto, Valão do Barro e Ipituna",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.0806,
+              -21.98095
+            ],
+            [
+              -42.04122,
+              -21.81031
+            ],
+            [
+              -42.29752,
+              -21.7488
+            ],
+            [
+              -42.2623,
+              -21.89605
+            ],
+            [
+              -42.15057,
+              -22.01843
+            ],
+            [
+              -42.0806,
+              -21.98095
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 151,
+        "delegaciaNome": "151ª DP - Nova Friburgo",
+        "municipio": "Nova Friburgo",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Nova Friburgo, São Pedro da Serra, Lumiar, Amparo, Riograndina, Conselheiro Paulino e Campo do Coelho",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.5651,
+              -22.14241
+            ],
+            [
+              -42.73681,
+              -22.24614
+            ],
+            [
+              -42.74462,
+              -22.26936
+            ],
+            [
+              -42.46041,
+              -22.46673
+            ],
+            [
+              -42.39537,
+              -22.44267
+            ],
+            [
+              -42.33269,
+              -22.35545
+            ],
+            [
+              -42.5651,
+              -22.14241
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 152,
+        "delegaciaNome": "152ª DP - Duas Barras",
+        "municipio": "Duas Barras",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Duas Barras e Monnerat",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.53507,
+              -22.0516
+            ],
+            [
+              -42.53557,
+              -22.07966
+            ],
+            [
+              -42.30665,
+              -22.12942
+            ],
+            [
+              -42.32287,
+              -22.03535
+            ],
+            [
+              -42.48921,
+              -21.96882
+            ],
+            [
+              -42.53507,
+              -22.0516
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 153,
+        "delegaciaNome": "153ª DP - Cantagalo",
+        "municipio": "Cantagalo",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Cantagalo, Santa Rita da Floresta, Boa Sorte, Euclidelândia e São Sebastião do Paraíba",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.48921,
+              -21.96882
+            ],
+            [
+              -42.32287,
+              -22.03535
+            ],
+            [
+              -42.2623,
+              -21.89605
+            ],
+            [
+              -42.29752,
+              -21.7488
+            ],
+            [
+              -42.38885,
+              -21.66196
+            ],
+            [
+              -42.43256,
+              -21.64869
+            ],
+            [
+              -42.48921,
+              -21.96882
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 154,
+        "delegaciaNome": "154ª DP - Cordeiro",
+        "municipio": "Cordeiro",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Cordeiro",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.32287,
+              -22.03535
+            ],
+            [
+              -42.30665,
+              -22.12942
+            ],
+            [
+              -42.19581,
+              -22.26402
+            ],
+            [
+              -42.15057,
+              -22.01843
+            ],
+            [
+              -42.2623,
+              -21.89605
+            ],
+            [
+              -42.32287,
+              -22.03535
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 156,
+        "delegaciaNome": "156ª DP - Santa Maria Madalena",
+        "municipio": "Santa Maria Madalena",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Santa Maria Madalena, Doutor Loreti, Renascença, Santo Antônio do Imbé, Sossego e Triunfo",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.90411,
+              -21.77603
+            ],
+            [
+              -42.04122,
+              -21.81031
+            ],
+            [
+              -42.0806,
+              -21.98095
+            ],
+            [
+              -41.94046,
+              -22.05102
+            ],
+            [
+              -41.73876,
+              -21.9135
+            ],
+            [
+              -41.90278,
+              -21.77636
+            ],
+            [
+              -41.90411,
+              -21.77603
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 157,
+        "delegaciaNome": "157ª DP - Trajano de Moraes",
+        "municipio": "Trajano de Moraes",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Trajano de Moraes, Doutor Elias, Sodrelândia, Vila da Grama e Visconde de Imbé",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.0806,
+              -21.98095
+            ],
+            [
+              -42.15057,
+              -22.01843
+            ],
+            [
+              -42.19581,
+              -22.26402
+            ],
+            [
+              -42.19389,
+              -22.27061
+            ],
+            [
+              -42.06987,
+              -22.30916
+            ],
+            [
+              -42.05875,
+              -22.30641
+            ],
+            [
+              -41.94046,
+              -22.05102
+            ],
+            [
+              -42.0806,
+              -21.98095
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 158,
+        "delegaciaNome": "158ª DP - Bom Jardim",
+        "municipio": "Bom Jardim",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Bom Jardim, Banquete, Barra Alegre e São José do Ribeirão",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.19581,
+              -22.26402
+            ],
+            [
+              -42.30665,
+              -22.12942
+            ],
+            [
+              -42.53557,
+              -22.07966
+            ],
+            [
+              -42.5651,
+              -22.14241
+            ],
+            [
+              -42.33269,
+              -22.35545
+            ],
+            [
+              -42.19389,
+              -22.27061
+            ],
+            [
+              -42.19581,
+              -22.26402
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 159,
+        "delegaciaNome": "159ª DP - Cachoeiras de Macacu",
+        "municipio": "Cachoeiras de Macacu",
+        "aisp": 11,
+        "risp": 7,
+        "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+        "unidadeTerritorial": "Cachoeiras de Macacu, Japuíba e Subaio",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.74462,
+              -22.26936
+            ],
+            [
+              -42.78739,
+              -22.30625
+            ],
+            [
+              -42.81918,
+              -22.4922
+            ],
+            [
+              -42.80188,
+              -22.5725
+            ],
+            [
+              -42.80147,
+              -22.57281
+            ],
+            [
+              -42.70411,
+              -22.59301
+            ],
+            [
+              -42.53525,
+              -22.57191
+            ],
+            [
+              -42.46041,
+              -22.46673
+            ],
+            [
+              -42.74462,
+              -22.26936
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 105,
+        "delegaciaNome": "105ª DP - Petrópolis",
+        "municipio": "Petrópolis",
+        "aisp": 26,
+        "risp": 7,
+        "batalhaoPMERJ": "26º BPM (Petrópolis)",
+        "unidadeTerritorial": "Petrópolis e Cascatinha",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.31937,
+              -22.36581
+            ],
+            [
+              -43.32689,
+              -22.41314
+            ],
+            [
+              -43.22861,
+              -22.56671
+            ],
+            [
+              -43.20586,
+              -22.57564
+            ],
+            [
+              -43.08137,
+              -22.5291
+            ],
+            [
+              -43.07816,
+              -22.5077
+            ],
+            [
+              -43.31937,
+              -22.36581
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 106,
+        "delegaciaNome": "106ª DP - Petrópolis",
+        "municipio": "Petrópolis",
+        "aisp": 26,
+        "risp": 7,
+        "batalhaoPMERJ": "26º BPM (Petrópolis)",
+        "unidadeTerritorial": "Itaipava, Pedro do Rio e Posse",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.05482,
+              -22.26511
+            ],
+            [
+              -43.0819,
+              -22.24439
+            ],
+            [
+              -43.17599,
+              -22.26907
+            ],
+            [
+              -43.32014,
+              -22.35778
+            ],
+            [
+              -43.31937,
+              -22.36581
+            ],
+            [
+              -43.07816,
+              -22.5077
+            ],
+            [
+              -43.04514,
+              -22.46464
+            ],
+            [
+              -43.05482,
+              -22.26511
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 104,
+        "delegaciaNome": "104ª DP - São José do Vale do Rio Preto",
+        "municipio": "São José do Vale do Rio Preto",
+        "aisp": 30,
+        "risp": 7,
+        "batalhaoPMERJ": "30º BPM (Teresópolis)",
+        "unidadeTerritorial": "São José do Vale do Rio Preto",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.05856,
+              -22.06467
+            ],
+            [
+              -43.0819,
+              -22.24439
+            ],
+            [
+              -43.05482,
+              -22.26511
+            ],
+            [
+              -42.78739,
+              -22.30625
+            ],
+            [
+              -42.74462,
+              -22.26936
+            ],
+            [
+              -42.73681,
+              -22.24614
+            ],
+            [
+              -42.80764,
+              -22.08066
+            ],
+            [
+              -43.05856,
+              -22.06467
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 110,
+        "delegaciaNome": "110ª DP - Teresópolis",
+        "municipio": "Teresópolis",
+        "aisp": 30,
+        "risp": 7,
+        "batalhaoPMERJ": "30º BPM (Teresópolis)",
+        "unidadeTerritorial": "Teresópolis, Vale do Bonsucesso e Vale do Paquequer",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.05482,
+              -22.26511
+            ],
+            [
+              -43.04514,
+              -22.46464
+            ],
+            [
+              -42.81918,
+              -22.4922
+            ],
+            [
+              -42.78739,
+              -22.30625
+            ],
+            [
+              -43.05482,
+              -22.26511
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 111,
+        "delegaciaNome": "111ª DP - Sumidouro",
+        "municipio": "Sumidouro",
+        "aisp": 30,
+        "risp": 7,
+        "batalhaoPMERJ": "30º BPM (Teresópolis)",
+        "unidadeTerritorial": "Sumidouro",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.77228,
+              -21.91096
+            ],
+            [
+              -42.80764,
+              -22.08066
+            ],
+            [
+              -42.73681,
+              -22.24614
+            ],
+            [
+              -42.5651,
+              -22.14241
+            ],
+            [
+              -42.53557,
+              -22.07966
+            ],
+            [
+              -42.53507,
+              -22.0516
+            ],
+            [
+              -42.77228,
+              -21.91096
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 112,
+        "delegaciaNome": "112ª DP - Carmo",
+        "municipio": "Carmo",
+        "aisp": 30,
+        "risp": 7,
+        "batalhaoPMERJ": "30º BPM (Teresópolis)",
+        "unidadeTerritorial": "Carmo, Córrego da Prata e Porto Velho do Cunha",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.77228,
+              -21.91096
+            ],
+            [
+              -42.53507,
+              -22.0516
+            ],
+            [
+              -42.48921,
+              -21.96882
+            ],
+            [
+              -42.43256,
+              -21.64869
+            ],
+            [
+              -42.71105,
+              -21.42622
+            ],
+            [
+              -42.85089,
+              -21.52792
+            ],
+            [
+              -42.77228,
+              -21.91096
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 107,
+        "delegaciaNome": "107ª DP - Paraíba do Sul",
+        "municipio": "Paraíba do Sul",
+        "aisp": 38,
+        "risp": 7,
+        "batalhaoPMERJ": "38º BPM (Três Rios)",
+        "unidadeTerritorial": "Paraíba do Sul, Werneck, Salutaris e Inconfidência",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.43364,
+              -22.27891
+            ],
+            [
+              -43.32014,
+              -22.35778
+            ],
+            [
+              -43.17599,
+              -22.26907
+            ],
+            [
+              -43.37747,
+              -21.91089
+            ],
+            [
+              -43.44446,
+              -21.95961
+            ],
+            [
+              -43.43364,
+              -22.27891
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 108,
+        "delegaciaNome": "108ª DP - Areal",
+        "municipio": "Areal",
+        "aisp": 38,
+        "risp": 7,
+        "batalhaoPMERJ": "38º BPM (Três Rios)",
+        "unidadeTerritorial": "Areal",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.17599,
+              -22.26907
+            ],
+            [
+              -43.0819,
+              -22.24439
+            ],
+            [
+              -43.05856,
+              -22.06467
+            ],
+            [
+              -43.17965,
+              -21.76702
+            ],
+            [
+              -43.37747,
+              -21.91089
+            ],
+            [
+              -43.17599,
+              -22.26907
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cisp": 109,
+        "delegaciaNome": "109ª DP - Sapucaia",
+        "municipio": "Sapucaia",
+        "aisp": 38,
+        "risp": 7,
+        "batalhaoPMERJ": "38º BPM (Três Rios)",
+        "unidadeTerritorial": "Sapucaia, Anta, Pião, Nossa Senhora Aparecida e Jamapara",
+        "tipo": "CISP"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.05856,
+              -22.06467
+            ],
+            [
+              -42.80764,
+              -22.08066
+            ],
+            [
+              -42.77228,
+              -21.91096
+            ],
+            [
+              -42.85089,
+              -21.52792
+            ],
+            [
+              -43.17965,
+              -21.76702
+            ],
+            [
+              -43.05856,
+              -22.06467
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

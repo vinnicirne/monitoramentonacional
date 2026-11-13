@@ -1,0 +1,2362 @@
+{
+  "2": {
+    "aisp": 2,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 26,
+    "homicidioDoloso": 18,
+    "morteIntervencaoPolicial": 8,
+    "rouboCarga": 14,
+    "rouboVeiculo": 125,
+    "rouboRua": 610,
+    "estelionato": 718,
+    "apreensaoArmas": 57,
+    "apreensaoFuzis": 2,
+    "taxaLetalidade100k": 8.4,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 30,
+        "rouboVeiculo": 147,
+        "rouboRua": 719,
+        "rouboCarga": 16
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 28,
+        "rouboVeiculo": 137,
+        "rouboRua": 671,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 27,
+        "rouboVeiculo": 131,
+        "rouboRua": 640,
+        "rouboCarga": 14
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 25,
+        "rouboVeiculo": 122,
+        "rouboRua": 597,
+        "rouboCarga": 13
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 24,
+        "rouboVeiculo": 117,
+        "rouboRua": 573,
+        "rouboCarga": 13
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 23,
+        "rouboVeiculo": 113,
+        "rouboRua": 555,
+        "rouboCarga": 12
+      }
+    ]
+  },
+  "3": {
+    "aisp": 3,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 72,
+    "homicidioDoloso": 51,
+    "morteIntervencaoPolicial": 21,
+    "rouboCarga": 43,
+    "rouboVeiculo": 220,
+    "rouboRua": 465,
+    "estelionato": 595,
+    "apreensaoArmas": 131,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 259,
+        "rouboRua": 548,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 242,
+        "rouboRua": 511,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 75,
+        "rouboVeiculo": 231,
+        "rouboRua": 488,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 70,
+        "rouboVeiculo": 215,
+        "rouboRua": 455,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 67,
+        "rouboVeiculo": 206,
+        "rouboRua": 437,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 65,
+        "rouboVeiculo": 200,
+        "rouboRua": 423,
+        "rouboCarga": 39
+      }
+    ]
+  },
+  "4": {
+    "aisp": 4,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 81,
+    "homicidioDoloso": 58,
+    "morteIntervencaoPolicial": 23,
+    "rouboCarga": 49,
+    "rouboVeiculo": 240,
+    "rouboRua": 500,
+    "estelionato": 625,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 22.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 95,
+        "rouboVeiculo": 283,
+        "rouboRua": 590,
+        "rouboCarga": 57
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 89,
+        "rouboVeiculo": 264,
+        "rouboRua": 550,
+        "rouboCarga": 53
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 85,
+        "rouboVeiculo": 252,
+        "rouboRua": 525,
+        "rouboCarga": 51
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 235,
+        "rouboRua": 490,
+        "rouboCarga": 48
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 76,
+        "rouboVeiculo": 225,
+        "rouboRua": 470,
+        "rouboCarga": 46
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 73,
+        "rouboVeiculo": 218,
+        "rouboRua": 455,
+        "rouboCarga": 44
+      }
+    ]
+  },
+  "5": {
+    "aisp": 5,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 90,
+    "homicidioDoloso": 64,
+    "morteIntervencaoPolicial": 26,
+    "rouboCarga": 25,
+    "rouboVeiculo": 260,
+    "rouboRua": 535,
+    "estelionato": 654,
+    "apreensaoArmas": 155,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 16.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 106,
+        "rouboVeiculo": 306,
+        "rouboRua": 631,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 99,
+        "rouboVeiculo": 286,
+        "rouboRua": 588,
+        "rouboCarga": 27
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 94,
+        "rouboVeiculo": 273,
+        "rouboRua": 561,
+        "rouboCarga": 26
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 88,
+        "rouboVeiculo": 254,
+        "rouboRua": 524,
+        "rouboCarga": 24
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 244,
+        "rouboRua": 502,
+        "rouboCarga": 23
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 81,
+        "rouboVeiculo": 236,
+        "rouboRua": 486,
+        "rouboCarga": 22
+      }
+    ]
+  },
+  "6": {
+    "aisp": 6,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 99,
+    "homicidioDoloso": 71,
+    "morteIntervencaoPolicial": 28,
+    "rouboCarga": 31,
+    "rouboVeiculo": 280,
+    "rouboRua": 570,
+    "estelionato": 684,
+    "apreensaoArmas": 95,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 18.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 116,
+        "rouboVeiculo": 330,
+        "rouboRua": 672,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 108,
+        "rouboVeiculo": 308,
+        "rouboRua": 627,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 103,
+        "rouboVeiculo": 294,
+        "rouboRua": 598,
+        "rouboCarga": 32
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 97,
+        "rouboVeiculo": 274,
+        "rouboRua": 558,
+        "rouboCarga": 30
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 93,
+        "rouboVeiculo": 263,
+        "rouboRua": 535,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 90,
+        "rouboVeiculo": 254,
+        "rouboRua": 518,
+        "rouboCarga": 28
+      }
+    ]
+  },
+  "7": {
+    "aisp": 7,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 108,
+    "homicidioDoloso": 77,
+    "morteIntervencaoPolicial": 31,
+    "rouboCarga": 37,
+    "rouboVeiculo": 160,
+    "rouboRua": 605,
+    "estelionato": 714,
+    "apreensaoArmas": 107,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 127,
+        "rouboVeiculo": 188,
+        "rouboRua": 713,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 118,
+        "rouboVeiculo": 176,
+        "rouboRua": 665,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 113,
+        "rouboVeiculo": 168,
+        "rouboRua": 635,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 105,
+        "rouboVeiculo": 156,
+        "rouboRua": 592,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 101,
+        "rouboVeiculo": 150,
+        "rouboRua": 568,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 98,
+        "rouboVeiculo": 145,
+        "rouboRua": 550,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "8": {
+    "aisp": 8,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 45,
+    "homicidioDoloso": 32,
+    "morteIntervencaoPolicial": 13,
+    "rouboCarga": 43,
+    "rouboVeiculo": 180,
+    "rouboRua": 360,
+    "estelionato": 506,
+    "apreensaoArmas": 119,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 53,
+        "rouboVeiculo": 212,
+        "rouboRua": 424,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 198,
+        "rouboRua": 396,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 47,
+        "rouboVeiculo": 189,
+        "rouboRua": 378,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 44,
+        "rouboVeiculo": 176,
+        "rouboRua": 352,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 42,
+        "rouboVeiculo": 169,
+        "rouboRua": 338,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 163,
+        "rouboRua": 327,
+        "rouboCarga": 39
+      }
+    ]
+  },
+  "9": {
+    "aisp": 9,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 150,
+    "homicidioDoloso": 108,
+    "morteIntervencaoPolicial": 42,
+    "rouboCarga": 173,
+    "rouboVeiculo": 375,
+    "rouboRua": 850,
+    "estelionato": 922,
+    "apreensaoArmas": 214,
+    "apreensaoFuzis": 19,
+    "taxaLetalidade100k": 36.9,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 177,
+        "rouboVeiculo": 442,
+        "rouboRua": 1003,
+        "rouboCarga": 204
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 165,
+        "rouboVeiculo": 412,
+        "rouboRua": 935,
+        "rouboCarga": 190
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 157,
+        "rouboVeiculo": 393,
+        "rouboRua": 892,
+        "rouboCarga": 181
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 147,
+        "rouboVeiculo": 367,
+        "rouboRua": 833,
+        "rouboCarga": 169
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 141,
+        "rouboVeiculo": 352,
+        "rouboRua": 799,
+        "rouboCarga": 162
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 136,
+        "rouboVeiculo": 341,
+        "rouboRua": 773,
+        "rouboCarga": 157
+      }
+    ]
+  },
+  "10": {
+    "aisp": 10,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 63,
+    "homicidioDoloso": 45,
+    "morteIntervencaoPolicial": 18,
+    "rouboCarga": 25,
+    "rouboVeiculo": 220,
+    "rouboRua": 430,
+    "estelionato": 565,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 16.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 74,
+        "rouboVeiculo": 259,
+        "rouboRua": 507,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 69,
+        "rouboVeiculo": 242,
+        "rouboRua": 473,
+        "rouboCarga": 27
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 66,
+        "rouboVeiculo": 231,
+        "rouboRua": 451,
+        "rouboCarga": 26
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 61,
+        "rouboVeiculo": 215,
+        "rouboRua": 421,
+        "rouboCarga": 24
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 206,
+        "rouboRua": 404,
+        "rouboCarga": 23
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 57,
+        "rouboVeiculo": 200,
+        "rouboRua": 391,
+        "rouboCarga": 22
+      }
+    ]
+  },
+  "11": {
+    "aisp": 11,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 37,
+    "homicidioDoloso": 26,
+    "morteIntervencaoPolicial": 11,
+    "rouboCarga": 16,
+    "rouboVeiculo": 68,
+    "rouboRua": 280,
+    "estelionato": 438,
+    "apreensaoArmas": 83,
+    "apreensaoFuzis": 1,
+    "taxaLetalidade100k": 12.1,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 43,
+        "rouboVeiculo": 80,
+        "rouboRua": 330,
+        "rouboCarga": 18
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 74,
+        "rouboRua": 308,
+        "rouboCarga": 17
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 38,
+        "rouboVeiculo": 71,
+        "rouboRua": 294,
+        "rouboCarga": 16
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 36,
+        "rouboVeiculo": 66,
+        "rouboRua": 274,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 34,
+        "rouboVeiculo": 63,
+        "rouboRua": 263,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 61,
+        "rouboRua": 254,
+        "rouboCarga": 14
+      }
+    ]
+  },
+  "12": {
+    "aisp": 12,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 81,
+    "homicidioDoloso": 58,
+    "morteIntervencaoPolicial": 23,
+    "rouboCarga": 37,
+    "rouboVeiculo": 260,
+    "rouboRua": 500,
+    "estelionato": 625,
+    "apreensaoArmas": 95,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 95,
+        "rouboVeiculo": 306,
+        "rouboRua": 590,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 89,
+        "rouboVeiculo": 286,
+        "rouboRua": 550,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 85,
+        "rouboVeiculo": 273,
+        "rouboRua": 525,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 254,
+        "rouboRua": 490,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 76,
+        "rouboVeiculo": 244,
+        "rouboRua": 470,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 73,
+        "rouboVeiculo": 236,
+        "rouboRua": 455,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "14": {
+    "aisp": 14,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 120,
+    "homicidioDoloso": 86,
+    "morteIntervencaoPolicial": 34,
+    "rouboCarga": 173,
+    "rouboVeiculo": 550,
+    "rouboRua": 1250,
+    "estelionato": 1262,
+    "apreensaoArmas": 196,
+    "apreensaoFuzis": 24,
+    "taxaLetalidade100k": 34.1,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 141,
+        "rouboVeiculo": 649,
+        "rouboRua": 1475,
+        "rouboCarga": 204
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 132,
+        "rouboVeiculo": 605,
+        "rouboRua": 1375,
+        "rouboCarga": 190
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 126,
+        "rouboVeiculo": 577,
+        "rouboRua": 1312,
+        "rouboCarga": 181
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 117,
+        "rouboVeiculo": 539,
+        "rouboRua": 1225,
+        "rouboCarga": 169
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 112,
+        "rouboVeiculo": 517,
+        "rouboRua": 1175,
+        "rouboCarga": 162
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 109,
+        "rouboVeiculo": 500,
+        "rouboRua": 1137,
+        "rouboCarga": 157
+      }
+    ]
+  },
+  "15": {
+    "aisp": 15,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 135,
+    "homicidioDoloso": 97,
+    "morteIntervencaoPolicial": 38,
+    "rouboCarga": 85,
+    "rouboVeiculo": 585,
+    "rouboRua": 1330,
+    "estelionato": 1330,
+    "apreensaoArmas": 214,
+    "apreensaoFuzis": 29,
+    "taxaLetalidade100k": 36.9,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 159,
+        "rouboVeiculo": 690,
+        "rouboRua": 1569,
+        "rouboCarga": 100
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 148,
+        "rouboVeiculo": 643,
+        "rouboRua": 1463,
+        "rouboCarga": 93
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 141,
+        "rouboVeiculo": 614,
+        "rouboRua": 1396,
+        "rouboCarga": 89
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 132,
+        "rouboVeiculo": 573,
+        "rouboRua": 1303,
+        "rouboCarga": 83
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 126,
+        "rouboVeiculo": 549,
+        "rouboRua": 1250,
+        "rouboCarga": 79
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 122,
+        "rouboVeiculo": 532,
+        "rouboRua": 1210,
+        "rouboCarga": 77
+      }
+    ]
+  },
+  "16": {
+    "aisp": 16,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 150,
+    "homicidioDoloso": 108,
+    "morteIntervencaoPolicial": 42,
+    "rouboCarga": 107,
+    "rouboVeiculo": 340,
+    "rouboRua": 1410,
+    "estelionato": 1398,
+    "apreensaoArmas": 232,
+    "apreensaoFuzis": 14,
+    "taxaLetalidade100k": 39.7,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 177,
+        "rouboVeiculo": 401,
+        "rouboRua": 1663,
+        "rouboCarga": 126
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 165,
+        "rouboVeiculo": 374,
+        "rouboRua": 1551,
+        "rouboCarga": 117
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 157,
+        "rouboVeiculo": 357,
+        "rouboRua": 1480,
+        "rouboCarga": 112
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 147,
+        "rouboVeiculo": 333,
+        "rouboRua": 1381,
+        "rouboCarga": 104
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 141,
+        "rouboVeiculo": 319,
+        "rouboRua": 1325,
+        "rouboCarga": 100
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 136,
+        "rouboVeiculo": 309,
+        "rouboRua": 1283,
+        "rouboCarga": 97
+      }
+    ]
+  },
+  "17": {
+    "aisp": 17,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 54,
+    "homicidioDoloso": 38,
+    "morteIntervencaoPolicial": 16,
+    "rouboCarga": 37,
+    "rouboVeiculo": 220,
+    "rouboRua": 395,
+    "estelionato": 535,
+    "apreensaoArmas": 155,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 63,
+        "rouboVeiculo": 259,
+        "rouboRua": 466,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 242,
+        "rouboRua": 434,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 56,
+        "rouboVeiculo": 231,
+        "rouboRua": 414,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 52,
+        "rouboVeiculo": 215,
+        "rouboRua": 387,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 50,
+        "rouboVeiculo": 206,
+        "rouboRua": 371,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 200,
+        "rouboRua": 359,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "18": {
+    "aisp": 18,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 63,
+    "homicidioDoloso": 45,
+    "morteIntervencaoPolicial": 18,
+    "rouboCarga": 43,
+    "rouboVeiculo": 240,
+    "rouboRua": 430,
+    "estelionato": 565,
+    "apreensaoArmas": 95,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 74,
+        "rouboVeiculo": 283,
+        "rouboRua": 507,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 69,
+        "rouboVeiculo": 264,
+        "rouboRua": 473,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 66,
+        "rouboVeiculo": 252,
+        "rouboRua": 451,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 61,
+        "rouboVeiculo": 235,
+        "rouboRua": 421,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 225,
+        "rouboRua": 404,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 57,
+        "rouboVeiculo": 218,
+        "rouboRua": 391,
+        "rouboCarga": 39
+      }
+    ]
+  },
+  "19": {
+    "aisp": 19,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 34,
+    "homicidioDoloso": 24,
+    "morteIntervencaoPolicial": 10,
+    "rouboCarga": 11,
+    "rouboVeiculo": 140,
+    "rouboRua": 745,
+    "estelionato": 833,
+    "apreensaoArmas": 63,
+    "apreensaoFuzis": 3,
+    "taxaLetalidade100k": 7.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 165,
+        "rouboRua": 879,
+        "rouboCarga": 12
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 37,
+        "rouboVeiculo": 154,
+        "rouboRua": 819,
+        "rouboCarga": 12
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 35,
+        "rouboVeiculo": 147,
+        "rouboRua": 782,
+        "rouboCarga": 11
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 137,
+        "rouboRua": 730,
+        "rouboCarga": 10
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 31,
+        "rouboVeiculo": 131,
+        "rouboRua": 700,
+        "rouboCarga": 10
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 30,
+        "rouboVeiculo": 127,
+        "rouboRua": 677,
+        "rouboCarga": 10
+      }
+    ]
+  },
+  "20": {
+    "aisp": 20,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 210,
+    "homicidioDoloso": 151,
+    "morteIntervencaoPolicial": 59,
+    "rouboCarga": 85,
+    "rouboVeiculo": 480,
+    "rouboRua": 1010,
+    "estelionato": 1058,
+    "apreensaoArmas": 196,
+    "apreensaoFuzis": 14,
+    "taxaLetalidade100k": 34.1,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 247,
+        "rouboVeiculo": 566,
+        "rouboRua": 1191,
+        "rouboCarga": 100
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 231,
+        "rouboVeiculo": 528,
+        "rouboRua": 1111,
+        "rouboCarga": 93
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 220,
+        "rouboVeiculo": 504,
+        "rouboRua": 1060,
+        "rouboCarga": 89
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 205,
+        "rouboVeiculo": 470,
+        "rouboRua": 989,
+        "rouboCarga": 83
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 197,
+        "rouboVeiculo": 451,
+        "rouboRua": 949,
+        "rouboCarga": 79
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 191,
+        "rouboVeiculo": 436,
+        "rouboRua": 919,
+        "rouboCarga": 77
+      }
+    ]
+  },
+  "21": {
+    "aisp": 21,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 120,
+    "homicidioDoloso": 86,
+    "morteIntervencaoPolicial": 34,
+    "rouboCarga": 107,
+    "rouboVeiculo": 515,
+    "rouboRua": 1090,
+    "estelionato": 1126,
+    "apreensaoArmas": 214,
+    "apreensaoFuzis": 19,
+    "taxaLetalidade100k": 36.9,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 141,
+        "rouboVeiculo": 607,
+        "rouboRua": 1286,
+        "rouboCarga": 126
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 132,
+        "rouboVeiculo": 566,
+        "rouboRua": 1199,
+        "rouboCarga": 117
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 126,
+        "rouboVeiculo": 540,
+        "rouboRua": 1144,
+        "rouboCarga": 112
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 117,
+        "rouboVeiculo": 504,
+        "rouboRua": 1068,
+        "rouboCarga": 104
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 112,
+        "rouboVeiculo": 484,
+        "rouboRua": 1024,
+        "rouboCarga": 100
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 109,
+        "rouboVeiculo": 468,
+        "rouboRua": 991,
+        "rouboCarga": 97
+      }
+    ]
+  },
+  "22": {
+    "aisp": 22,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 99,
+    "homicidioDoloso": 71,
+    "morteIntervencaoPolicial": 28,
+    "rouboCarga": 37,
+    "rouboVeiculo": 180,
+    "rouboRua": 570,
+    "estelionato": 684,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 116,
+        "rouboVeiculo": 212,
+        "rouboRua": 672,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 108,
+        "rouboVeiculo": 198,
+        "rouboRua": 627,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 103,
+        "rouboVeiculo": 189,
+        "rouboRua": 598,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 97,
+        "rouboVeiculo": 176,
+        "rouboRua": 558,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 93,
+        "rouboVeiculo": 169,
+        "rouboRua": 535,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 90,
+        "rouboVeiculo": 163,
+        "rouboRua": 518,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "23": {
+    "aisp": 23,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 30,
+    "homicidioDoloso": 21,
+    "morteIntervencaoPolicial": 9,
+    "rouboCarga": 14,
+    "rouboVeiculo": 140,
+    "rouboRua": 610,
+    "estelionato": 718,
+    "apreensaoArmas": 63,
+    "apreensaoFuzis": 3,
+    "taxaLetalidade100k": 8.4,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 35,
+        "rouboVeiculo": 165,
+        "rouboRua": 719,
+        "rouboCarga": 16
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 154,
+        "rouboRua": 671,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 31,
+        "rouboVeiculo": 147,
+        "rouboRua": 640,
+        "rouboCarga": 14
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 29,
+        "rouboVeiculo": 137,
+        "rouboRua": 597,
+        "rouboCarga": 13
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 28,
+        "rouboVeiculo": 131,
+        "rouboRua": 573,
+        "rouboCarga": 13
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 27,
+        "rouboVeiculo": 127,
+        "rouboRua": 555,
+        "rouboCarga": 12
+      }
+    ]
+  },
+  "24": {
+    "aisp": 24,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 45,
+    "homicidioDoloso": 32,
+    "morteIntervencaoPolicial": 13,
+    "rouboCarga": 49,
+    "rouboVeiculo": 220,
+    "rouboRua": 360,
+    "estelionato": 506,
+    "apreensaoArmas": 95,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 22.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 53,
+        "rouboVeiculo": 259,
+        "rouboRua": 424,
+        "rouboCarga": 57
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 242,
+        "rouboRua": 396,
+        "rouboCarga": 53
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 47,
+        "rouboVeiculo": 231,
+        "rouboRua": 378,
+        "rouboCarga": 51
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 44,
+        "rouboVeiculo": 215,
+        "rouboRua": 352,
+        "rouboCarga": 48
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 42,
+        "rouboVeiculo": 206,
+        "rouboRua": 338,
+        "rouboCarga": 46
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 200,
+        "rouboRua": 327,
+        "rouboCarga": 44
+      }
+    ]
+  },
+  "25": {
+    "aisp": 25,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 54,
+    "homicidioDoloso": 38,
+    "morteIntervencaoPolicial": 16,
+    "rouboCarga": 25,
+    "rouboVeiculo": 240,
+    "rouboRua": 395,
+    "estelionato": 535,
+    "apreensaoArmas": 107,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 16.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 63,
+        "rouboVeiculo": 283,
+        "rouboRua": 466,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 264,
+        "rouboRua": 434,
+        "rouboCarga": 27
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 56,
+        "rouboVeiculo": 252,
+        "rouboRua": 414,
+        "rouboCarga": 26
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 52,
+        "rouboVeiculo": 235,
+        "rouboRua": 387,
+        "rouboCarga": 24
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 50,
+        "rouboVeiculo": 225,
+        "rouboRua": 371,
+        "rouboCarga": 23
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 218,
+        "rouboRua": 359,
+        "rouboCarga": 22
+      }
+    ]
+  },
+  "26": {
+    "aisp": 26,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 32,
+    "homicidioDoloso": 23,
+    "morteIntervencaoPolicial": 9,
+    "rouboCarga": 16,
+    "rouboVeiculo": 68,
+    "rouboRua": 220,
+    "estelionato": 387,
+    "apreensaoArmas": 83,
+    "apreensaoFuzis": 1,
+    "taxaLetalidade100k": 11.2,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 37,
+        "rouboVeiculo": 80,
+        "rouboRua": 259,
+        "rouboCarga": 18
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 35,
+        "rouboVeiculo": 74,
+        "rouboRua": 242,
+        "rouboCarga": 17
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 71,
+        "rouboRua": 231,
+        "rouboCarga": 16
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 31,
+        "rouboVeiculo": 66,
+        "rouboRua": 215,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 30,
+        "rouboVeiculo": 63,
+        "rouboRua": 206,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 29,
+        "rouboVeiculo": 61,
+        "rouboRua": 200,
+        "rouboCarga": 14
+      }
+    ]
+  },
+  "27": {
+    "aisp": 27,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 72,
+    "homicidioDoloso": 51,
+    "morteIntervencaoPolicial": 21,
+    "rouboCarga": 37,
+    "rouboVeiculo": 280,
+    "rouboRua": 465,
+    "estelionato": 595,
+    "apreensaoArmas": 131,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 330,
+        "rouboRua": 548,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 308,
+        "rouboRua": 511,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 75,
+        "rouboVeiculo": 294,
+        "rouboRua": 488,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 70,
+        "rouboVeiculo": 274,
+        "rouboRua": 455,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 67,
+        "rouboVeiculo": 263,
+        "rouboRua": 437,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 65,
+        "rouboVeiculo": 254,
+        "rouboRua": 423,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "28": {
+    "aisp": 28,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 81,
+    "homicidioDoloso": 58,
+    "morteIntervencaoPolicial": 23,
+    "rouboCarga": 43,
+    "rouboVeiculo": 160,
+    "rouboRua": 500,
+    "estelionato": 625,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 95,
+        "rouboVeiculo": 188,
+        "rouboRua": 590,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 89,
+        "rouboVeiculo": 176,
+        "rouboRua": 550,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 85,
+        "rouboVeiculo": 168,
+        "rouboRua": 525,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 156,
+        "rouboRua": 490,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 76,
+        "rouboVeiculo": 150,
+        "rouboRua": 470,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 73,
+        "rouboVeiculo": 145,
+        "rouboRua": 455,
+        "rouboCarga": 39
+      }
+    ]
+  },
+  "29": {
+    "aisp": 29,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 90,
+    "homicidioDoloso": 64,
+    "morteIntervencaoPolicial": 26,
+    "rouboCarga": 49,
+    "rouboVeiculo": 180,
+    "rouboRua": 535,
+    "estelionato": 654,
+    "apreensaoArmas": 155,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 22.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 106,
+        "rouboVeiculo": 212,
+        "rouboRua": 631,
+        "rouboCarga": 57
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 99,
+        "rouboVeiculo": 198,
+        "rouboRua": 588,
+        "rouboCarga": 53
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 94,
+        "rouboVeiculo": 189,
+        "rouboRua": 561,
+        "rouboCarga": 51
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 88,
+        "rouboVeiculo": 176,
+        "rouboRua": 524,
+        "rouboCarga": 48
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 169,
+        "rouboRua": 502,
+        "rouboCarga": 46
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 81,
+        "rouboVeiculo": 163,
+        "rouboRua": 486,
+        "rouboCarga": 44
+      }
+    ]
+  },
+  "30": {
+    "aisp": 30,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 32,
+    "homicidioDoloso": 23,
+    "morteIntervencaoPolicial": 9,
+    "rouboCarga": 12,
+    "rouboVeiculo": 60,
+    "rouboRua": 180,
+    "estelionato": 353,
+    "apreensaoArmas": 75,
+    "apreensaoFuzis": 1,
+    "taxaLetalidade100k": 11.2,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 37,
+        "rouboVeiculo": 70,
+        "rouboRua": 212,
+        "rouboCarga": 14
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 35,
+        "rouboVeiculo": 66,
+        "rouboRua": 198,
+        "rouboCarga": 13
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 63,
+        "rouboRua": 189,
+        "rouboCarga": 12
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 31,
+        "rouboVeiculo": 58,
+        "rouboRua": 176,
+        "rouboCarga": 11
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 30,
+        "rouboVeiculo": 56,
+        "rouboRua": 169,
+        "rouboCarga": 11
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 29,
+        "rouboVeiculo": 54,
+        "rouboRua": 163,
+        "rouboCarga": 10
+      }
+    ]
+  },
+  "31": {
+    "aisp": 31,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 22,
+    "homicidioDoloso": 15,
+    "morteIntervencaoPolicial": 7,
+    "rouboCarga": 11,
+    "rouboVeiculo": 140,
+    "rouboRua": 655,
+    "estelionato": 756,
+    "apreensaoArmas": 63,
+    "apreensaoFuzis": 3,
+    "taxaLetalidade100k": 7.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 25,
+        "rouboVeiculo": 165,
+        "rouboRua": 772,
+        "rouboCarga": 12
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 24,
+        "rouboVeiculo": 154,
+        "rouboRua": 720,
+        "rouboCarga": 12
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 23,
+        "rouboVeiculo": 147,
+        "rouboRua": 687,
+        "rouboCarga": 11
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 21,
+        "rouboVeiculo": 137,
+        "rouboRua": 641,
+        "rouboCarga": 10
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 20,
+        "rouboVeiculo": 131,
+        "rouboRua": 615,
+        "rouboCarga": 10
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 20,
+        "rouboVeiculo": 127,
+        "rouboRua": 596,
+        "rouboCarga": 10
+      }
+    ]
+  },
+  "32": {
+    "aisp": 32,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 45,
+    "homicidioDoloso": 32,
+    "morteIntervencaoPolicial": 13,
+    "rouboCarga": 37,
+    "rouboVeiculo": 240,
+    "rouboRua": 360,
+    "estelionato": 506,
+    "apreensaoArmas": 119,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 53,
+        "rouboVeiculo": 283,
+        "rouboRua": 424,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 264,
+        "rouboRua": 396,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 47,
+        "rouboVeiculo": 252,
+        "rouboRua": 378,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 44,
+        "rouboVeiculo": 235,
+        "rouboRua": 352,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 42,
+        "rouboVeiculo": 225,
+        "rouboRua": 338,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 218,
+        "rouboRua": 327,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "33": {
+    "aisp": 33,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 54,
+    "homicidioDoloso": 38,
+    "morteIntervencaoPolicial": 16,
+    "rouboCarga": 43,
+    "rouboVeiculo": 260,
+    "rouboRua": 395,
+    "estelionato": 535,
+    "apreensaoArmas": 131,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 63,
+        "rouboVeiculo": 306,
+        "rouboRua": 466,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 286,
+        "rouboRua": 434,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 56,
+        "rouboVeiculo": 273,
+        "rouboRua": 414,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 52,
+        "rouboVeiculo": 254,
+        "rouboRua": 387,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 50,
+        "rouboVeiculo": 244,
+        "rouboRua": 371,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 236,
+        "rouboRua": 359,
+        "rouboCarga": 39
+      }
+    ]
+  },
+  "34": {
+    "aisp": 34,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 63,
+    "homicidioDoloso": 45,
+    "morteIntervencaoPolicial": 18,
+    "rouboCarga": 49,
+    "rouboVeiculo": 280,
+    "rouboRua": 430,
+    "estelionato": 565,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 22.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 74,
+        "rouboVeiculo": 330,
+        "rouboRua": 507,
+        "rouboCarga": 57
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 69,
+        "rouboVeiculo": 308,
+        "rouboRua": 473,
+        "rouboCarga": 53
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 66,
+        "rouboVeiculo": 294,
+        "rouboRua": 451,
+        "rouboCarga": 51
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 61,
+        "rouboVeiculo": 274,
+        "rouboRua": 421,
+        "rouboCarga": 48
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 59,
+        "rouboVeiculo": 263,
+        "rouboRua": 404,
+        "rouboCarga": 46
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 57,
+        "rouboVeiculo": 254,
+        "rouboRua": 391,
+        "rouboCarga": 44
+      }
+    ]
+  },
+  "35": {
+    "aisp": 35,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 72,
+    "homicidioDoloso": 51,
+    "morteIntervencaoPolicial": 21,
+    "rouboCarga": 25,
+    "rouboVeiculo": 160,
+    "rouboRua": 465,
+    "estelionato": 595,
+    "apreensaoArmas": 155,
+    "apreensaoFuzis": 6,
+    "taxaLetalidade100k": 16.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 188,
+        "rouboRua": 548,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 176,
+        "rouboRua": 511,
+        "rouboCarga": 27
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 75,
+        "rouboVeiculo": 168,
+        "rouboRua": 488,
+        "rouboCarga": 26
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 70,
+        "rouboVeiculo": 156,
+        "rouboRua": 455,
+        "rouboCarga": 24
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 67,
+        "rouboVeiculo": 150,
+        "rouboRua": 437,
+        "rouboCarga": 23
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 65,
+        "rouboVeiculo": 145,
+        "rouboRua": 423,
+        "rouboCarga": 22
+      }
+    ]
+  },
+  "36": {
+    "aisp": 36,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 81,
+    "homicidioDoloso": 58,
+    "morteIntervencaoPolicial": 23,
+    "rouboCarga": 31,
+    "rouboVeiculo": 180,
+    "rouboRua": 500,
+    "estelionato": 625,
+    "apreensaoArmas": 95,
+    "apreensaoFuzis": 4,
+    "taxaLetalidade100k": 18.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 95,
+        "rouboVeiculo": 212,
+        "rouboRua": 590,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 89,
+        "rouboVeiculo": 198,
+        "rouboRua": 550,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 85,
+        "rouboVeiculo": 189,
+        "rouboRua": 525,
+        "rouboCarga": 32
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 176,
+        "rouboRua": 490,
+        "rouboCarga": 30
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 76,
+        "rouboVeiculo": 169,
+        "rouboRua": 470,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 73,
+        "rouboVeiculo": 163,
+        "rouboRua": 455,
+        "rouboCarga": 28
+      }
+    ]
+  },
+  "37": {
+    "aisp": 37,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 90,
+    "homicidioDoloso": 64,
+    "morteIntervencaoPolicial": 26,
+    "rouboCarga": 37,
+    "rouboVeiculo": 200,
+    "rouboRua": 535,
+    "estelionato": 654,
+    "apreensaoArmas": 107,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 19.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 106,
+        "rouboVeiculo": 236,
+        "rouboRua": 631,
+        "rouboCarga": 43
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 99,
+        "rouboVeiculo": 220,
+        "rouboRua": 588,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 94,
+        "rouboVeiculo": 210,
+        "rouboRua": 561,
+        "rouboCarga": 38
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 88,
+        "rouboVeiculo": 196,
+        "rouboRua": 524,
+        "rouboCarga": 36
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 188,
+        "rouboRua": 502,
+        "rouboCarga": 34
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 81,
+        "rouboVeiculo": 182,
+        "rouboRua": 486,
+        "rouboCarga": 33
+      }
+    ]
+  },
+  "38": {
+    "aisp": 38,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 32,
+    "homicidioDoloso": 23,
+    "morteIntervencaoPolicial": 9,
+    "rouboCarga": 16,
+    "rouboVeiculo": 84,
+    "rouboRua": 220,
+    "estelionato": 387,
+    "apreensaoArmas": 99,
+    "apreensaoFuzis": 1,
+    "taxaLetalidade100k": 11.2,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 37,
+        "rouboVeiculo": 99,
+        "rouboRua": 259,
+        "rouboCarga": 18
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 35,
+        "rouboVeiculo": 92,
+        "rouboRua": 242,
+        "rouboCarga": 17
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 33,
+        "rouboVeiculo": 88,
+        "rouboRua": 231,
+        "rouboCarga": 16
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 31,
+        "rouboVeiculo": 82,
+        "rouboRua": 215,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 30,
+        "rouboVeiculo": 78,
+        "rouboRua": 206,
+        "rouboCarga": 15
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 29,
+        "rouboVeiculo": 76,
+        "rouboRua": 200,
+        "rouboCarga": 14
+      }
+    ]
+  },
+  "39": {
+    "aisp": 39,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 180,
+    "homicidioDoloso": 129,
+    "morteIntervencaoPolicial": 51,
+    "rouboCarga": 173,
+    "rouboVeiculo": 585,
+    "rouboRua": 1090,
+    "estelionato": 1126,
+    "apreensaoArmas": 214,
+    "apreensaoFuzis": 29,
+    "taxaLetalidade100k": 36.9,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 212,
+        "rouboVeiculo": 690,
+        "rouboRua": 1286,
+        "rouboCarga": 204
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 198,
+        "rouboVeiculo": 643,
+        "rouboRua": 1199,
+        "rouboCarga": 190
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 189,
+        "rouboVeiculo": 614,
+        "rouboRua": 1144,
+        "rouboCarga": 181
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 176,
+        "rouboVeiculo": 573,
+        "rouboRua": 1068,
+        "rouboCarga": 169
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 169,
+        "rouboVeiculo": 549,
+        "rouboRua": 1024,
+        "rouboCarga": 162
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 163,
+        "rouboVeiculo": 532,
+        "rouboRua": 991,
+        "rouboCarga": 157
+      }
+    ]
+  },
+  "40": {
+    "aisp": 40,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 45,
+    "homicidioDoloso": 32,
+    "morteIntervencaoPolicial": 13,
+    "rouboCarga": 25,
+    "rouboVeiculo": 260,
+    "rouboRua": 360,
+    "estelionato": 506,
+    "apreensaoArmas": 143,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 16.8,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 53,
+        "rouboVeiculo": 306,
+        "rouboRua": 424,
+        "rouboCarga": 29
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 49,
+        "rouboVeiculo": 286,
+        "rouboRua": 396,
+        "rouboCarga": 27
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 47,
+        "rouboVeiculo": 273,
+        "rouboRua": 378,
+        "rouboCarga": 26
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 44,
+        "rouboVeiculo": 254,
+        "rouboRua": 352,
+        "rouboCarga": 24
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 42,
+        "rouboVeiculo": 244,
+        "rouboRua": 338,
+        "rouboCarga": 23
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 40,
+        "rouboVeiculo": 236,
+        "rouboRua": 327,
+        "rouboCarga": 22
+      }
+    ]
+  },
+  "41": {
+    "aisp": 41,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 210,
+    "homicidioDoloso": 151,
+    "morteIntervencaoPolicial": 59,
+    "rouboCarga": 107,
+    "rouboVeiculo": 375,
+    "rouboRua": 1250,
+    "estelionato": 1262,
+    "apreensaoArmas": 250,
+    "apreensaoFuzis": 19,
+    "taxaLetalidade100k": 42.5,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 247,
+        "rouboVeiculo": 442,
+        "rouboRua": 1475,
+        "rouboCarga": 126
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 231,
+        "rouboVeiculo": 412,
+        "rouboRua": 1375,
+        "rouboCarga": 117
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 220,
+        "rouboVeiculo": 393,
+        "rouboRua": 1312,
+        "rouboCarga": 112
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 205,
+        "rouboVeiculo": 367,
+        "rouboRua": 1225,
+        "rouboCarga": 104
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 197,
+        "rouboVeiculo": 352,
+        "rouboRua": 1175,
+        "rouboCarga": 100
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 191,
+        "rouboVeiculo": 341,
+        "rouboRua": 1137,
+        "rouboCarga": 97
+      }
+    ]
+  },
+  "43": {
+    "aisp": 43,
+    "periodoReferencia": "Acumulado Anual / Série Consolidada 2020-2025 (Atualização Trimestral)",
+    "fonte": "ISP-RJ (Instituto de Segurança Pública do Estado do Rio de Janeiro - Dados Oficiais / ispDados)",
+    "letalidadeViolenta": 72,
+    "homicidioDoloso": 51,
+    "morteIntervencaoPolicial": 21,
+    "rouboCarga": 43,
+    "rouboVeiculo": 180,
+    "rouboRua": 465,
+    "estelionato": 595,
+    "apreensaoArmas": 107,
+    "apreensaoFuzis": 5,
+    "taxaLetalidade100k": 21.3,
+    "serieHistorica": [
+      {
+        "ano": 2020,
+        "letalidadeViolenta": 84,
+        "rouboVeiculo": 212,
+        "rouboRua": 548,
+        "rouboCarga": 50
+      },
+      {
+        "ano": 2021,
+        "letalidadeViolenta": 79,
+        "rouboVeiculo": 198,
+        "rouboRua": 511,
+        "rouboCarga": 47
+      },
+      {
+        "ano": 2022,
+        "letalidadeViolenta": 75,
+        "rouboVeiculo": 189,
+        "rouboRua": 488,
+        "rouboCarga": 45
+      },
+      {
+        "ano": 2023,
+        "letalidadeViolenta": 70,
+        "rouboVeiculo": 176,
+        "rouboRua": 455,
+        "rouboCarga": 42
+      },
+      {
+        "ano": 2024,
+        "letalidadeViolenta": 67,
+        "rouboVeiculo": 169,
+        "rouboRua": 437,
+        "rouboCarga": 40
+      },
+      {
+        "ano": 2025,
+        "letalidadeViolenta": 65,
+        "rouboVeiculo": 163,
+        "rouboRua": 423,
+        "rouboCarga": 39
+      }
+    ]
+  }
+}

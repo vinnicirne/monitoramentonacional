@@ -1,238 +1,155 @@
 import React from 'react';
-import { 
-  Shield, 
-  MapPin, 
-  Search, 
-  Database, 
-  AlertTriangle, 
-  BarChart3, 
-  Download,
+import {
+  Shield,
+  BarChart3,
+  AlertTriangle,
+  Database,
   Info,
-  Layers
+  Layers,
+  Building2
 } from 'lucide-react';
-import { TerritorialRegistry } from '../types';
+import { EstadoScope } from '../types/sigBase';
+
+export type MainActiveTab = 'map' | 'sig_mges' | 'stats' | 'audit' | 'import' | 'about';
 
 interface HeaderProps {
-  registry: TerritorialRegistry | null;
-  activeTab: 'map' | 'import' | 'audit' | 'stats' | 'about';
-  setActiveTab: (tab: 'map' | 'import' | 'audit' | 'stats' | 'about') => void;
-  searchQuery: string;
-  setSearchQuery: (q: string) => void;
-  onSelectCISP: (cispId: number) => void;
+  activeTab: MainActiveTab;
+  setActiveTab: (tab: MainActiveTab) => void;
+  estadoScope: EstadoScope;
+  setEstadoScope: (scope: EstadoScope) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  registry,
   activeTab,
   setActiveTab,
-  searchQuery,
-  setSearchQuery,
-  onSelectCISP,
+  estadoScope,
+  setEstadoScope
 }) => {
-  const [showSearchResults, setShowSearchResults] = React.useState(false);
-
-  // Search filter
-  const searchResults = React.useMemo(() => {
-    if (!registry || !searchQuery.trim() || searchQuery.length < 2) return [];
-    const q = searchQuery.toLowerCase();
-    const results: Array<{
-      id: number;
-      label: string;
-      sub: string;
-      type: 'CISP' | 'AISP' | 'MUNICIPIO' | 'BAIRRO' | 'FACCAO';
-    }> = [];
-
-    // Search CISPs
-    Object.values(registry.cisps).forEach((cisp) => {
-      if (
-        cisp.nome_oficial.toLowerCase().includes(q) ||
-        cisp.cisp_formatado.toLowerCase().includes(q) ||
-        cisp.cisp.toString() === q
-      ) {
-        results.push({
-          id: cisp.cisp,
-          label: `${cisp.cisp_formatado} - ${cisp.nome_oficial}`,
-          sub: `${cisp.municipio} • AISP ${cisp.aisp} (${cisp.batalhao})`,
-          type: 'CISP'
-        });
-      } else if (cisp.municipio.toLowerCase().includes(q)) {
-        if (!results.some(r => r.id === cisp.cisp)) {
-          results.push({
-            id: cisp.cisp,
-            label: `${cisp.municipio} (${cisp.cisp_formatado})`,
-            sub: `${cisp.batalhao} • RISP ${cisp.risp}`,
-            type: 'MUNICIPIO'
-          });
-        }
-      } else if (cisp.bairros.some(b => b.toLowerCase().includes(q))) {
-        const matchingBairro = cisp.bairros.find(b => b.toLowerCase().includes(q));
-        results.push({
-          id: cisp.cisp,
-          label: `Bairro: ${matchingBairro}`,
-          sub: `Atendido pela ${cisp.cisp_formatado} • ${cisp.batalhao}`,
-          type: 'BAIRRO'
-        });
-      } else if (cisp.dinamica_territorial?.faccao.toLowerCase().includes(q)) {
-        results.push({
-          id: cisp.cisp,
-          label: `${cisp.cisp_formatado} - ${cisp.dinamica_territorial.faccao}`,
-          sub: `Risco: ${cisp.dinamica_territorial.grau_risco} • ${cisp.municipio}`,
-          type: 'FACCAO'
-        });
-      }
-    });
-
-    return results.slice(0, 8);
-  }, [registry, searchQuery]);
-
   return (
-    <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between z-20 shrink-0">
-      {/* Brand & Territorial identity */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
-          <Shield className="w-6 h-6 text-blue-400" />
+    <header className="h-[52px] md:h-16 bg-slate-900/95 border-b border-slate-800 px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0">
+      {/* 1. Brand Identity — Clean, never clipped on mobile */}
+      <div className="flex items-center gap-2.5 shrink-0">
+        <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
+          <Shield className="w-4 h-4 md:w-5 md:h-5" />
         </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-bold text-base text-slate-100 tracking-wide flex items-center gap-2">
-              Painel de Monitoramento Territorial
-              <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                RJ • GIS
-              </span>
-            </h1>
-          </div>
-          <p className="text-xs text-slate-400 flex items-center gap-2">
-            <span>Governança & Inteligência Policial</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-emerald-400 font-mono text-[11px]">7 RISPs | 41 AISPs | 137 CISPs | ISP-RJ</span>
-          </p>
+        <div className="hidden sm:flex items-center gap-2">
+          <h1 className="font-bold text-sm lg:text-[15px] text-slate-100 tracking-tight whitespace-nowrap">
+            <span className="hidden md:inline">Monitoramento Territorial</span>
+            <span className="md:hidden">Territorial</span>
+          </h1>
+          <span className="hidden lg:inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 border border-blue-500/30 font-mono">
+            RJ · MG · ES
+          </span>
         </div>
       </div>
 
-      {/* Center Search Input */}
-      <div className="relative w-80 lg:w-96">
-        <div className="relative">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setShowSearchResults(true);
+      {/* 2. State Scope Segmented Control — Fits cleanly on 375px+ mobile */}
+      <div className="flex items-center gap-0.5 bg-slate-950/90 p-1 rounded-xl border border-slate-800 min-w-0 overflow-x-auto no-scrollbar">
+        {(
+          [
+            { id: 'TODOS', label: 'Todos' },
+            { id: 'RJ', label: 'RJ' },
+            { id: 'MG', label: 'MG' },
+            { id: 'ES', label: 'ES' },
+            { id: 'MG_ES', label: 'MG+ES' }
+          ] as const
+        ).map(uf => (
+          <button
+            key={uf.id}
+            onClick={() => {
+              setEstadoScope(uf.id);
+              if (activeTab === 'sig_mges' && (uf.id === 'RJ' || uf.id === 'TODOS')) {
+                setActiveTab('map');
+              }
             }}
-            onFocus={() => setShowSearchResults(true)}
-            placeholder="Buscar CISP (ex: 5ª DP), AISP, Bairro, Município..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-800/90 text-slate-100 rounded-lg border border-slate-700/80 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-slate-500"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setShowSearchResults(false);
-              }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-
-        {/* Dropdown search results */}
-        {showSearchResults && searchResults.length > 0 && (
-          <div 
-            className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl py-1 z-50 max-h-80 overflow-y-auto"
-            onMouseLeave={() => setShowSearchResults(false)}
+            className={`px-2.5 py-1.5 md:py-1 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              estadoScope === uf.id
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+            }`}
           >
-            <div className="px-3 py-1 text-[10px] uppercase tracking-wider font-semibold text-slate-400 border-b border-slate-800">
-              Resultados Encontrados ({searchResults.length})
-            </div>
-            {searchResults.map((item, idx) => (
-              <button
-                key={`${item.id}-${idx}`}
-                onClick={() => {
-                  onSelectCISP(item.id);
-                  setShowSearchResults(false);
-                  setActiveTab('map');
-                }}
-                className="w-full text-left px-3 py-2 hover:bg-blue-600/15 border-b border-slate-800/50 last:border-b-0 flex items-start gap-2.5 transition-colors"
-              >
-                <MapPin className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-slate-200 truncate">{item.label}</div>
-                  <div className="text-[11px] text-slate-400 truncate">{item.sub}</div>
-                </div>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono uppercase">
-                  {item.type}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+            {uf.label}
+          </button>
+        ))}
       </div>
 
-      {/* Nav Tabs */}
-      <nav className="flex items-center gap-1.5">
+      {/* 3. Desktop Navigation Tabs (on mobile, handled by Thumb-Zone Bottom Tab Bar) */}
+      <nav className="hidden md:flex items-center gap-1 shrink-0">
         <button
           onClick={() => setActiveTab('map')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+          title="Mapa & Dossiê"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
             activeTab === 'map'
               ? 'bg-blue-600 text-white shadow-sm'
               : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
         >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Mapa & Dossiê</span>
+          <Layers className="w-3.5 h-3.5 shrink-0" />
+          <span>Mapa</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('sig_mges')}
+          title="Base SIG MG & ES"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+            activeTab === 'sig_mges'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+          }`}
+        >
+          <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'sig_mges' ? 'text-white' : 'text-emerald-400'}`} />
+          <span className="hidden lg:inline">SIG MG·ES</span>
+          <span className="lg:hidden">SIG</span>
         </button>
 
         <button
           onClick={() => setActiveTab('stats')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+          title="Estatísticas ISP-RJ"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
             activeTab === 'stats'
               ? 'bg-blue-600 text-white shadow-sm'
               : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
         >
-          <BarChart3 className="w-3.5 h-3.5" />
-          <span>Estatísticas ISP</span>
+          <BarChart3 className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden lg:inline">Estatísticas</span>
         </button>
 
         <button
           onClick={() => setActiveTab('audit')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+          title="Auditoria Territorial"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
             activeTab === 'audit'
               ? 'bg-amber-600 text-white shadow-sm'
               : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
         >
-          <AlertTriangle className="w-3.5 h-3.5 text-amber-300" />
-          <span>Auditoria</span>
+          <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'audit' ? 'text-white' : 'text-amber-300'}`} />
+          <span className="hidden lg:inline">Auditoria</span>
         </button>
 
         <button
           onClick={() => setActiveTab('import')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-            activeTab === 'import'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
+          title="Importar Planilhas & GeoJSON"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer whitespace-nowrap"
         >
-          <Database className="w-3.5 h-3.5" />
-          <span>Importar Dados</span>
+          <Database className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden lg:inline">Importar</span>
         </button>
 
         <button
           onClick={() => setActiveTab('about')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+          title="Metodologia & Fontes"
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
             activeTab === 'about'
               ? 'bg-blue-600 text-white shadow-sm'
               : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
         >
-          <Info className="w-3.5 h-3.5" />
-          <span>Metodologia</span>
+          <Info className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden lg:inline">Metodologia</span>
         </button>
       </nav>
     </header>
   );
 };
-

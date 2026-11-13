@@ -1,21 +1,28 @@
+import { UfMetadataInfo } from '../data/brasilEstadosData';
+import { DivisaoTerritorialRow, UnidadePolicialRow } from './sigBase';
+import { CodigoFaccaoPrecisa } from '../data/faccoesPrecisas';
+
 export type BasemapType = 'osm' | 'satellite' | 'streets' | 'voyager';
 
-export type ChoroplethMetric = 
-  | 'none' 
-  | 'letalidade_violenta' 
-  | 'roubo_rua' 
-  | 'roubo_carga' 
-  | 'roubo_veiculo' 
-  | 'fuzis_apreendidos' 
+export type ChoroplethMetric =
+  | 'none'
+  | 'letalidade_violenta'
+  | 'roubo_rua'
+  | 'roubo_carga'
+  | 'roubo_veiculo'
+  | 'fuzis_apreendidos'
   | 'faccao';
 
 export type LayerVisibility = {
+  brasilEstados: boolean;
   risp: boolean;
   aisp: boolean;
   cisp: boolean;
+  faccoesPrecisas: boolean;
   delegacias: boolean;
   batalhoes: boolean;
   focos: boolean;
+  mgEs: boolean;
 };
 
 export interface ISPIndicatorsYear {
@@ -107,7 +114,7 @@ export interface TerritorialRegistry {
 }
 
 export interface SelectedFeatureData {
-  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'DELEGACIA' | 'BATALHAO';
+  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'FACCAO_COMUNIDADE' | 'DELEGACIA' | 'BATALHAO' | 'ESTADO_UF' | 'MGES_NODE';
   id: string | number;
   nome: string;
   cisp?: number;
@@ -123,13 +130,22 @@ export interface SelectedFeatureData {
   marcolegal?: string;
   indicadores?: CISPRecord['indicadores'];
   dinamica_territorial?: FactionData;
-  // For special focus
+  // For special focus or precise Dados de Riscos community
   faccao?: string;
+  faccaoCode?: CodigoFaccaoPrecisa;
   descricao?: string;
   fonte?: string;
   data_registro?: string;
   grau_confiabilidade?: string;
   alerta_juridico?: string;
   coordinates?: [number, number];
+  // For 27 UFs & MG/ES SIG
+  ufInfo?: UfMetadataInfo;
+  mgEsInfo?: {
+    uf: 'MG' | 'ES';
+    titulo: string;
+    subtitulo: string;
+    divisao?: DivisaoTerritorialRow;
+    unidade?: UnidadePolicialRow;
+  };
 }
-

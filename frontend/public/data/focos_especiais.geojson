@@ -1,1 +1,1040 @@
-{"type": "FeatureCollection", "name": "FOCOS_ESPECIAIS_RJ", "features": [{"type": "Feature", "id": "foco-1", "geometry": {"type": "Polygon", "coordinates": [[[-43.255, -22.855], [-43.238, -22.845], [-43.232, -22.858], [-43.248, -22.868], [-43.255, -22.855]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Complexo da Maré", "aisp": 22, "cisp": 21, "faccao": "Divisão Territorial (CV / TCP)", "descricao": "Divisão histórica entre o Comando Vermelho (Nova Holanda e Parque União) e Terceiro Comando Puro (Baixa do Sapateiro e Salsa e Merengue). Fortificação armada nas vias principais.", "fonte": "Observatório GENI-UFF / ISP-RJ", "data_registro": "2024-11", "grau_confiabilidade": "Alto (96%)", "alerta_juridico": "Base documental pública homologada em relatórios do Observatório de Segurança e SEPM.", "cor": "#EF4444"}}, {"type": "Feature", "id": "foco-2", "geometry": {"type": "Polygon", "coordinates": [[[-43.285, -22.85], [-43.268, -22.842], [-43.264, -22.856], [-43.28, -22.864], [-43.285, -22.85]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Complexo do Alemão e Penha", "aisp": 16, "cisp": 22, "faccao": "Comando Vermelho (CV)", "descricao": "Sede histórica e centro de comando logístico do Comando Vermelho no Rio de Janeiro. Relevo acidentado com barricadas e controle territorial estrito.", "fonte": "Relatórios Oficiais GAECO MP-RJ / GENI-UFF", "data_registro": "2024-12", "grau_confiabilidade": "Alto (98%)", "alerta_juridico": "Registro amparado em inquéritos policiais públicos e operações ministeriais.", "cor": "#DC2626"}}, {"type": "Feature", "id": "foco-3", "geometry": {"type": "Polygon", "coordinates": [[[-43.298, -22.825], [-43.282, -22.818], [-43.275, -22.832], [-43.292, -22.839], [-43.298, -22.825]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Complexo de Israel (Vigário Geral / Parada de Lucas)", "aisp": 16, "cisp": 38, "faccao": "Terceiro Comando Puro (TCP)", "descricao": "Agrupamento armado sob liderança de 'Peixão' abrangendo Vigário Geral, Parada de Lucas, Cordovil, Cidade Alta e Cinco Bocas. Presença de barricadas de grande porte e símbolos religiosos nos acessos.", "fonte": "GAECO MP-RJ / SEPM-RJ", "data_registro": "2024-12", "grau_confiabilidade": "Alto (99%)", "alerta_juridico": "Documentado em múltiplas denúncias do MP-RJ por extorsão e monopólio ilícito de gás e internet.", "cor": "#2563EB"}}, {"type": "Feature", "id": "foco-4", "geometry": {"type": "Polygon", "coordinates": [[[-43.36, -22.89], [-43.342, -22.88], [-43.338, -22.895], [-43.355, -22.905], [-43.36, -22.89]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Praça Seca e Bateau Mouche", "aisp": 18, "cisp": 28, "faccao": "Área de Disputa Bélica (CV x Milícia)", "descricao": "Conflito diário pelo controle das comunidades Morro do Barão, Chacrinha, Covanca e Jordão entre células do CV e paramilitares remanescentes.", "fonte": "Instituto Fogo Cruzado / ISP-RJ", "data_registro": "2024-12", "grau_confiabilidade": "Alto (95%)", "alerta_juridico": "Área sob acompanhamento contínuo da DHC e do Comando do 18º BPM.", "cor": "#F59E0B"}}, {"type": "Feature", "id": "foco-5", "geometry": {"type": "Polygon", "coordinates": [[[-43.345, -22.985], [-43.328, -22.975], [-43.32, -22.99], [-43.338, -23.002], [-43.345, -22.985]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Rio das Pedras, Muzema e Tijuquinha", "aisp": 18, "cisp": 16, "faccao": "Milícia Paramilitar Histórica", "descricao": "Berço histórico da milícia na Zona Oeste. Controle de taxas condominiais, água, transporte alternativo, botijões de gás e loteamentos irregulares.", "fonte": "GAECO MP-RJ (Operação Intocáveis) / GENI-UFF", "data_registro": "2024-11", "grau_confiabilidade": "Alto (98%)", "alerta_juridico": "Lastreado por sentenças condenatórias da Justiça Estadual e relatórios de inteligência.", "cor": "#7C3AED"}}, {"type": "Feature", "id": "foco-6", "geometry": {"type": "Polygon", "coordinates": [[[-43.365, -22.965], [-43.35, -22.955], [-43.342, -22.97], [-43.358, -22.98], [-43.365, -22.965]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Gardênia Azul", "aisp": 18, "cisp": 32, "faccao": "Disputa e Transição (CV x Milícia)", "descricao": "Comunidade tradicionalmente miliciana invadida e disputada por traficantes do Comando Vermelho oriundos da Cidade de Deus.", "fonte": "Relatórios da Polícia Civil / Fogo Cruzado", "data_registro": "2024-11", "grau_confiabilidade": "Alto (94%)", "alerta_juridico": "Monitoramento de confrontos por drone e ocorrências registradas na 32ª DP.", "cor": "#EA580C"}}, {"type": "Feature", "id": "foco-7", "geometry": {"type": "Polygon", "coordinates": [[[-43.68, -22.91], [-43.64, -22.89], [-43.63, -22.93], [-43.67, -22.95], [-43.68, -22.91]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Eixo Santa Cruz - Paciência - Campo Grande", "aisp": 27, "cisp": 36, "faccao": "Milícia (Fracionamento Pós-Zinho)", "descricao": "Região sob forte extorsão a comércios, provedores clandestinos de internet e transporte vans. Reorganização armada após prisões federais.", "fonte": "Polícia Federal / MP-RJ Operação Dinastia", "data_registro": "2024-12", "grau_confiabilidade": "Alto (97%)", "alerta_juridico": "Investigações federais de lavagem de capitais e tráfico internacional de armas.", "cor": "#7C3AED"}}, {"type": "Feature", "id": "foco-8", "geometry": {"type": "Polygon", "coordinates": [[[-43.08, -22.78], [-43.04, -22.76], [-43.03, -22.8], [-43.07, -22.82], [-43.08, -22.78]]]}, "properties": {"tipo": "FOCO_ESPECIAL", "nome": "Complexo do Salgueiro (São Gonçalo)", "aisp": 7, "cisp": 72, "faccao": "Comando Vermelho (CV)", "descricao": "Principal entreposto de armas e refúgio da liderança do CV no Leste Fluminense. Posição estratégica na Baía de Guanabara.", "fonte": "SEPM-RJ / ISP-RJ", "data_registro": "2024-11", "grau_confiabilidade": "Alto (95%)", "alerta_juridico": "Operações integradas regulares do BOPE e CORE.", "cor": "#DC2626"}}]}
+{
+  "type": "FeatureCollection",
+  "name": "FOCOS_ESPECIAIS_RJ_2025",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "foco-marica-01",
+      "properties": {
+        "id": "foco-marica-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Maricá - Eixo Inoã / Itaipuaçu (Monitoramento 12º BPM & 82ª DP)",
+        "municipio": "Maricá",
+        "aisp": 12,
+        "cisp": 82,
+        "faccao": "Comando Vermelho (Monitoramento de Infiltração)",
+        "grupoArmado": "CV",
+        "situacao": "Sob Monitoramento Integrado",
+        "fonte": "12º BPM (6ª Cia) · 82ª DP · ISP-RJ · GAECO MP-RJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Corredores da RJ-106 e bairros de Inoã, Itaipuaçu e Spar. Monitoramento contínuo para contenção de investidas de células do CV procedentes de São Gonçalo e Região dos Lagos. Sem hegemonia territorial estabelecida.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.94,
+              -22.91
+            ],
+            [
+              -42.87,
+              -22.905
+            ],
+            [
+              -42.865,
+              -22.955
+            ],
+            [
+              -42.935,
+              -22.96
+            ],
+            [
+              -42.94,
+              -22.91
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-01",
+      "properties": {
+        "id": "foco-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo do Alemão",
+        "municipio": "Rio de Janeiro",
+        "aisp": 16,
+        "cisp": 22,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Mapa dos Grupos Armados (GENI-UFF / Fogo Cruzado) & Relatórios SEPM",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Grota, Nova Brasília, Fazendinha e Morro da Baiana. Circunscrição sob a 22ª DP e 16º BPM.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.275,
+              -22.855
+            ],
+            [
+              -43.262,
+              -22.858
+            ],
+            [
+              -43.268,
+              -22.869
+            ],
+            [
+              -43.282,
+              -22.864
+            ],
+            [
+              -43.275,
+              -22.855
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-02",
+      "properties": {
+        "id": "foco-02",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo da Maré",
+        "municipio": "Rio de Janeiro",
+        "aisp": 22,
+        "cisp": 21,
+        "faccao": "Divisão Documentada (TCP / CV / Milícia)",
+        "grupoArmado": "EM_DISPUTA",
+        "situacao": "Área em Disputa",
+        "fonte": "Pesquisa Territorial Maré / GENI-UFF / Fogo Cruzado",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Divisão entre comunidades: Parque União e Nova Holanda (CV); Vila dos Pinheiros, Vila do João e Baixa do Sapateiro (TCP); Roquette Pinto e Praia de Ramos (Milícia).",
+        "cor": "#64748b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.248,
+              -22.852
+            ],
+            [
+              -43.238,
+              -22.858
+            ],
+            [
+              -43.242,
+              -22.871
+            ],
+            [
+              -43.255,
+              -22.865
+            ],
+            [
+              -43.248,
+              -22.852
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-03",
+      "properties": {
+        "id": "foco-03",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo da Penha",
+        "municipio": "Rio de Janeiro",
+        "aisp": 16,
+        "cisp": 22,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Observatório de Segurança Pública do RJ & ISP Dados",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Abrange Vila Cruzeiro, Chatuba da Penha e Morro da Fé. Histórico de base operacional na Zona Norte.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.282,
+              -22.842
+            ],
+            [
+              -43.271,
+              -22.846
+            ],
+            [
+              -43.275,
+              -22.855
+            ],
+            [
+              -43.289,
+              -22.851
+            ],
+            [
+              -43.282,
+              -22.842
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-04",
+      "properties": {
+        "id": "foco-04",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Rocinha e Vidigal",
+        "municipio": "Rio de Janeiro",
+        "aisp": 23,
+        "cisp": 11,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Mapa dos Grupos Armados / MP-RJ & SEPM",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Migração de controle consolidada sob o CV. Circunscrição sob a 11ª DP e 23º BPM.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.254,
+              -22.986
+            ],
+            [
+              -43.243,
+              -22.989
+            ],
+            [
+              -43.247,
+              -22.998
+            ],
+            [
+              -43.259,
+              -22.993
+            ],
+            [
+              -43.254,
+              -22.986
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-05",
+      "properties": {
+        "id": "foco-05",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Cidade de Deus",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "cisp": 32,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Relatório Integrado 18º BPM / GENI-UFF",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Ponto focal em Jacarepaguá, fronteira territorial com grupos paramilitares da Gardênia Azul e Muzema.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.368,
+              -22.942
+            ],
+            [
+              -43.355,
+              -22.945
+            ],
+            [
+              -43.359,
+              -22.955
+            ],
+            [
+              -43.372,
+              -22.952
+            ],
+            [
+              -43.368,
+              -22.942
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-06",
+      "properties": {
+        "id": "foco-06",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo do Chapadão",
+        "municipio": "Rio de Janeiro",
+        "aisp": 41,
+        "cisp": 39,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Força-Tarefa de Roubo de Cargas / MP-RJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Região limítrofe ao Complexo da Pedreira. Alta incidência de confronto de fronteira.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.355,
+              -22.819
+            ],
+            [
+              -43.338,
+              -22.824
+            ],
+            [
+              -43.344,
+              -22.836
+            ],
+            [
+              -43.361,
+              -22.831
+            ],
+            [
+              -43.355,
+              -22.819
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-07",
+      "properties": {
+        "id": "foco-07",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo da Pedreira",
+        "municipio": "Rio de Janeiro",
+        "aisp": 41,
+        "cisp": 39,
+        "faccao": "Terceiro Comando Puro (TCP)",
+        "grupoArmado": "TCP",
+        "situacao": "Predomínio Documentado",
+        "fonte": "GENI-UFF / Relatórios de Inteligência 41º BPM",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Base histórica do TCP na Zona Norte, confrontando diretamente o Chapadão.",
+        "cor": "#10b981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.365,
+              -22.832
+            ],
+            [
+              -43.35,
+              -22.835
+            ],
+            [
+              -43.355,
+              -22.848
+            ],
+            [
+              -43.372,
+              -22.842
+            ],
+            [
+              -43.365,
+              -22.832
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-08",
+      "properties": {
+        "id": "foco-08",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Rio das Pedras e Muzema",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "cisp": 32,
+        "faccao": "Grupos Paramilitares / Milícia",
+        "grupoArmado": "MILICIA",
+        "situacao": "Predomínio Documentado",
+        "fonte": "Investigações GAECO / MP-RJ & GENI-UFF",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Documentado em Ações Judiciais MP-RJ",
+        "detalhes": "Região de atuação de grupos milicianos com extorsão e controle imobiliário informal.",
+        "cor": "#64748b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.342,
+              -22.982
+            ],
+            [
+              -43.325,
+              -22.985
+            ],
+            [
+              -43.33,
+              -22.998
+            ],
+            [
+              -43.348,
+              -22.994
+            ],
+            [
+              -43.342,
+              -22.982
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-09",
+      "properties": {
+        "id": "foco-09",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Praça Seca e Campinho",
+        "municipio": "Rio de Janeiro",
+        "aisp": 18,
+        "cisp": 28,
+        "faccao": "Área em Disputa (CV vs Milícia)",
+        "grupoArmado": "EM_DISPUTA",
+        "situacao": "Área em Disputa",
+        "fonte": "Fogo Cruzado / Relatório Diário ISP-RJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Confrontos entre CV e paramilitares pelo controle da serra da Covanca e Morro do Barão.",
+        "cor": "#f97316"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.355,
+              -22.885
+            ],
+            [
+              -43.34,
+              -22.888
+            ],
+            [
+              -43.345,
+              -22.902
+            ],
+            [
+              -43.36,
+              -22.898
+            ],
+            [
+              -43.355,
+              -22.885
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-10",
+      "properties": {
+        "id": "foco-10",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo do Salgueiro (São Gonçalo)",
+        "municipio": "São Gonçalo",
+        "aisp": 7,
+        "cisp": 72,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "7º BPM & CORE / PCERJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Base estratégica do CV no Leste Fluminense com rotas para a Baía de Guanabara.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.045,
+              -22.795
+            ],
+            [
+              -43.028,
+              -22.799
+            ],
+            [
+              -43.033,
+              -22.812
+            ],
+            [
+              -43.05,
+              -22.808
+            ],
+            [
+              -43.045,
+              -22.795
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-niteroi-01",
+      "properties": {
+        "id": "foco-niteroi-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Morro do Estado e Arrastão (Niterói)",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "cisp": 76,
+        "faccao": "Área em Disputa (TCP vs CV)",
+        "grupoArmado": "EM_DISPUTA",
+        "situacao": "Área em Disputa",
+        "fonte": "12º BPM · 76ª DP · GENI-UFF / Fogo Cruzado",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Histórico de invasões e contra-ataques entre TCP e CV na área central de Niterói, contidos pelo 12º BPM.",
+        "cor": "#f97316"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.125,
+              -22.895
+            ],
+            [
+              -43.112,
+              -22.898
+            ],
+            [
+              -43.116,
+              -22.909
+            ],
+            [
+              -43.128,
+              -22.905
+            ],
+            [
+              -43.125,
+              -22.895
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-niteroi-02",
+      "properties": {
+        "id": "foco-niteroi-02",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo do Viradouro e Cavalão (Niterói)",
+        "municipio": "Niterói",
+        "aisp": 12,
+        "cisp": 77,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "12º BPM · 77ª DP (Icaraí)",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Área com base integrada da PMERJ (DPO Viradouro) e monitoramento por câmeras da Prefeitura de Niterói.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.102,
+              -22.905
+            ],
+            [
+              -43.088,
+              -22.908
+            ],
+            [
+              -43.092,
+              -22.92
+            ],
+            [
+              -43.105,
+              -22.916
+            ],
+            [
+              -43.102,
+              -22.905
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-caxias-01",
+      "properties": {
+        "id": "foco-caxias-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Complexo da Mangueirinha (Duque de Caxias)",
+        "municipio": "Duque de Caxias",
+        "aisp": 15,
+        "cisp": 59,
+        "faccao": "Comando Vermelho (CV)",
+        "grupoArmado": "CV",
+        "situacao": "Predomínio Documentado",
+        "fonte": "15º BPM · 59ª DP · ISP Dados",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Base de operações do CV na Baixada lindeira à Rodovia Washington Luís, alvo de operações do 15º BPM.",
+        "cor": "#ef4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.31,
+              -22.78
+            ],
+            [
+              -43.295,
+              -22.784
+            ],
+            [
+              -43.299,
+              -22.796
+            ],
+            [
+              -43.314,
+              -22.791
+            ],
+            [
+              -43.31,
+              -22.78
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-iguacu-01",
+      "properties": {
+        "id": "foco-iguacu-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Km 32 e Valverde (Nova Iguaçu)",
+        "municipio": "Nova Iguaçu",
+        "aisp": 20,
+        "cisp": 52,
+        "faccao": "Grupos Paramilitares / Milícia",
+        "grupoArmado": "MILICIA",
+        "situacao": "Predomínio Documentado",
+        "fonte": "20º BPM · 52ª DP · GAECO MP-RJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Cobrança de taxas de segurança a comerciantes e provedores de internet clandestinos no Km 32 e Cabuçu.",
+        "cor": "#64748b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.51,
+              -22.775
+            ],
+            [
+              -43.49,
+              -22.78
+            ],
+            [
+              -43.495,
+              -22.795
+            ],
+            [
+              -43.515,
+              -22.79
+            ],
+            [
+              -43.51,
+              -22.775
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-12",
+      "properties": {
+        "id": "foco-12",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Belford Roxo (Complexo do Roseiral e Castelar)",
+        "municipio": "Belford Roxo",
+        "aisp": 39,
+        "cisp": 54,
+        "faccao": "Terceiro Comando Puro (TCP) vs CV",
+        "grupoArmado": "TCP",
+        "situacao": "Área em Disputa",
+        "fonte": "39º BPM / 54ª DP / GAECO MP-RJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Conflito de fronteira entre Roseiral (TCP) e Castelar (CV).",
+        "cor": "#10b981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.405,
+              -22.755
+            ],
+            [
+              -43.39,
+              -22.758
+            ],
+            [
+              -43.394,
+              -22.769
+            ],
+            [
+              -43.41,
+              -22.766
+            ],
+            [
+              -43.405,
+              -22.755
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-cabofrio-01",
+      "properties": {
+        "id": "foco-cabofrio-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Manoel Corrêa e Tangará (Cabo Frio)",
+        "municipio": "Cabo Frio",
+        "aisp": 25,
+        "cisp": 126,
+        "faccao": "Área em Disputa (CV vs TCP)",
+        "grupoArmado": "EM_DISPUTA",
+        "situacao": "Área em Disputa",
+        "fonte": "25º BPM · 126ª DP · GENI-UFF",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Manoel Corrêa sob controle do CV, com recorrentes tentativas de incursão armada do TCP a partir de Tangará.",
+        "cor": "#f97316"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -42.045,
+              -22.885
+            ],
+            [
+              -42.025,
+              -22.89
+            ],
+            [
+              -42.03,
+              -22.905
+            ],
+            [
+              -42.05,
+              -22.9
+            ],
+            [
+              -42.045,
+              -22.885
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-angra-01",
+      "properties": {
+        "id": "foco-angra-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Frade e Belém (Angra dos Reis)",
+        "municipio": "Angra dos Reis",
+        "aisp": 33,
+        "cisp": 166,
+        "faccao": "Área em Disputa (CV vs TCP)",
+        "grupoArmado": "EM_DISPUTA",
+        "situacao": "Área em Disputa",
+        "fonte": "33º BPM · 166ª DP · ISP Dados",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Operacional Verificado",
+        "detalhes": "Disputa armada violenta entre o Belém (TCP) e o Frade (CV) com impactos diretos no tráfego da BR-101.",
+        "cor": "#f97316"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -44.44,
+              -22.99
+            ],
+            [
+              -44.41,
+              -22.995
+            ],
+            [
+              -44.415,
+              -23.015
+            ],
+            [
+              -44.445,
+              -23.01
+            ],
+            [
+              -44.44,
+              -22.99
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-campos-01",
+      "properties": {
+        "id": "foco-campos-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Distrito de Guarus (Campos dos Goytacazes)",
+        "municipio": "Campos dos Goytacazes",
+        "aisp": 8,
+        "cisp": 146,
+        "faccao": "Amigos dos Amigos (ADA) vs TCP",
+        "grupoArmado": "ADA",
+        "situacao": "Área em Disputa",
+        "fonte": "8º BPM · 146ª DP · GENI-UFF",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Parque Lebret, Parque Santa Rosa e adjacências sob influência do ADA, enfrentando o avanço do TCP.",
+        "cor": "#f59e0b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -41.34,
+              -21.74
+            ],
+            [
+              -41.315,
+              -21.745
+            ],
+            [
+              -41.32,
+              -21.765
+            ],
+            [
+              -41.345,
+              -21.76
+            ],
+            [
+              -41.34,
+              -21.74
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-santacruz-01",
+      "properties": {
+        "id": "foco-santacruz-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Santa Cruz e Antares (Zona Oeste)",
+        "municipio": "Rio de Janeiro",
+        "aisp": 27,
+        "cisp": 36,
+        "faccao": "Grupos Paramilitares / Milícia",
+        "grupoArmado": "MILICIA",
+        "situacao": "Predomínio Documentado",
+        "fonte": "27º BPM · 36ª DP · DRACO / PCERJ",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Controle de vans, gás e gatonet por grupos paramilitares, alvo frequente de prisões da Polícia Civil.",
+        "cor": "#64748b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.69,
+              -22.91
+            ],
+            [
+              -43.665,
+              -22.915
+            ],
+            [
+              -43.67,
+              -22.935
+            ],
+            [
+              -43.695,
+              -22.93
+            ],
+            [
+              -43.69,
+              -22.91
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-11",
+      "properties": {
+        "id": "foco-11",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Morro do São Carlos e Catumbi",
+        "municipio": "Rio de Janeiro",
+        "aisp": 4,
+        "cisp": 6,
+        "faccao": "Terceiro Comando Puro (TCP)",
+        "grupoArmado": "TCP",
+        "situacao": "Predomínio Documentado",
+        "fonte": "GENI-UFF / Relatórios Integrados 4º e 5º BPM",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Fortaleza do TCP na região central do Rio, vizinho ao Morro da Coroa e Fallet/Fogueteiro (CV).",
+        "cor": "#10b981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.205,
+              -22.915
+            ],
+            [
+              -43.195,
+              -22.917
+            ],
+            [
+              -43.198,
+              -22.926
+            ],
+            [
+              -43.209,
+              -22.923
+            ],
+            [
+              -43.205,
+              -22.915
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "foco-vilaalianca-01",
+      "properties": {
+        "id": "foco-vilaalianca-01",
+        "tipo": "FOCO_ESPECIAL",
+        "nome": "Vila Aliança e Senador Camará",
+        "municipio": "Rio de Janeiro",
+        "aisp": 14,
+        "cisp": 33,
+        "faccao": "Terceiro Comando Puro (TCP)",
+        "grupoArmado": "TCP",
+        "situacao": "Predomínio Documentado",
+        "fonte": "14º BPM · 33ª DP (Realengo) · GENI-UFF",
+        "data_registro": "2024-2025",
+        "grau_confiabilidade": "Registro Público Documentado",
+        "detalhes": "Base de lideranças do TCP na Zona Oeste, conflagrada em relação à Vila Kennedy (CV).",
+        "cor": "#10b981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.495,
+              -22.865
+            ],
+            [
+              -43.475,
+              -22.87
+            ],
+            [
+              -43.48,
+              -22.885
+            ],
+            [
+              -43.5,
+              -22.88
+            ],
+            [
+              -43.495,
+              -22.865
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -12,6 +12,9 @@
   "dependencies": {
     "@types/papaparse": "^5.5.2",
     "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "jszip": "^3.10.2",
     "lucide-react": "^1.72.0",
     "ol": "^9.2.4",
     "papaparse": "^5.7.1",

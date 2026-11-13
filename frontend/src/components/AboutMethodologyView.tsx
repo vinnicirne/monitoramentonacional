@@ -13,7 +13,7 @@ import {
 
 export const AboutMethodologyView: React.FC = () => {
   return (
-    <div className="flex-1 h-[calc(100vh-4rem)] bg-slate-950 overflow-y-auto p-8 space-y-8">
+    <div className="flex-1 h-full bg-slate-950 overflow-y-auto p-4 md:p-8 space-y-6 md:space-y-8">
       {/* Hero */}
       <div className="max-w-4xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold">

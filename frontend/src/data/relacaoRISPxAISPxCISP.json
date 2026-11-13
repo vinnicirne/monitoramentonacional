@@ -1,0 +1,2894 @@
+[
+  {
+    "id": "cisp-9-0",
+    "risp": 1,
+    "aisp": 2,
+    "cisp": 9,
+    "delegaciaNome": "009ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Catete, Cosme Velho, Flamengo, Glória e Laranjeiras",
+    "bairros": [
+      "Catete",
+      "Cosme Velho",
+      "Flamengo",
+      "Glória",
+      "Laranjeiras"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "2º BPM (Botafogo)",
+    "lat": -22.93,
+    "lng": -43.179,
+    "circunscricao": "Circunscrição da 009ª DP abrangendo Rio de Janeiro (Catete, Cosme Velho, Flamengo, Glória e Laranjeiras)"
+  },
+  {
+    "id": "cisp-10-1",
+    "risp": 1,
+    "aisp": 2,
+    "cisp": 10,
+    "delegaciaNome": "010ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Botafogo, Humaitá e Urca",
+    "bairros": [
+      "Botafogo",
+      "Humaitá",
+      "Urca"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "2º BPM (Botafogo)",
+    "lat": -22.951,
+    "lng": -43.184,
+    "circunscricao": "Circunscrição da 010ª DP abrangendo Rio de Janeiro (Botafogo, Humaitá e Urca)"
+  },
+  {
+    "id": "cisp-23-2",
+    "risp": 1,
+    "aisp": 3,
+    "cisp": 23,
+    "delegaciaNome": "023ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Cachambi, Méier (parte) e Todos os Santos (parte)",
+    "bairros": [
+      "Cachambi",
+      "Méier (parte)",
+      "Todos os Santos (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "3º BPM (Méier)",
+    "lat": -22.892,
+    "lng": -43.278,
+    "circunscricao": "Circunscrição da 023ª DP abrangendo Rio de Janeiro (Cachambi, Méier (parte) e Todos os Santos (parte))"
+  },
+  {
+    "id": "cisp-24-3",
+    "risp": 1,
+    "aisp": 3,
+    "cisp": 24,
+    "delegaciaNome": "024ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Abolição, Água Santa (parte), Encantado, Engenho de Dentro (parte), Pilares e Piedade",
+    "bairros": [
+      "Abolição",
+      "Água Santa (parte)",
+      "Encantado",
+      "Engenho de Dentro (parte)",
+      "Pilares",
+      "Piedade"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "3º BPM (Méier)",
+    "lat": -22.895,
+    "lng": -43.301,
+    "circunscricao": "Circunscrição da 024ª DP abrangendo Rio de Janeiro (Abolição, Água Santa (parte), Encantado, Engenho de Dentro (parte), Pilares e Piedade)"
+  },
+  {
+    "id": "cisp-25-4",
+    "risp": 1,
+    "aisp": 3,
+    "cisp": 25,
+    "delegaciaNome": "025ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Engenho Novo, Jacaré, Jacarezinho, Riachuelo, Rocha, Sampaio e São Francisco Xavier",
+    "bairros": [
+      "Engenho Novo",
+      "Jacaré",
+      "Jacarezinho",
+      "Riachuelo",
+      "Rocha",
+      "Sampaio",
+      "São Francisco Xavier"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "3º BPM (Méier)",
+    "lat": -22.903,
+    "lng": -43.262,
+    "circunscricao": "Circunscrição da 025ª DP abrangendo Rio de Janeiro (Engenho Novo, Jacaré, Jacarezinho, Riachuelo, Rocha, Sampaio e São Francisco Xavier)"
+  },
+  {
+    "id": "cisp-26-5",
+    "risp": 1,
+    "aisp": 3,
+    "cisp": 26,
+    "delegaciaNome": "026ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Água Santa (parte), Engenho de Dentro (parte), Lins de Vasconcelos e Todos os Santos",
+    "bairros": [
+      "Água Santa (parte)",
+      "Engenho de Dentro (parte)",
+      "Lins de Vasconcelos",
+      "Todos os Santos"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "3º BPM (Méier)",
+    "lat": -22.908,
+    "lng": -43.285,
+    "circunscricao": "Circunscrição da 026ª DP abrangendo Rio de Janeiro (Água Santa (parte), Engenho de Dentro (parte), Lins de Vasconcelos e Todos os Santos)"
+  },
+  {
+    "id": "cisp-44-6",
+    "risp": 1,
+    "aisp": 3,
+    "cisp": 44,
+    "delegaciaNome": "044ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Del Castilho, Engenho da Rainha, Inhaúma, Maria da Graça e Tomás Coelho",
+    "bairros": [
+      "Del Castilho",
+      "Engenho da Rainha",
+      "Inhaúma",
+      "Maria da Graça",
+      "Tomás Coelho"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "3º BPM (Méier)",
+    "lat": -22.872,
+    "lng": -43.298,
+    "circunscricao": "Circunscrição da 044ª DP abrangendo Rio de Janeiro (Del Castilho, Engenho da Rainha, Inhaúma, Maria da Graça e Tomás Coelho)"
+  },
+  {
+    "id": "cisp-6-7",
+    "risp": 1,
+    "aisp": 4,
+    "cisp": 6,
+    "delegaciaNome": "006ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Catumbi, Cidade Nova, Estácio, Rio Comprido e Centro (parte)",
+    "bairros": [
+      "Catumbi",
+      "Cidade Nova",
+      "Estácio",
+      "Rio Comprido",
+      "Centro (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "4º BPM (São Cristóvão)",
+    "lat": -22.914,
+    "lng": -43.203,
+    "circunscricao": "Circunscrição da 006ª DP abrangendo Rio de Janeiro (Catumbi, Cidade Nova, Estácio, Rio Comprido e Centro (parte))"
+  },
+  {
+    "id": "cisp-17-8",
+    "risp": 1,
+    "aisp": 4,
+    "cisp": 17,
+    "delegaciaNome": "017ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Caju, Mangueira, São Cristóvão e Vasco da Gama",
+    "bairros": [
+      "Caju",
+      "Mangueira",
+      "São Cristóvão",
+      "Vasco da Gama"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "4º BPM (São Cristóvão)",
+    "lat": -22.899,
+    "lng": -43.22,
+    "circunscricao": "Circunscrição da 017ª DP abrangendo Rio de Janeiro (Caju, Mangueira, São Cristóvão e Vasco da Gama)"
+  },
+  {
+    "id": "cisp-1-9",
+    "risp": 1,
+    "aisp": 5,
+    "cisp": 1,
+    "delegaciaNome": "001ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Centro (parte)",
+    "bairros": [
+      "Centro (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+    "lat": -22.9068,
+    "lng": -43.1822,
+    "circunscricao": "Circunscrição da 001ª DP abrangendo Rio de Janeiro (Centro (parte))"
+  },
+  {
+    "id": "cisp-4-10",
+    "risp": 1,
+    "aisp": 5,
+    "cisp": 4,
+    "delegaciaNome": "004ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Centro (parte), Gamboa, Santo Cristo e Saúde",
+    "bairros": [
+      "Centro (parte)",
+      "Gamboa",
+      "Santo Cristo",
+      "Saúde"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+    "lat": -22.898,
+    "lng": -43.189,
+    "circunscricao": "Circunscrição da 004ª DP abrangendo Rio de Janeiro (Centro (parte), Gamboa, Santo Cristo e Saúde)"
+  },
+  {
+    "id": "cisp-5-11",
+    "risp": 1,
+    "aisp": 5,
+    "cisp": 5,
+    "delegaciaNome": "005ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Centro (parte), Lapa e Paquetá",
+    "bairros": [
+      "Centro (parte)",
+      "Lapa",
+      "Paquetá"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+    "lat": -22.9125,
+    "lng": -43.18,
+    "circunscricao": "Circunscrição da 005ª DP abrangendo Rio de Janeiro (Centro (parte), Lapa e Paquetá)"
+  },
+  {
+    "id": "cisp-7-12",
+    "risp": 1,
+    "aisp": 5,
+    "cisp": 7,
+    "delegaciaNome": "007ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Santa Teresa",
+    "bairros": [
+      "Santa Teresa"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "5º BPM (Praça da Harmonia)",
+    "lat": -22.92,
+    "lng": -43.19,
+    "circunscricao": "Circunscrição da 007ª DP abrangendo Rio de Janeiro (Santa Teresa)"
+  },
+  {
+    "id": "cisp-18-13",
+    "risp": 1,
+    "aisp": 6,
+    "cisp": 18,
+    "delegaciaNome": "018ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Maracanã, Praça da Bandeira e Tijuca (parte)",
+    "bairros": [
+      "Maracanã",
+      "Praça da Bandeira",
+      "Tijuca (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "6º BPM (Tijuca)",
+    "lat": -22.924,
+    "lng": -43.227,
+    "circunscricao": "Circunscrição da 018ª DP abrangendo Rio de Janeiro (Maracanã, Praça da Bandeira e Tijuca (parte))"
+  },
+  {
+    "id": "cisp-19-14",
+    "risp": 1,
+    "aisp": 6,
+    "cisp": 19,
+    "delegaciaNome": "019ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Alto da Boa Vista e Tijuca (parte)",
+    "bairros": [
+      "Alto da Boa Vista",
+      "Tijuca (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "6º BPM (Tijuca)",
+    "lat": -22.94,
+    "lng": -43.24,
+    "circunscricao": "Circunscrição da 019ª DP abrangendo Rio de Janeiro (Alto da Boa Vista e Tijuca (parte))"
+  },
+  {
+    "id": "cisp-20-15",
+    "risp": 1,
+    "aisp": 6,
+    "cisp": 20,
+    "delegaciaNome": "020ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Andaraí, Grajaú e Vila Isabel",
+    "bairros": [
+      "Andaraí",
+      "Grajaú",
+      "Vila Isabel"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "6º BPM (Tijuca)",
+    "lat": -22.915,
+    "lng": -43.248,
+    "circunscricao": "Circunscrição da 020ª DP abrangendo Rio de Janeiro (Andaraí, Grajaú e Vila Isabel)"
+  },
+  {
+    "id": "cisp-22-16",
+    "risp": 1,
+    "aisp": 16,
+    "cisp": 22,
+    "delegaciaNome": "022ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Brás de Pina (parte), Olaria, Penha e Penha Circular (parte)",
+    "bairros": [
+      "Brás de Pina (parte)",
+      "Olaria",
+      "Penha",
+      "Penha Circular (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "16º BPM (Olaria)",
+    "lat": -22.842,
+    "lng": -43.279,
+    "circunscricao": "Circunscrição da 022ª DP abrangendo Rio de Janeiro (Brás de Pina (parte), Olaria, Penha e Penha Circular (parte))"
+  },
+  {
+    "id": "cisp-38-17",
+    "risp": 1,
+    "aisp": 16,
+    "cisp": 38,
+    "delegaciaNome": "038ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Brás de Pina (parte), Cordovil, Jardim América, Parada de Lucas,Penha Circular (parte) e Vigário Geral",
+    "bairros": [
+      "Brás de Pina (parte)",
+      "Cordovil",
+      "Jardim América",
+      "Parada de Lucas",
+      "Penha Circular (parte)",
+      "Vigário Geral"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "16º BPM (Olaria)",
+    "lat": -22.818,
+    "lng": -43.305,
+    "circunscricao": "Circunscrição da 038ª DP abrangendo Rio de Janeiro (Brás de Pina (parte), Cordovil, Jardim América, Parada de Lucas,Penha Circular (parte) e Vigário Geral)"
+  },
+  {
+    "id": "cisp-37-18",
+    "risp": 1,
+    "aisp": 17,
+    "cisp": 37,
+    "delegaciaNome": "037ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Bancários, Cacuia, Cidade Universitária, Cocotá, Freguesia, Galeão, Jardim Carioca, Jardim Guanabara, Moneró, Pitangueiras, Portuguesa, Praia da Bandeira, Ribeira, Tauá e Zumbi",
+    "bairros": [
+      "Bancários",
+      "Cacuia",
+      "Cidade Universitária",
+      "Cocotá",
+      "Freguesia",
+      "Galeão",
+      "Jardim Carioca",
+      "Jardim Guanabara",
+      "Moneró",
+      "Pitangueiras",
+      "Portuguesa",
+      "Praia da Bandeira",
+      "Ribeira",
+      "Tauá",
+      "Zumbi"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "17º BPM (Ilha do Governador)",
+    "lat": -22.81,
+    "lng": -43.21,
+    "circunscricao": "Circunscrição da 037ª DP abrangendo Rio de Janeiro (Bancários, Cacuia, Cidade Universitária, Cocotá, Freguesia, Galeão, Jardim Carioca, Jardim Guanabara, Moneró, Pitangueiras, Portuguesa, Praia da Bandeira, Ribeira, Tauá e Zumbi)"
+  },
+  {
+    "id": "cisp-12-19",
+    "risp": 1,
+    "aisp": 19,
+    "cisp": 12,
+    "delegaciaNome": "012ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Copacabana (parte) e Leme",
+    "bairros": [
+      "Copacabana (parte)",
+      "Leme"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "19º BPM (Copacabana)",
+    "lat": -22.969,
+    "lng": -43.181,
+    "circunscricao": "Circunscrição da 012ª DP abrangendo Rio de Janeiro (Copacabana (parte) e Leme)"
+  },
+  {
+    "id": "cisp-13-20",
+    "risp": 1,
+    "aisp": 19,
+    "cisp": 13,
+    "delegaciaNome": "013ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Copacabana (parte)",
+    "bairros": [
+      "Copacabana (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "19º BPM (Copacabana)",
+    "lat": -22.977,
+    "lng": -43.19,
+    "circunscricao": "Circunscrição da 013ª DP abrangendo Rio de Janeiro (Copacabana (parte))"
+  },
+  {
+    "id": "cisp-21-21",
+    "risp": 1,
+    "aisp": 22,
+    "cisp": 21,
+    "delegaciaNome": "021ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Benfica, Bonsucesso, Higienópolis, Manguinhos, Maré e Ramos",
+    "bairros": [
+      "Benfica",
+      "Bonsucesso",
+      "Higienópolis",
+      "Manguinhos",
+      "Maré",
+      "Ramos"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "22º BPM (Maré)",
+    "lat": -22.871,
+    "lng": -43.245,
+    "circunscricao": "Circunscrição da 021ª DP abrangendo Rio de Janeiro (Benfica, Bonsucesso, Higienópolis, Manguinhos, Maré e Ramos)"
+  },
+  {
+    "id": "cisp-11-22",
+    "risp": 1,
+    "aisp": 23,
+    "cisp": 11,
+    "delegaciaNome": "011ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Rocinha",
+    "bairros": [
+      "Rocinha"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "23º BPM (Leblon)",
+    "lat": -22.988,
+    "lng": -43.245,
+    "circunscricao": "Circunscrição da 011ª DP abrangendo Rio de Janeiro (Rocinha)"
+  },
+  {
+    "id": "cisp-14-23",
+    "risp": 1,
+    "aisp": 23,
+    "cisp": 14,
+    "delegaciaNome": "014ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Ipanema e Leblon",
+    "bairros": [
+      "Ipanema",
+      "Leblon"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "23º BPM (Leblon)",
+    "lat": -22.983,
+    "lng": -43.205,
+    "circunscricao": "Circunscrição da 014ª DP abrangendo Rio de Janeiro (Ipanema e Leblon)"
+  },
+  {
+    "id": "cisp-15-24",
+    "risp": 1,
+    "aisp": 23,
+    "cisp": 15,
+    "delegaciaNome": "015ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Gávea, Jardim Botânico, Lagoa, São Conrado e Vidigal",
+    "bairros": [
+      "Gávea",
+      "Jardim Botânico",
+      "Lagoa",
+      "São Conrado",
+      "Vidigal"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "23º BPM (Leblon)",
+    "lat": -22.975,
+    "lng": -43.227,
+    "circunscricao": "Circunscrição da 015ª DP abrangendo Rio de Janeiro (Gávea, Jardim Botânico, Lagoa, São Conrado e Vidigal)"
+  },
+  {
+    "id": "cisp-29-25",
+    "risp": 2,
+    "aisp": 9,
+    "cisp": 29,
+    "delegaciaNome": "029ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Cavalcanti, Engenheiro Leal, Madureira, Turiaçu, Vaz Lobo, Oswaldo Cruz (parte), Cascadura e Quintino Bocaiúva",
+    "bairros": [
+      "Cavalcanti",
+      "Engenheiro Leal",
+      "Madureira",
+      "Turiaçu",
+      "Vaz Lobo",
+      "Oswaldo Cruz (parte)",
+      "Cascadura",
+      "Quintino Bocaiúva"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+    "lat": -22.875,
+    "lng": -43.34,
+    "circunscricao": "Circunscrição da 029ª DP abrangendo Rio de Janeiro (Cavalcanti, Engenheiro Leal, Madureira, Turiaçu, Vaz Lobo, Oswaldo Cruz (parte), Cascadura e Quintino Bocaiúva)"
+  },
+  {
+    "id": "cisp-30-26",
+    "risp": 2,
+    "aisp": 9,
+    "cisp": 30,
+    "delegaciaNome": "030ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Bento Ribeiro, Campinho, Marechal Hermes e Oswaldo Cruz (parte)",
+    "bairros": [
+      "Bento Ribeiro",
+      "Campinho",
+      "Marechal Hermes",
+      "Oswaldo Cruz (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+    "lat": -22.868,
+    "lng": -43.37,
+    "circunscricao": "Circunscrição da 030ª DP abrangendo Rio de Janeiro (Bento Ribeiro, Campinho, Marechal Hermes e Oswaldo Cruz (parte))"
+  },
+  {
+    "id": "cisp-40-27",
+    "risp": 2,
+    "aisp": 9,
+    "cisp": 40,
+    "delegaciaNome": "040ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Coelho Neto, Colégio (parte), Honório Gurgel e Rocha Miranda",
+    "bairros": [
+      "Coelho Neto",
+      "Colégio (parte)",
+      "Honório Gurgel",
+      "Rocha Miranda"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "9º BPM (Rocha Miranda)",
+    "lat": -22.855,
+    "lng": -43.352,
+    "circunscricao": "Circunscrição da 040ª DP abrangendo Rio de Janeiro (Coelho Neto, Colégio (parte), Honório Gurgel e Rocha Miranda)"
+  },
+  {
+    "id": "cisp-33-28",
+    "risp": 2,
+    "aisp": 14,
+    "cisp": 33,
+    "delegaciaNome": "033ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Campo dos Afonsos, Deodoro, Jardim Sulacap, Magalhães Bastos, Realengo e Vila Militar",
+    "bairros": [
+      "Campo dos Afonsos",
+      "Deodoro",
+      "Jardim Sulacap",
+      "Magalhães Bastos",
+      "Realengo",
+      "Vila Militar"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "14º BPM (Bangu)",
+    "lat": -22.878,
+    "lng": -43.435,
+    "circunscricao": "Circunscrição da 033ª DP abrangendo Rio de Janeiro (Campo dos Afonsos, Deodoro, Jardim Sulacap, Magalhães Bastos, Realengo e Vila Militar)"
+  },
+  {
+    "id": "cisp-34-29",
+    "risp": 2,
+    "aisp": 14,
+    "cisp": 34,
+    "delegaciaNome": "034ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Bangu, Gericinó, Padre Miguel e Senador Camará",
+    "bairros": [
+      "Bangu",
+      "Gericinó",
+      "Padre Miguel",
+      "Senador Camará"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "14º BPM (Bangu)",
+    "lat": -22.88,
+    "lng": -43.468,
+    "circunscricao": "Circunscrição da 034ª DP abrangendo Rio de Janeiro (Bangu, Gericinó, Padre Miguel e Senador Camará)"
+  },
+  {
+    "id": "cisp-28-30",
+    "risp": 2,
+    "aisp": 18,
+    "cisp": 28,
+    "delegaciaNome": "028ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Vila Valqueire, Praça Seca e Tanque (parte)",
+    "bairros": [
+      "Vila Valqueire",
+      "Praça Seca",
+      "Tanque (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+    "lat": -22.901,
+    "lng": -43.355,
+    "circunscricao": "Circunscrição da 028ª DP abrangendo Rio de Janeiro (Vila Valqueire, Praça Seca e Tanque (parte))"
+  },
+  {
+    "id": "cisp-32-31",
+    "risp": 2,
+    "aisp": 18,
+    "cisp": 32,
+    "delegaciaNome": "032ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Anil, Cidade de Deus, Curicica, Gardênia Azul, Jacarepaguá e Taquara",
+    "bairros": [
+      "Anil",
+      "Cidade de Deus",
+      "Curicica",
+      "Gardênia Azul",
+      "Jacarepaguá",
+      "Taquara"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+    "lat": -22.935,
+    "lng": -43.366,
+    "circunscricao": "Circunscrição da 032ª DP abrangendo Rio de Janeiro (Anil, Cidade de Deus, Curicica, Gardênia Azul, Jacarepaguá e Taquara)"
+  },
+  {
+    "id": "cisp-41-32",
+    "risp": 2,
+    "aisp": 18,
+    "cisp": 41,
+    "delegaciaNome": "041ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Freguesia (Jacarepaguá), Pechincha e Tanque (parte)",
+    "bairros": [
+      "Freguesia (Jacarepaguá)",
+      "Pechincha",
+      "Tanque (parte)"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "18º BPM (Jacarepaguá)",
+    "lat": -22.935,
+    "lng": -43.339,
+    "circunscricao": "Circunscrição da 041ª DP abrangendo Rio de Janeiro (Freguesia (Jacarepaguá), Pechincha e Tanque (parte))"
+  },
+  {
+    "id": "cisp-36-33",
+    "risp": 2,
+    "aisp": 27,
+    "cisp": 36,
+    "delegaciaNome": "036ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Paciência e Santa Cruz",
+    "bairros": [
+      "Paciência",
+      "Santa Cruz"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "27º BPM (Santa Cruz)",
+    "lat": -22.92,
+    "lng": -43.68,
+    "circunscricao": "Circunscrição da 036ª DP abrangendo Rio de Janeiro (Paciência e Santa Cruz)"
+  },
+  {
+    "id": "cisp-43-34",
+    "risp": 2,
+    "aisp": 27,
+    "cisp": 43,
+    "delegaciaNome": "043ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Guaratiba, Pedra de Guaratiba e Sepetiba",
+    "bairros": [
+      "Guaratiba",
+      "Pedra de Guaratiba",
+      "Sepetiba"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "27º BPM (Santa Cruz)",
+    "lat": -22.985,
+    "lng": -43.64,
+    "circunscricao": "Circunscrição da 043ª DP abrangendo Rio de Janeiro (Guaratiba, Pedra de Guaratiba e Sepetiba)"
+  },
+  {
+    "id": "cisp-16-35",
+    "risp": 2,
+    "aisp": 31,
+    "cisp": 16,
+    "delegaciaNome": "016ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Barra da Tijuca, Itanhangá, Joá",
+    "bairros": [
+      "Barra da Tijuca",
+      "Itanhangá",
+      "Joá"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "31º BPM (Recreio / Barra)",
+    "lat": -23.003,
+    "lng": -43.324,
+    "circunscricao": "Circunscrição da 016ª DP abrangendo Rio de Janeiro (Barra da Tijuca, Itanhangá, Joá)"
+  },
+  {
+    "id": "cisp-42-36",
+    "risp": 2,
+    "aisp": 31,
+    "cisp": 42,
+    "delegaciaNome": "042ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Recreio dos Bandeirantes, Barra de Guaratiba, Camorim, Grumari, Vargem Grande e Vargem Pequena",
+    "bairros": [
+      "Recreio dos Bandeirantes",
+      "Barra de Guaratiba",
+      "Camorim",
+      "Grumari",
+      "Vargem Grande",
+      "Vargem Pequena"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "31º BPM (Recreio / Barra)",
+    "lat": -23.015,
+    "lng": -43.46,
+    "circunscricao": "Circunscrição da 042ª DP abrangendo Rio de Janeiro (Recreio dos Bandeirantes, Barra de Guaratiba, Camorim, Grumari, Vargem Grande e Vargem Pequena)"
+  },
+  {
+    "id": "cisp-35-37",
+    "risp": 2,
+    "aisp": 40,
+    "cisp": 35,
+    "delegaciaNome": "035ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Campo Grande, Cosmos, Inhoaíba, Santíssimo e Senador Vasconcelos",
+    "bairros": [
+      "Campo Grande",
+      "Cosmos",
+      "Inhoaíba",
+      "Santíssimo",
+      "Senador Vasconcelos"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "40º BPM (Campo Grande)",
+    "lat": -22.901,
+    "lng": -43.559,
+    "circunscricao": "Circunscrição da 035ª DP abrangendo Rio de Janeiro (Campo Grande, Cosmos, Inhoaíba, Santíssimo e Senador Vasconcelos)"
+  },
+  {
+    "id": "cisp-27-38",
+    "risp": 2,
+    "aisp": 41,
+    "cisp": 27,
+    "delegaciaNome": "027ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Colégio (parte), Irajá, Vicente de Carvalho, Vila Kosmos, Vila da Penha e Vista Alegre",
+    "bairros": [
+      "Colégio (parte)",
+      "Irajá",
+      "Vicente de Carvalho",
+      "Vila Kosmos",
+      "Vila da Penha",
+      "Vista Alegre"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "41º BPM (Irajá)",
+    "lat": -22.846,
+    "lng": -43.321,
+    "circunscricao": "Circunscrição da 027ª DP abrangendo Rio de Janeiro (Colégio (parte), Irajá, Vicente de Carvalho, Vila Kosmos, Vila da Penha e Vista Alegre)"
+  },
+  {
+    "id": "cisp-31-39",
+    "risp": 2,
+    "aisp": 41,
+    "cisp": 31,
+    "delegaciaNome": "031ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Anchieta, Guadalupe, Parque Anchieta e Ricardo de Albuquerque",
+    "bairros": [
+      "Anchieta",
+      "Guadalupe",
+      "Parque Anchieta",
+      "Ricardo de Albuquerque"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "41º BPM (Irajá)",
+    "lat": -22.825,
+    "lng": -43.398,
+    "circunscricao": "Circunscrição da 031ª DP abrangendo Rio de Janeiro (Anchieta, Guadalupe, Parque Anchieta e Ricardo de Albuquerque)"
+  },
+  {
+    "id": "cisp-39-40",
+    "risp": 2,
+    "aisp": 41,
+    "cisp": 39,
+    "delegaciaNome": "039ª DP - Rio de Janeiro",
+    "unidadeTerritorial": "Acari, Barros Filho, Costa Barros, Parque Colúmbia e Pavuna",
+    "bairros": [
+      "Acari",
+      "Barros Filho",
+      "Costa Barros",
+      "Parque Colúmbia",
+      "Pavuna"
+    ],
+    "municipio": "Rio de Janeiro",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "41º BPM (Irajá)",
+    "lat": -22.815,
+    "lng": -43.345,
+    "circunscricao": "Circunscrição da 039ª DP abrangendo Rio de Janeiro (Acari, Barros Filho, Costa Barros, Parque Colúmbia e Pavuna)"
+  },
+  {
+    "id": "cisp-59-41",
+    "risp": 3,
+    "aisp": 15,
+    "cisp": 59,
+    "delegaciaNome": "059ª DP - Duque de Caxias",
+    "unidadeTerritorial": "Duque de Caxias (Centro)",
+    "bairros": [
+      "Duque de Caxias (Centro)"
+    ],
+    "municipio": "Duque de Caxias",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+    "lat": -22.785,
+    "lng": -43.31,
+    "circunscricao": "Circunscrição da 059ª DP abrangendo Duque de Caxias (Duque de Caxias (Centro))"
+  },
+  {
+    "id": "cisp-60-42",
+    "risp": 3,
+    "aisp": 15,
+    "cisp": 60,
+    "delegaciaNome": "060ª DP - Duque de Caxias",
+    "unidadeTerritorial": "Campos Elyseos",
+    "bairros": [
+      "Campos Elyseos"
+    ],
+    "municipio": "Duque de Caxias",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+    "lat": -22.715,
+    "lng": -43.285,
+    "circunscricao": "Circunscrição da 060ª DP abrangendo Duque de Caxias (Campos Elyseos)"
+  },
+  {
+    "id": "cisp-61-43",
+    "risp": 3,
+    "aisp": 15,
+    "cisp": 61,
+    "delegaciaNome": "061ª DP - Duque de Caxias",
+    "unidadeTerritorial": "Xerém",
+    "bairros": [
+      "Xerém"
+    ],
+    "municipio": "Duque de Caxias",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+    "lat": -22.585,
+    "lng": -43.305,
+    "circunscricao": "Circunscrição da 061ª DP abrangendo Duque de Caxias (Xerém)"
+  },
+  {
+    "id": "cisp-62-44",
+    "risp": 3,
+    "aisp": 15,
+    "cisp": 62,
+    "delegaciaNome": "062ª DP - Duque de Caxias",
+    "unidadeTerritorial": "Imbariê",
+    "bairros": [
+      "Imbariê"
+    ],
+    "municipio": "Duque de Caxias",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "15º BPM (Duque de Caxias)",
+    "lat": -22.645,
+    "lng": -43.235,
+    "circunscricao": "Circunscrição da 062ª DP abrangendo Duque de Caxias (Imbariê)"
+  },
+  {
+    "id": "cisp-52-45",
+    "risp": 3,
+    "aisp": 20,
+    "cisp": 52,
+    "delegaciaNome": "052ª DP - Nova Iguaçu",
+    "unidadeTerritorial": "Centro",
+    "bairros": [
+      "Centro"
+    ],
+    "municipio": "Nova Iguaçu",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "20º BPM (Mesquita)",
+    "lat": -22.756,
+    "lng": -43.451,
+    "circunscricao": "Circunscrição da 052ª DP abrangendo Nova Iguaçu (Centro)"
+  },
+  {
+    "id": "cisp-53-46",
+    "risp": 3,
+    "aisp": 20,
+    "cisp": 53,
+    "delegaciaNome": "053ª DP - Mesquita",
+    "unidadeTerritorial": "Mesquita, Chatuba e Banco de Areia",
+    "bairros": [
+      "Mesquita",
+      "Chatuba",
+      "Banco de Areia"
+    ],
+    "municipio": "Mesquita",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "20º BPM (Mesquita)",
+    "lat": -22.783,
+    "lng": -43.428,
+    "circunscricao": "Circunscrição da 053ª DP abrangendo Mesquita (Mesquita, Chatuba e Banco de Areia)"
+  },
+  {
+    "id": "cisp-56-47",
+    "risp": 3,
+    "aisp": 20,
+    "cisp": 56,
+    "delegaciaNome": "056ª DP - Nova Iguaçu",
+    "unidadeTerritorial": "Comendador Soares, Cabuçú e Km32",
+    "bairros": [
+      "Comendador Soares",
+      "Cabuçú",
+      "Km32"
+    ],
+    "municipio": "Nova Iguaçu",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "20º BPM (Mesquita)",
+    "lat": -22.748,
+    "lng": -43.479,
+    "circunscricao": "Circunscrição da 056ª DP abrangendo Nova Iguaçu (Comendador Soares, Cabuçú e Km32)"
+  },
+  {
+    "id": "cisp-57-48",
+    "risp": 3,
+    "aisp": 20,
+    "cisp": 57,
+    "delegaciaNome": "057ª DP - Nilópolis",
+    "unidadeTerritorial": "Nilópolis e Olinda",
+    "bairros": [
+      "Nilópolis",
+      "Olinda"
+    ],
+    "municipio": "Nilópolis",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "20º BPM (Mesquita)",
+    "lat": -22.805,
+    "lng": -43.415,
+    "circunscricao": "Circunscrição da 057ª DP abrangendo Nilópolis (Nilópolis e Olinda)"
+  },
+  {
+    "id": "cisp-58-49",
+    "risp": 3,
+    "aisp": 20,
+    "cisp": 58,
+    "delegaciaNome": "058ª DP - Nova Iguaçu",
+    "unidadeTerritorial": "Posse, Austin, Miguel Couto, Vila de Cava e Tinguá",
+    "bairros": [
+      "Posse",
+      "Austin",
+      "Miguel Couto",
+      "Vila de Cava",
+      "Tinguá"
+    ],
+    "municipio": "Nova Iguaçu",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "20º BPM (Mesquita)",
+    "lat": -22.712,
+    "lng": -43.465,
+    "circunscricao": "Circunscrição da 058ª DP abrangendo Nova Iguaçu (Posse, Austin, Miguel Couto, Vila de Cava e Tinguá)"
+  },
+  {
+    "id": "cisp-64-50",
+    "risp": 3,
+    "aisp": 21,
+    "cisp": 64,
+    "delegaciaNome": "064ª DP - São João de Meriti",
+    "unidadeTerritorial": "São João de Meriti, Coelho da Rocha e São Mateus",
+    "bairros": [
+      "São João de Meriti",
+      "Coelho da Rocha",
+      "São Mateus"
+    ],
+    "municipio": "São João de Meriti",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "21º BPM (São João de Meriti)",
+    "lat": -22.802,
+    "lng": -43.372,
+    "circunscricao": "Circunscrição da 064ª DP abrangendo São João de Meriti (São João de Meriti, Coelho da Rocha e São Mateus)"
+  },
+  {
+    "id": "cisp-48-51",
+    "risp": 3,
+    "aisp": 24,
+    "cisp": 48,
+    "delegaciaNome": "048ª DP - Seropédica",
+    "unidadeTerritorial": "Seropédica",
+    "bairros": [
+      "Seropédica"
+    ],
+    "municipio": "Seropédica",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "24º BPM (Queimados)",
+    "lat": -22.755,
+    "lng": -43.705,
+    "circunscricao": "Circunscrição da 048ª DP abrangendo Seropédica (Seropédica)"
+  },
+  {
+    "id": "cisp-50-52",
+    "risp": 3,
+    "aisp": 24,
+    "cisp": 50,
+    "delegaciaNome": "050ª DP - Itaguaí",
+    "unidadeTerritorial": "Itaguaí e Ibituporanga",
+    "bairros": [
+      "Itaguaí",
+      "Ibituporanga"
+    ],
+    "municipio": "Itaguaí",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "24º BPM (Queimados)",
+    "lat": -22.865,
+    "lng": -43.775,
+    "circunscricao": "Circunscrição da 050ª DP abrangendo Itaguaí (Itaguaí e Ibituporanga)"
+  },
+  {
+    "id": "cisp-51-53",
+    "risp": 3,
+    "aisp": 24,
+    "cisp": 51,
+    "delegaciaNome": "051ª DP - Paracambi",
+    "unidadeTerritorial": "Paracambi",
+    "bairros": [
+      "Paracambi"
+    ],
+    "municipio": "Paracambi",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "24º BPM (Queimados)",
+    "lat": -22.61,
+    "lng": -43.71,
+    "circunscricao": "Circunscrição da 051ª DP abrangendo Paracambi (Paracambi)"
+  },
+  {
+    "id": "cisp-55-54",
+    "risp": 3,
+    "aisp": 24,
+    "cisp": 55,
+    "delegaciaNome": "055ª DP - Queimados",
+    "unidadeTerritorial": "Centro, Norte, Sul. Leste, Oeste e Nordeste",
+    "bairros": [
+      "Centro",
+      "Norte",
+      "Sul. Leste",
+      "Oeste",
+      "Nordeste"
+    ],
+    "municipio": "Queimados",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "24º BPM (Queimados)",
+    "lat": -22.715,
+    "lng": -43.425,
+    "circunscricao": "Circunscrição da 055ª DP abrangendo Queimados (Centro, Norte, Sul. Leste, Oeste e Nordeste)"
+  },
+  {
+    "id": "cisp-63-55",
+    "risp": 3,
+    "aisp": 24,
+    "cisp": 63,
+    "delegaciaNome": "063ª DP - Japeri",
+    "unidadeTerritorial": "Japeri, Engenheiro Pedreira, Marajoara, Pedra Lisa e Rio D`Ouro",
+    "bairros": [
+      "Japeri",
+      "Engenheiro Pedreira",
+      "Marajoara",
+      "Pedra Lisa",
+      "Rio D`Ouro"
+    ],
+    "municipio": "Japeri",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "24º BPM (Queimados)",
+    "lat": -22.645,
+    "lng": -43.655,
+    "circunscricao": "Circunscrição da 063ª DP abrangendo Japeri (Japeri, Engenheiro Pedreira, Marajoara, Pedra Lisa e Rio D`Ouro)"
+  },
+  {
+    "id": "cisp-65-56",
+    "risp": 3,
+    "aisp": 34,
+    "cisp": 65,
+    "delegaciaNome": "065ª DP - Magé",
+    "unidadeTerritorial": "Magé, Santo Aleixo e Suruí",
+    "bairros": [
+      "Magé",
+      "Santo Aleixo",
+      "Suruí"
+    ],
+    "municipio": "Magé",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "34º BPM (Magé)",
+    "lat": -22.652,
+    "lng": -43.04,
+    "circunscricao": "Circunscrição da 065ª DP abrangendo Magé (Magé, Santo Aleixo e Suruí)"
+  },
+  {
+    "id": "cisp-66-57",
+    "risp": 3,
+    "aisp": 34,
+    "cisp": 66,
+    "delegaciaNome": "066ª DP - Magé",
+    "unidadeTerritorial": "Inhomirim e Guia de Copaíba",
+    "bairros": [
+      "Inhomirim",
+      "Guia de Copaíba"
+    ],
+    "municipio": "Magé",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "34º BPM (Magé)",
+    "lat": -22.612,
+    "lng": -43.14,
+    "circunscricao": "Circunscrição da 066ª DP abrangendo Magé (Inhomirim e Guia de Copaíba)"
+  },
+  {
+    "id": "cisp-67-58",
+    "risp": 3,
+    "aisp": 34,
+    "cisp": 67,
+    "delegaciaNome": "067ª DP - Guapimirim",
+    "unidadeTerritorial": "Guapimirim",
+    "bairros": [
+      "Guapimirim"
+    ],
+    "municipio": "Guapimirim",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "34º BPM (Magé)",
+    "lat": -22.535,
+    "lng": -42.98,
+    "circunscricao": "Circunscrição da 067ª DP abrangendo Guapimirim (Guapimirim)"
+  },
+  {
+    "id": "cisp-54-59",
+    "risp": 3,
+    "aisp": 39,
+    "cisp": 54,
+    "delegaciaNome": "054ª DP - Belford Roxo",
+    "unidadeTerritorial": "Areia Branca, Jardim Redentor, Parque São José, Nova Aurora e Lote XV",
+    "bairros": [
+      "Areia Branca",
+      "Jardim Redentor",
+      "Parque São José",
+      "Nova Aurora",
+      "Lote XV"
+    ],
+    "municipio": "Belford Roxo",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "39º BPM (Belford Roxo)",
+    "lat": -22.763,
+    "lng": -43.399,
+    "circunscricao": "Circunscrição da 054ª DP abrangendo Belford Roxo (Areia Branca, Jardim Redentor, Parque São José, Nova Aurora e Lote XV)"
+  },
+  {
+    "id": "cisp-72-60",
+    "risp": 4,
+    "aisp": 1,
+    "cisp": 72,
+    "delegaciaNome": "072ª DP - São Gonçalo",
+    "unidadeTerritorial": "São Gonçalo",
+    "bairros": [
+      "São Gonçalo"
+    ],
+    "municipio": "São Gonçalo",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "7º BPM (São Gonçalo - 1ª Cia)",
+    "lat": -22.827,
+    "lng": -43.053,
+    "circunscricao": "Circunscrição da 072ª DP abrangendo São Gonçalo (São Gonçalo)"
+  },
+  {
+    "id": "cisp-73-61",
+    "risp": 4,
+    "aisp": 1,
+    "cisp": 73,
+    "delegaciaNome": "073ª DP - São Gonçalo",
+    "unidadeTerritorial": "Neves",
+    "bairros": [
+      "Neves"
+    ],
+    "municipio": "São Gonçalo",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "7º BPM (São Gonçalo - 1ª Cia)",
+    "lat": -22.856,
+    "lng": -43.09,
+    "circunscricao": "Circunscrição da 073ª DP abrangendo São Gonçalo (Neves)"
+  },
+  {
+    "id": "cisp-74-62",
+    "risp": 4,
+    "aisp": 7,
+    "cisp": 74,
+    "delegaciaNome": "074ª DP - São Gonçalo",
+    "unidadeTerritorial": "Monjolo",
+    "bairros": [
+      "Monjolo"
+    ],
+    "municipio": "São Gonçalo",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "7º BPM (São Gonçalo)",
+    "lat": -22.798,
+    "lng": -42.985,
+    "circunscricao": "Circunscrição da 074ª DP abrangendo São Gonçalo (Monjolo)"
+  },
+  {
+    "id": "cisp-75-63",
+    "risp": 4,
+    "aisp": 7,
+    "cisp": 75,
+    "delegaciaNome": "075ª DP - São Gonçalo",
+    "unidadeTerritorial": "Ipiiba e Sete Pontes",
+    "bairros": [
+      "Ipiiba",
+      "Sete Pontes"
+    ],
+    "municipio": "São Gonçalo",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "7º BPM (São Gonçalo)",
+    "lat": -22.865,
+    "lng": -43.01,
+    "circunscricao": "Circunscrição da 075ª DP abrangendo São Gonçalo (Ipiiba e Sete Pontes)"
+  },
+  {
+    "id": "cisp-76-64",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 76,
+    "delegaciaNome": "076ª DP - Niterói",
+    "unidadeTerritorial": "Centro, Ponta da Areia, Ilha da Conceição, São Lourenço, Fátima, Morro do Estado, Ingá, São Domingos, Gragoatá e Boa Viagem",
+    "bairros": [
+      "Centro",
+      "Ponta da Areia",
+      "Ilha da Conceição",
+      "São Lourenço",
+      "Fátima",
+      "Morro do Estado",
+      "Ingá",
+      "São Domingos",
+      "Gragoatá",
+      "Boa Viagem"
+    ],
+    "municipio": "Niterói",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.89,
+    "lng": -43.12,
+    "circunscricao": "Circunscrição da 076ª DP abrangendo Niterói (Centro, Ponta da Areia, Ilha da Conceição, São Lourenço, Fátima, Morro do Estado, Ingá, São Domingos, Gragoatá e Boa Viagem)"
+  },
+  {
+    "id": "cisp-77-65",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 77,
+    "delegaciaNome": "077ª DP - Niterói",
+    "unidadeTerritorial": "Santa Rosa, Icaraí, Vital Brasil, Pé Pequeno, Viradouro e Cubango",
+    "bairros": [
+      "Santa Rosa",
+      "Icaraí",
+      "Vital Brasil",
+      "Pé Pequeno",
+      "Viradouro",
+      "Cubango"
+    ],
+    "municipio": "Niterói",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.905,
+    "lng": -43.105,
+    "circunscricao": "Circunscrição da 077ª DP abrangendo Niterói (Santa Rosa, Icaraí, Vital Brasil, Pé Pequeno, Viradouro e Cubango)"
+  },
+  {
+    "id": "cisp-78-66",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 78,
+    "delegaciaNome": "078ª DP - Niterói",
+    "unidadeTerritorial": "Fonseca, Viçoso Jardim, Caramujo, Baldeador, Santa Bárbara, Tenente Jardim, Engenhoca, Santana e Barreto",
+    "bairros": [
+      "Fonseca",
+      "Viçoso Jardim",
+      "Caramujo",
+      "Baldeador",
+      "Santa Bárbara",
+      "Tenente Jardim",
+      "Engenhoca",
+      "Santana",
+      "Barreto"
+    ],
+    "municipio": "Niterói",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.878,
+    "lng": -43.085,
+    "circunscricao": "Circunscrição da 078ª DP abrangendo Niterói (Fonseca, Viçoso Jardim, Caramujo, Baldeador, Santa Bárbara, Tenente Jardim, Engenhoca, Santana e Barreto)"
+  },
+  {
+    "id": "cisp-79-67",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 79,
+    "delegaciaNome": "079ª DP - Niterói",
+    "unidadeTerritorial": "Jurujuba, Charitas, São Francisco, Cachoeiras, Maceió, Largo da Batalha, Ititioca, Badu, Sapê, Matapaca, Vila Progresso, Muriqui, Maria Paula e Cantagalo",
+    "bairros": [
+      "Jurujuba",
+      "Charitas",
+      "São Francisco",
+      "Cachoeiras",
+      "Maceió",
+      "Largo da Batalha",
+      "Ititioca",
+      "Badu",
+      "Sapê",
+      "Matapaca",
+      "Vila Progresso",
+      "Muriqui",
+      "Maria Paula",
+      "Cantagalo"
+    ],
+    "municipio": "Niterói",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.925,
+    "lng": -43.08,
+    "circunscricao": "Circunscrição da 079ª DP abrangendo Niterói (Jurujuba, Charitas, São Francisco, Cachoeiras, Maceió, Largo da Batalha, Ititioca, Badu, Sapê, Matapaca, Vila Progresso, Muriqui, Maria Paula e Cantagalo)"
+  },
+  {
+    "id": "cisp-81-68",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 81,
+    "delegaciaNome": "081ª DP - Niterói",
+    "unidadeTerritorial": "Itaipu, Camboinhas, Itacoatiara, Piratininga, Cafubá, Jacaré, Rio do Ouro, Engenho do Mato, Várzea das Moças e Jardim Imbuí",
+    "bairros": [
+      "Itaipu",
+      "Camboinhas",
+      "Itacoatiara",
+      "Piratininga",
+      "Cafubá",
+      "Jacaré",
+      "Rio do Ouro",
+      "Engenho do Mato",
+      "Várzea das Moças",
+      "Jardim Imbuí"
+    ],
+    "municipio": "Niterói",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.96,
+    "lng": -43.03,
+    "circunscricao": "Circunscrição da 081ª DP abrangendo Niterói (Itaipu, Camboinhas, Itacoatiara, Piratininga, Cafubá, Jacaré, Rio do Ouro, Engenho do Mato, Várzea das Moças e Jardim Imbuí)"
+  },
+  {
+    "id": "cisp-82-69",
+    "risp": 4,
+    "aisp": 12,
+    "cisp": 82,
+    "delegaciaNome": "082ª DP - Maricá",
+    "unidadeTerritorial": "Maricá e Inoã",
+    "bairros": [
+      "Maricá",
+      "Inoã"
+    ],
+    "municipio": "Maricá",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "12º BPM (Niterói)",
+    "lat": -22.919,
+    "lng": -42.818,
+    "circunscricao": "Circunscrição da 082ª DP abrangendo Maricá (Maricá e Inoã)"
+  },
+  {
+    "id": "cisp-118-70",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 118,
+    "delegaciaNome": "118ª DP - Araruama",
+    "unidadeTerritorial": "Araruama, Morro Grande e São Vicente de Paula",
+    "bairros": [
+      "Araruama",
+      "Morro Grande",
+      "São Vicente de Paula"
+    ],
+    "municipio": "Araruama",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.873,
+    "lng": -42.342,
+    "circunscricao": "Circunscrição da 118ª DP abrangendo Araruama (Araruama, Morro Grande e São Vicente de Paula)"
+  },
+  {
+    "id": "cisp-124-71",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 124,
+    "delegaciaNome": "124ª DP - Saquarema",
+    "unidadeTerritorial": "Saquarema, Bacaxá e Sampaio Correia",
+    "bairros": [
+      "Saquarema",
+      "Bacaxá",
+      "Sampaio Correia"
+    ],
+    "municipio": "Saquarema",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.932,
+    "lng": -42.51,
+    "circunscricao": "Circunscrição da 124ª DP abrangendo Saquarema (Saquarema, Bacaxá e Sampaio Correia)"
+  },
+  {
+    "id": "cisp-125-72",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 125,
+    "delegaciaNome": "125ª DP - São Pedro da Aldeia",
+    "unidadeTerritorial": "São Pedro da Aldeia",
+    "bairros": [
+      "São Pedro da Aldeia"
+    ],
+    "municipio": "São Pedro da Aldeia",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.842,
+    "lng": -42.1,
+    "circunscricao": "Circunscrição da 125ª DP abrangendo São Pedro da Aldeia (São Pedro da Aldeia)"
+  },
+  {
+    "id": "cisp-126-73",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 126,
+    "delegaciaNome": "126ª DP - Cabo Frio",
+    "unidadeTerritorial": "Cabo Frio e Tamoios",
+    "bairros": [
+      "Cabo Frio",
+      "Tamoios"
+    ],
+    "municipio": "Cabo Frio",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.88,
+    "lng": -42.02,
+    "circunscricao": "Circunscrição da 126ª DP abrangendo Cabo Frio (Cabo Frio e Tamoios)"
+  },
+  {
+    "id": "cisp-127-74",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 127,
+    "delegaciaNome": "127ª DP - Armação dos Búzios",
+    "unidadeTerritorial": "Armação dos Búzios",
+    "bairros": [
+      "Armação dos Búzios"
+    ],
+    "municipio": "Armação dos Búzios",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.75,
+    "lng": -41.9,
+    "circunscricao": "Circunscrição da 127ª DP abrangendo Armação dos Búzios (Armação dos Búzios)"
+  },
+  {
+    "id": "cisp-129-75",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 129,
+    "delegaciaNome": "129ª DP - Iguaba Grande",
+    "unidadeTerritorial": "Iguaba Grande",
+    "bairros": [
+      "Iguaba Grande"
+    ],
+    "municipio": "Iguaba Grande",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.84,
+    "lng": -42.18,
+    "circunscricao": "Circunscrição da 129ª DP abrangendo Iguaba Grande (Iguaba Grande)"
+  },
+  {
+    "id": "cisp-132-76",
+    "risp": 4,
+    "aisp": 25,
+    "cisp": 132,
+    "delegaciaNome": "132ª DP - Arraial do Cabo",
+    "unidadeTerritorial": "Arraial do Cabo",
+    "bairros": [
+      "Arraial do Cabo"
+    ],
+    "municipio": "Arraial do Cabo",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "25º BPM (Cabo Frio)",
+    "lat": -22.965,
+    "lng": -42.025,
+    "circunscricao": "Circunscrição da 132ª DP abrangendo Arraial do Cabo (Arraial do Cabo)"
+  },
+  {
+    "id": "cisp-70-77",
+    "risp": 4,
+    "aisp": 35,
+    "cisp": 70,
+    "delegaciaNome": "070ª DP - Tanguá",
+    "unidadeTerritorial": "Tanguá",
+    "bairros": [
+      "Tanguá"
+    ],
+    "municipio": "Tanguá",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "35º BPM (Itaboraí)",
+    "lat": -22.73,
+    "lng": -42.71,
+    "circunscricao": "Circunscrição da 070ª DP abrangendo Tanguá (Tanguá)"
+  },
+  {
+    "id": "cisp-71-78",
+    "risp": 4,
+    "aisp": 35,
+    "cisp": 71,
+    "delegaciaNome": "071ª DP - Itaboraí",
+    "unidadeTerritorial": "Itaboraí, Cabuçú, Itambí, Porto das Caixas e Sambaetiba",
+    "bairros": [
+      "Itaboraí",
+      "Cabuçú",
+      "Itambí",
+      "Porto das Caixas",
+      "Sambaetiba"
+    ],
+    "municipio": "Itaboraí",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "35º BPM (Itaboraí)",
+    "lat": -22.745,
+    "lng": -42.86,
+    "circunscricao": "Circunscrição da 071ª DP abrangendo Itaboraí (Itaboraí, Cabuçú, Itambí, Porto das Caixas e Sambaetiba)"
+  },
+  {
+    "id": "cisp-119-79",
+    "risp": 4,
+    "aisp": 35,
+    "cisp": 119,
+    "delegaciaNome": "119ª DP - Rio Bonito",
+    "unidadeTerritorial": "Rio Bonito e Boa Esperança",
+    "bairros": [
+      "Rio Bonito",
+      "Boa Esperança"
+    ],
+    "municipio": "Rio Bonito",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "35º BPM (Itaboraí)",
+    "lat": -22.705,
+    "lng": -42.625,
+    "circunscricao": "Circunscrição da 119ª DP abrangendo Rio Bonito (Rio Bonito e Boa Esperança)"
+  },
+  {
+    "id": "cisp-120-80",
+    "risp": 4,
+    "aisp": 35,
+    "cisp": 120,
+    "delegaciaNome": "120ª DP - Silva Jardim",
+    "unidadeTerritorial": "Silva Jardim, Aldeia Velha, Correntezas e Gaviões",
+    "bairros": [
+      "Silva Jardim",
+      "Aldeia Velha",
+      "Correntezas",
+      "Gaviões"
+    ],
+    "municipio": "Silva Jardim",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "35º BPM (Itaboraí)",
+    "lat": -22.65,
+    "lng": -42.395,
+    "circunscricao": "Circunscrição da 120ª DP abrangendo Silva Jardim (Silva Jardim, Aldeia Velha, Correntezas e Gaviões)"
+  },
+  {
+    "id": "cisp-88-81",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 88,
+    "delegaciaNome": "088ª DP - Barra do Piraí",
+    "unidadeTerritorial": "Barra do Piraí, Dorandia, Ipiabas, São José do Turvo e Vargem Alegre",
+    "bairros": [
+      "Barra do Piraí",
+      "Dorandia",
+      "Ipiabas",
+      "São José do Turvo",
+      "Vargem Alegre"
+    ],
+    "municipio": "Barra do Piraí",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.525,
+    "lng": -43.825,
+    "circunscricao": "Circunscrição da 088ª DP abrangendo Barra do Piraí (Barra do Piraí, Dorandia, Ipiabas, São José do Turvo e Vargem Alegre)"
+  },
+  {
+    "id": "cisp-91-82",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 91,
+    "delegaciaNome": "091ª DP - Valença",
+    "unidadeTerritorial": "Valença, Barão de Juparana, Conservatória, Parapeúna, Pentagna e Santa Isabel do Rio Preto",
+    "bairros": [
+      "Valença",
+      "Barão de Juparana",
+      "Conservatória",
+      "Parapeúna",
+      "Pentagna",
+      "Santa Isabel do Rio Preto"
+    ],
+    "municipio": "Valença",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.245,
+    "lng": -43.705,
+    "circunscricao": "Circunscrição da 091ª DP abrangendo Valença (Valença, Barão de Juparana, Conservatória, Parapeúna, Pentagna e Santa Isabel do Rio Preto)"
+  },
+  {
+    "id": "cisp-92-83",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 92,
+    "delegaciaNome": "092ª DP - Rio das Flores",
+    "unidadeTerritorial": "Rio das Flores, Manuel Duarte, Abarracamento e Taboas",
+    "bairros": [
+      "Rio das Flores",
+      "Manuel Duarte",
+      "Abarracamento",
+      "Taboas"
+    ],
+    "municipio": "Rio das Flores",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.17,
+    "lng": -43.585,
+    "circunscricao": "Circunscrição da 092ª DP abrangendo Rio das Flores (Rio das Flores, Manuel Duarte, Abarracamento e Taboas)"
+  },
+  {
+    "id": "cisp-94-84",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 94,
+    "delegaciaNome": "094ª DP - Piraí",
+    "unidadeTerritorial": "Piraí, Arrozal, Monumento e Santanésia",
+    "bairros": [
+      "Piraí",
+      "Arrozal",
+      "Monumento",
+      "Santanésia"
+    ],
+    "municipio": "Piraí",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.628,
+    "lng": -43.898,
+    "circunscricao": "Circunscrição da 094ª DP abrangendo Piraí (Piraí, Arrozal, Monumento e Santanésia)"
+  },
+  {
+    "id": "cisp-95-85",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 95,
+    "delegaciaNome": "095ª DP - Vassouras",
+    "unidadeTerritorial": "Vassouras, Andrade Pinto, São Sebastião dos Ferreiros e Sebastião de Lacerda",
+    "bairros": [
+      "Vassouras",
+      "Andrade Pinto",
+      "São Sebastião dos Ferreiros",
+      "Sebastião de Lacerda"
+    ],
+    "municipio": "Vassouras",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.403,
+    "lng": -43.663,
+    "circunscricao": "Circunscrição da 095ª DP abrangendo Vassouras (Vassouras, Andrade Pinto, São Sebastião dos Ferreiros e Sebastião de Lacerda)"
+  },
+  {
+    "id": "cisp-96-86",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 96,
+    "delegaciaNome": "096ª DP - Miguel Pereira",
+    "unidadeTerritorial": "Miguel Pereira, Governador Portela e Conrado",
+    "bairros": [
+      "Miguel Pereira",
+      "Governador Portela",
+      "Conrado"
+    ],
+    "municipio": "Miguel Pereira",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.455,
+    "lng": -43.495,
+    "circunscricao": "Circunscrição da 096ª DP abrangendo Miguel Pereira (Miguel Pereira, Governador Portela e Conrado)"
+  },
+  {
+    "id": "cisp-96-87",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 96,
+    "delegaciaNome": "096ª DP - Paty do Alferes",
+    "unidadeTerritorial": "Paty do Alferes e Avelar",
+    "bairros": [
+      "Paty do Alferes",
+      "Avelar"
+    ],
+    "municipio": "Paty do Alferes",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.455,
+    "lng": -43.495,
+    "circunscricao": "Circunscrição da 096ª DP abrangendo Paty do Alferes (Paty do Alferes e Avelar)"
+  },
+  {
+    "id": "cisp-97-88",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 97,
+    "delegaciaNome": "097ª DP - Mendes",
+    "unidadeTerritorial": "Mendes",
+    "bairros": [
+      "Mendes"
+    ],
+    "municipio": "Mendes",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.526,
+    "lng": -43.732,
+    "circunscricao": "Circunscrição da 097ª DP abrangendo Mendes (Mendes)"
+  },
+  {
+    "id": "cisp-98-89",
+    "risp": 5,
+    "aisp": 10,
+    "cisp": 98,
+    "delegaciaNome": "098ª DP - Engenheiro Paulo de Frontin",
+    "unidadeTerritorial": "Engenheiro Paulo de Frontin e Sacra Família do Tinguá",
+    "bairros": [
+      "Engenheiro Paulo de Frontin",
+      "Sacra Família do Tinguá"
+    ],
+    "municipio": "Engenheiro Paulo de Frontin",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "10º BPM (Barra do Piraí)",
+    "lat": -22.553,
+    "lng": -43.678,
+    "circunscricao": "Circunscrição da 098ª DP abrangendo Engenheiro Paulo de Frontin (Engenheiro Paulo de Frontin e Sacra Família do Tinguá)"
+  },
+  {
+    "id": "cisp-90-90",
+    "risp": 5,
+    "aisp": 28,
+    "cisp": 90,
+    "delegaciaNome": "090ª DP - Barra Mansa",
+    "unidadeTerritorial": "Antonio Rocha, Floriano, Nossa Senhora do Amparo, Rialto e Regiões Administrativas I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV",
+    "bairros": [
+      "Antonio Rocha",
+      "Floriano",
+      "Nossa Senhora do Amparo",
+      "Rialto",
+      "Regiões Administrativas I",
+      "II",
+      "III",
+      "IV",
+      "V",
+      "VI",
+      "VII",
+      "VIII",
+      "IX",
+      "X",
+      "XI",
+      "XII",
+      "XIII",
+      "XIV"
+    ],
+    "municipio": "Barra Mansa",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+    "lat": -22.545,
+    "lng": -44.17,
+    "circunscricao": "Circunscrição da 090ª DP abrangendo Barra Mansa (Antonio Rocha, Floriano, Nossa Senhora do Amparo, Rialto e Regiões Administrativas I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV)"
+  },
+  {
+    "id": "cisp-93-91",
+    "risp": 5,
+    "aisp": 28,
+    "cisp": 93,
+    "delegaciaNome": "093ª DP - Volta Redonda",
+    "unidadeTerritorial": "Volta Redonda",
+    "bairros": [
+      "Volta Redonda"
+    ],
+    "municipio": "Volta Redonda",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+    "lat": -22.52,
+    "lng": -44.105,
+    "circunscricao": "Circunscrição da 093ª DP abrangendo Volta Redonda (Volta Redonda)"
+  },
+  {
+    "id": "cisp-101-92",
+    "risp": 5,
+    "aisp": 28,
+    "cisp": 101,
+    "delegaciaNome": "101ª DP - Pinheiral",
+    "unidadeTerritorial": "Pinheiral",
+    "bairros": [
+      "Pinheiral"
+    ],
+    "municipio": "Pinheiral",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+    "lat": -22.512,
+    "lng": -44.001,
+    "circunscricao": "Circunscrição da 101ª DP abrangendo Pinheiral (Pinheiral)"
+  },
+  {
+    "id": "cisp-168-93",
+    "risp": 5,
+    "aisp": 28,
+    "cisp": 168,
+    "delegaciaNome": "168ª DP - Rio Claro",
+    "unidadeTerritorial": "Rio Claro, Getulândia, Lídice, Passa Três e São João Marcos",
+    "bairros": [
+      "Rio Claro",
+      "Getulândia",
+      "Lídice",
+      "Passa Três",
+      "São João Marcos"
+    ],
+    "municipio": "Rio Claro",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "28º BPM (Volta Redonda)",
+    "lat": -22.72,
+    "lng": -44.135,
+    "circunscricao": "Circunscrição da 168ª DP abrangendo Rio Claro (Rio Claro, Getulândia, Lídice, Passa Três e São João Marcos)"
+  },
+  {
+    "id": "cisp-165-94",
+    "risp": 5,
+    "aisp": 33,
+    "cisp": 165,
+    "delegaciaNome": "165ª DP - Mangaratiba",
+    "unidadeTerritorial": "Mangaratiba, Conceição de Jacareí, Vila Muriquí, Itacuruçá",
+    "bairros": [
+      "Mangaratiba",
+      "Conceição de Jacareí",
+      "Vila Muriquí",
+      "Itacuruçá"
+    ],
+    "municipio": "Mangaratiba",
+    "regiaoGoverno": "Costa Verde",
+    "batalhaoPMERJ": "33º BPM (Angra dos Reis)",
+    "lat": -22.955,
+    "lng": -44.04,
+    "circunscricao": "Circunscrição da 165ª DP abrangendo Mangaratiba (Mangaratiba, Conceição de Jacareí, Vila Muriquí, Itacuruçá)"
+  },
+  {
+    "id": "cisp-166-95",
+    "risp": 5,
+    "aisp": 33,
+    "cisp": 166,
+    "delegaciaNome": "166ª DP - Angra dos Reis",
+    "unidadeTerritorial": "Angra dos Reis, Jacuecanga, Cunhambebe, Mambucaba, Abraão e Praia de Araçatiba",
+    "bairros": [
+      "Angra dos Reis",
+      "Jacuecanga",
+      "Cunhambebe",
+      "Mambucaba",
+      "Abraão",
+      "Praia de Araçatiba"
+    ],
+    "municipio": "Angra dos Reis",
+    "regiaoGoverno": "Costa Verde",
+    "batalhaoPMERJ": "33º BPM (Angra dos Reis)",
+    "lat": -23.005,
+    "lng": -44.315,
+    "circunscricao": "Circunscrição da 166ª DP abrangendo Angra dos Reis (Angra dos Reis, Jacuecanga, Cunhambebe, Mambucaba, Abraão e Praia de Araçatiba)"
+  },
+  {
+    "id": "cisp-89-96",
+    "risp": 5,
+    "aisp": 37,
+    "cisp": 89,
+    "delegaciaNome": "089ª DP - Resende",
+    "unidadeTerritorial": "Resende, Engenheiro Passos, Agulhas Negras, Pedra Selada e Fumaça",
+    "bairros": [
+      "Resende",
+      "Engenheiro Passos",
+      "Agulhas Negras",
+      "Pedra Selada",
+      "Fumaça"
+    ],
+    "municipio": "Resende",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "37º BPM (Resende)",
+    "lat": -22.47,
+    "lng": -44.45,
+    "circunscricao": "Circunscrição da 089ª DP abrangendo Resende (Resende, Engenheiro Passos, Agulhas Negras, Pedra Selada e Fumaça)"
+  },
+  {
+    "id": "cisp-99-97",
+    "risp": 5,
+    "aisp": 37,
+    "cisp": 99,
+    "delegaciaNome": "099ª DP - Itatiaia",
+    "unidadeTerritorial": "Itatiaia",
+    "bairros": [
+      "Itatiaia"
+    ],
+    "municipio": "Itatiaia",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "37º BPM (Resende)",
+    "lat": -22.495,
+    "lng": -44.56,
+    "circunscricao": "Circunscrição da 099ª DP abrangendo Itatiaia (Itatiaia)"
+  },
+  {
+    "id": "cisp-100-98",
+    "risp": 5,
+    "aisp": 37,
+    "cisp": 100,
+    "delegaciaNome": "100ª DP - Porto Real",
+    "unidadeTerritorial": "Porto Real",
+    "bairros": [
+      "Porto Real"
+    ],
+    "municipio": "Porto Real",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "37º BPM (Resende)",
+    "lat": -22.418,
+    "lng": -44.34,
+    "circunscricao": "Circunscrição da 100ª DP abrangendo Porto Real (Porto Real)"
+  },
+  {
+    "id": "cisp-100-99",
+    "risp": 5,
+    "aisp": 37,
+    "cisp": 100,
+    "delegaciaNome": "100ª DP - Quatis",
+    "unidadeTerritorial": "Quatis, Falcão e Ribeirão de São Joaquim",
+    "bairros": [
+      "Quatis",
+      "Falcão",
+      "Ribeirão de São Joaquim"
+    ],
+    "municipio": "Quatis",
+    "regiaoGoverno": "Médio Paraíba",
+    "batalhaoPMERJ": "37º BPM (Resende)",
+    "lat": -22.418,
+    "lng": -44.34,
+    "circunscricao": "Circunscrição da 100ª DP abrangendo Quatis (Quatis, Falcão e Ribeirão de São Joaquim)"
+  },
+  {
+    "id": "cisp-167-100",
+    "risp": 5,
+    "aisp": 43,
+    "cisp": 167,
+    "delegaciaNome": "167ª DP - Paraty",
+    "unidadeTerritorial": "Paraty, Paraty-Mirim e Tarituba",
+    "bairros": [
+      "Paraty",
+      "Paraty-Mirim",
+      "Tarituba"
+    ],
+    "municipio": "Paraty",
+    "regiaoGoverno": "Costa Verde",
+    "batalhaoPMERJ": "33º BPM (2ª Cia Paraty)",
+    "lat": -23.22,
+    "lng": -44.715,
+    "circunscricao": "Circunscrição da 167ª DP abrangendo Paraty (Paraty, Paraty-Mirim e Tarituba)"
+  },
+  {
+    "id": "cisp-134-101",
+    "risp": 6,
+    "aisp": 8,
+    "cisp": 134,
+    "delegaciaNome": "134ª DP - Campos dos Goytacazes",
+    "unidadeTerritorial": "Campos dos Goytacazes (Primeiro Subdistrito, Segundo Subdistrito e Quarto Subdistrito), Ibitioca, Dores de Macabu, Morangaba, Mussurepe, Serrinha, Santo Amaro de Campos, São Sebastião de Campos e Tocos",
+    "bairros": [
+      "Campos dos Goytacazes (Primeiro Subdistrito",
+      "Segundo Subdistrito",
+      "Quarto Subdistrito)",
+      "Ibitioca",
+      "Dores de Macabu",
+      "Morangaba",
+      "Mussurepe",
+      "Serrinha",
+      "Santo Amaro de Campos",
+      "São Sebastião de Campos",
+      "Tocos"
+    ],
+    "municipio": "Campos dos Goytacazes",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+    "lat": -21.755,
+    "lng": -41.325,
+    "circunscricao": "Circunscrição da 134ª DP abrangendo Campos dos Goytacazes (Campos dos Goytacazes (Primeiro Subdistrito, Segundo Subdistrito e Quarto Subdistrito), Ibitioca, Dores de Macabu, Morangaba, Mussurepe, Serrinha, Santo Amaro de Campos, São Sebastião de Campos e Tocos)"
+  },
+  {
+    "id": "cisp-141-102",
+    "risp": 6,
+    "aisp": 8,
+    "cisp": 141,
+    "delegaciaNome": "141ª DP - São Fidélis",
+    "unidadeTerritorial": "São Fidelis, Cambiasca, Colonia, Ipuca e Pureza",
+    "bairros": [
+      "São Fidelis",
+      "Cambiasca",
+      "Colonia",
+      "Ipuca",
+      "Pureza"
+    ],
+    "municipio": "São Fidélis",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+    "lat": -21.645,
+    "lng": -41.75,
+    "circunscricao": "Circunscrição da 141ª DP abrangendo São Fidélis (São Fidelis, Cambiasca, Colonia, Ipuca e Pureza)"
+  },
+  {
+    "id": "cisp-145-103",
+    "risp": 6,
+    "aisp": 8,
+    "cisp": 145,
+    "delegaciaNome": "145ª DP - São João da Barra",
+    "unidadeTerritorial": "Barcelos, Atafona, São João da Barra, Grussaí, Cajueiro e Pipeiras",
+    "bairros": [
+      "Barcelos",
+      "Atafona",
+      "São João da Barra",
+      "Grussaí",
+      "Cajueiro",
+      "Pipeiras"
+    ],
+    "municipio": "São João da Barra",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+    "lat": -21.64,
+    "lng": -41.05,
+    "circunscricao": "Circunscrição da 145ª DP abrangendo São João da Barra (Barcelos, Atafona, São João da Barra, Grussaí, Cajueiro e Pipeiras)"
+  },
+  {
+    "id": "cisp-146-104",
+    "risp": 6,
+    "aisp": 8,
+    "cisp": 146,
+    "delegaciaNome": "146ª DP - Campos dos Goytacazes",
+    "unidadeTerritorial": "Campos dos Goytacazes (Terceiro Subdistrito), Santa Maria, Morro do Coco, Santo Eduardo, Travessão e Vila Nova de Campos",
+    "bairros": [
+      "Campos dos Goytacazes (Terceiro Subdistrito)",
+      "Santa Maria",
+      "Morro do Coco",
+      "Santo Eduardo",
+      "Travessão",
+      "Vila Nova de Campos"
+    ],
+    "municipio": "Campos dos Goytacazes",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+    "lat": -21.435,
+    "lng": -41.28,
+    "circunscricao": "Circunscrição da 146ª DP abrangendo Campos dos Goytacazes (Campos dos Goytacazes (Terceiro Subdistrito), Santa Maria, Morro do Coco, Santo Eduardo, Travessão e Vila Nova de Campos)"
+  },
+  {
+    "id": "cisp-147-105",
+    "risp": 6,
+    "aisp": 8,
+    "cisp": 147,
+    "delegaciaNome": "147ª DP - São Francisco de Itabapoana",
+    "unidadeTerritorial": "São Francisco de Itabapoana, Maniva e Barra Seca",
+    "bairros": [
+      "São Francisco de Itabapoana",
+      "Maniva",
+      "Barra Seca"
+    ],
+    "municipio": "São Francisco de Itabapoana",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "8º BPM (Campos dos Goytacazes)",
+    "lat": -21.47,
+    "lng": -41.015,
+    "circunscricao": "Circunscrição da 147ª DP abrangendo São Francisco de Itabapoana (São Francisco de Itabapoana, Maniva e Barra Seca)"
+  },
+  {
+    "id": "cisp-138-106",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 138,
+    "delegaciaNome": "138ª DP - Laje do Muriaé",
+    "unidadeTerritorial": "Laje do Muriaé",
+    "bairros": [
+      "Laje do Muriaé"
+    ],
+    "municipio": "Laje do Muriaé",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.205,
+    "lng": -42.125,
+    "circunscricao": "Circunscrição da 138ª DP abrangendo Laje do Muriaé (Laje do Muriaé)"
+  },
+  {
+    "id": "cisp-139-107",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 139,
+    "delegaciaNome": "139ª DP - Porciúncula",
+    "unidadeTerritorial": "Porciúncula, Purilândia e Santa Clara",
+    "bairros": [
+      "Porciúncula",
+      "Purilândia",
+      "Santa Clara"
+    ],
+    "municipio": "Porciúncula",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -20.965,
+    "lng": -41.98,
+    "circunscricao": "Circunscrição da 139ª DP abrangendo Porciúncula (Porciúncula, Purilândia e Santa Clara)"
+  },
+  {
+    "id": "cisp-140-108",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 140,
+    "delegaciaNome": "140ª DP - Natividade",
+    "unidadeTerritorial": "Natividade, Ourania e Bom Jesus do Querendo",
+    "bairros": [
+      "Natividade",
+      "Ourania",
+      "Bom Jesus do Querendo"
+    ],
+    "municipio": "Natividade",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.042,
+    "lng": -41.9,
+    "circunscricao": "Circunscrição da 140ª DP abrangendo Natividade (Natividade, Ourania e Bom Jesus do Querendo)"
+  },
+  {
+    "id": "cisp-140-109",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 140,
+    "delegaciaNome": "140ª DP - Varre-Sai",
+    "unidadeTerritorial": "Varre-Sai",
+    "bairros": [
+      "Varre-Sai"
+    ],
+    "municipio": "Varre-Sai",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.042,
+    "lng": -41.9,
+    "circunscricao": "Circunscrição da 140ª DP abrangendo Varre-Sai (Varre-Sai)"
+  },
+  {
+    "id": "cisp-143-110",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 143,
+    "delegaciaNome": "143ª DP - Itaperuna",
+    "unidadeTerritorial": "Itaperuna, Boaventura, Nossa Senhora da Penha, Itajara, Retiro do Muriaé, Raposo e Comendador Venâncio",
+    "bairros": [
+      "Itaperuna",
+      "Boaventura",
+      "Nossa Senhora da Penha",
+      "Itajara",
+      "Retiro do Muriaé",
+      "Raposo",
+      "Comendador Venâncio"
+    ],
+    "municipio": "Itaperuna",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.202,
+    "lng": -41.888,
+    "circunscricao": "Circunscrição da 143ª DP abrangendo Itaperuna (Itaperuna, Boaventura, Nossa Senhora da Penha, Itajara, Retiro do Muriaé, Raposo e Comendador Venâncio)"
+  },
+  {
+    "id": "cisp-143-111",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 143,
+    "delegaciaNome": "143ª DP - São José de Ubá",
+    "unidadeTerritorial": "São José de Ubá",
+    "bairros": [
+      "São José de Ubá"
+    ],
+    "municipio": "São José de Ubá",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.202,
+    "lng": -41.888,
+    "circunscricao": "Circunscrição da 143ª DP abrangendo São José de Ubá (São José de Ubá)"
+  },
+  {
+    "id": "cisp-144-112",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 144,
+    "delegaciaNome": "144ª DP - Bom Jesus de Itabapoana",
+    "unidadeTerritorial": "Bom Jesus de Itabapoana, Carabuçú, Calheiros, Pirapetinga de Bom Jesus, Rosal e Serrinha",
+    "bairros": [
+      "Bom Jesus de Itabapoana",
+      "Carabuçú",
+      "Calheiros",
+      "Pirapetinga de Bom Jesus",
+      "Rosal",
+      "Serrinha"
+    ],
+    "municipio": "Bom Jesus de Itabapoana",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.135,
+    "lng": -41.675,
+    "circunscricao": "Circunscrição da 144ª DP abrangendo Bom Jesus de Itabapoana (Bom Jesus de Itabapoana, Carabuçú, Calheiros, Pirapetinga de Bom Jesus, Rosal e Serrinha)"
+  },
+  {
+    "id": "cisp-148-113",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 148,
+    "delegaciaNome": "148ª DP - Italva",
+    "unidadeTerritorial": "Italva",
+    "bairros": [
+      "Italva"
+    ],
+    "municipio": "Italva",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.425,
+    "lng": -41.685,
+    "circunscricao": "Circunscrição da 148ª DP abrangendo Italva (Italva)"
+  },
+  {
+    "id": "cisp-148-114",
+    "risp": 6,
+    "aisp": 29,
+    "cisp": 148,
+    "delegaciaNome": "148ª DP - Cardoso Moreira",
+    "unidadeTerritorial": "Cardoso Moreira e São Joaquim",
+    "bairros": [
+      "Cardoso Moreira",
+      "São Joaquim"
+    ],
+    "municipio": "Cardoso Moreira",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "29º BPM (Itaperuna)",
+    "lat": -21.425,
+    "lng": -41.685,
+    "circunscricao": "Circunscrição da 148ª DP abrangendo Cardoso Moreira (Cardoso Moreira e São Joaquim)"
+  },
+  {
+    "id": "cisp-121-115",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 121,
+    "delegaciaNome": "121ª DP - Casimiro de Abreu",
+    "unidadeTerritorial": "Casimiro de Abreu, Professor Souza, Barra de São João e Rio Dourado",
+    "bairros": [
+      "Casimiro de Abreu",
+      "Professor Souza",
+      "Barra de São João",
+      "Rio Dourado"
+    ],
+    "municipio": "Casimiro de Abreu",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.52,
+    "lng": -42.203,
+    "circunscricao": "Circunscrição da 121ª DP abrangendo Casimiro de Abreu (Casimiro de Abreu, Professor Souza, Barra de São João e Rio Dourado)"
+  },
+  {
+    "id": "cisp-122-116",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 122,
+    "delegaciaNome": "122ª DP - Conceição de Macabú",
+    "unidadeTerritorial": "Conceição de Macabú e Macabuzinho",
+    "bairros": [
+      "Conceição de Macabú",
+      "Macabuzinho"
+    ],
+    "municipio": "Conceição de Macabú",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.148,
+    "lng": -41.87,
+    "circunscricao": "Circunscrição da 122ª DP abrangendo Conceição de Macabú (Conceição de Macabú e Macabuzinho)"
+  },
+  {
+    "id": "cisp-123-117",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 123,
+    "delegaciaNome": "123ª DP - Macaé",
+    "unidadeTerritorial": "Centro, Cabiúnas, Barra de Macaé, Aeroporto e Imboassica",
+    "bairros": [
+      "Centro",
+      "Cabiúnas",
+      "Barra de Macaé",
+      "Aeroporto",
+      "Imboassica"
+    ],
+    "municipio": "Macaé",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.38,
+    "lng": -41.785,
+    "circunscricao": "Circunscrição da 123ª DP abrangendo Macaé (Centro, Cabiúnas, Barra de Macaé, Aeroporto e Imboassica)"
+  },
+  {
+    "id": "cisp-128-118",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 128,
+    "delegaciaNome": "128ª DP - Rio das Ostras",
+    "unidadeTerritorial": "Rio das Ostras",
+    "bairros": [
+      "Rio das Ostras"
+    ],
+    "municipio": "Rio das Ostras",
+    "regiaoGoverno": "Baixadas Litorâneas",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.525,
+    "lng": -41.945,
+    "circunscricao": "Circunscrição da 128ª DP abrangendo Rio das Ostras (Rio das Ostras)"
+  },
+  {
+    "id": "cisp-130-119",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 130,
+    "delegaciaNome": "130ª DP - Carapebus",
+    "unidadeTerritorial": "Centro, UB-S, Rodagem, Carapebus e Praia de Carapebus",
+    "bairros": [
+      "Centro",
+      "UB-S",
+      "Rodagem",
+      "Carapebus",
+      "Praia de Carapebus"
+    ],
+    "municipio": "Carapebus",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.255,
+    "lng": -41.65,
+    "circunscricao": "Circunscrição da 130ª DP abrangendo Carapebus (Centro, UB-S, Rodagem, Carapebus e Praia de Carapebus)"
+  },
+  {
+    "id": "cisp-130-120",
+    "risp": 6,
+    "aisp": 32,
+    "cisp": 130,
+    "delegaciaNome": "130ª DP - Quissamã",
+    "unidadeTerritorial": "Quissamã",
+    "bairros": [
+      "Quissamã"
+    ],
+    "municipio": "Quissamã",
+    "regiaoGoverno": "Norte Fluminense",
+    "batalhaoPMERJ": "32º BPM (Macaé)",
+    "lat": -22.255,
+    "lng": -41.65,
+    "circunscricao": "Circunscrição da 130ª DP abrangendo Quissamã (Quissamã)"
+  },
+  {
+    "id": "cisp-135-121",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 135,
+    "delegaciaNome": "135ª DP - Itaocara",
+    "unidadeTerritorial": "Itaocara, Portela, Batatal, Laranjais, Jaguarembe e Estrada Nova",
+    "bairros": [
+      "Itaocara",
+      "Portela",
+      "Batatal",
+      "Laranjais",
+      "Jaguarembe",
+      "Estrada Nova"
+    ],
+    "municipio": "Itaocara",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.67,
+    "lng": -42.075,
+    "circunscricao": "Circunscrição da 135ª DP abrangendo Itaocara (Itaocara, Portela, Batatal, Laranjais, Jaguarembe e Estrada Nova)"
+  },
+  {
+    "id": "cisp-136-122",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 136,
+    "delegaciaNome": "136ª DP - Aperibé",
+    "unidadeTerritorial": "Aperibé",
+    "bairros": [
+      "Aperibé"
+    ],
+    "municipio": "Aperibé",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.53,
+    "lng": -42.1,
+    "circunscricao": "Circunscrição da 136ª DP abrangendo Aperibé (Aperibé)"
+  },
+  {
+    "id": "cisp-136-123",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 136,
+    "delegaciaNome": "136ª DP - Santo Antônio de Pádua",
+    "unidadeTerritorial": "Santo Antônio de Pádua, Campelo, Paraoquena, Monte Alegre, Ibitiguaçú, Santa Cruz, Baltazar, Marangatú e São Pedro de Alcântara",
+    "bairros": [
+      "Santo Antônio de Pádua",
+      "Campelo",
+      "Paraoquena",
+      "Monte Alegre",
+      "Ibitiguaçú",
+      "Santa Cruz",
+      "Baltazar",
+      "Marangatú",
+      "São Pedro de Alcântara"
+    ],
+    "municipio": "Santo Antônio de Pádua",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.53,
+    "lng": -42.1,
+    "circunscricao": "Circunscrição da 136ª DP abrangendo Santo Antônio de Pádua (Santo Antônio de Pádua, Campelo, Paraoquena, Monte Alegre, Ibitiguaçú, Santa Cruz, Baltazar, Marangatú e São Pedro de Alcântara)"
+  },
+  {
+    "id": "cisp-137-124",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 137,
+    "delegaciaNome": "137ª DP - Miracema",
+    "unidadeTerritorial": "Miracema, Venda das Flores e Paraíso do Tobias",
+    "bairros": [
+      "Miracema",
+      "Venda das Flores",
+      "Paraíso do Tobias"
+    ],
+    "municipio": "Miracema",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.415,
+    "lng": -42.195,
+    "circunscricao": "Circunscrição da 137ª DP abrangendo Miracema (Miracema, Venda das Flores e Paraíso do Tobias)"
+  },
+  {
+    "id": "cisp-142-125",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 142,
+    "delegaciaNome": "142ª DP - Cambuci",
+    "unidadeTerritorial": "Cambuci, Três Irmãos, Funil, Monte Verde e São João do Paraíso",
+    "bairros": [
+      "Cambuci",
+      "Três Irmãos",
+      "Funil",
+      "Monte Verde",
+      "São João do Paraíso"
+    ],
+    "municipio": "Cambuci",
+    "regiaoGoverno": "Noroeste Fluminense",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.575,
+    "lng": -41.91,
+    "circunscricao": "Circunscrição da 142ª DP abrangendo Cambuci (Cambuci, Três Irmãos, Funil, Monte Verde e São João do Paraíso)"
+  },
+  {
+    "id": "cisp-155-126",
+    "risp": 6,
+    "aisp": 36,
+    "cisp": 155,
+    "delegaciaNome": "155ª DP - São Sebastião do Alto",
+    "unidadeTerritorial": "São Sebastião do Alto, Valão do Barro e Ipituna",
+    "bairros": [
+      "São Sebastião do Alto",
+      "Valão do Barro",
+      "Ipituna"
+    ],
+    "municipio": "São Sebastião do Alto",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "36º BPM (Santo Antônio de Pádua)",
+    "lat": -21.92,
+    "lng": -42.135,
+    "circunscricao": "Circunscrição da 155ª DP abrangendo São Sebastião do Alto (São Sebastião do Alto, Valão do Barro e Ipituna)"
+  },
+  {
+    "id": "cisp-151-127",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 151,
+    "delegaciaNome": "151ª DP - Nova Friburgo",
+    "unidadeTerritorial": "Nova Friburgo, São Pedro da Serra, Lumiar, Amparo, Riograndina, Conselheiro Paulino e Campo do Coelho",
+    "bairros": [
+      "Nova Friburgo",
+      "São Pedro da Serra",
+      "Lumiar",
+      "Amparo",
+      "Riograndina",
+      "Conselheiro Paulino",
+      "Campo do Coelho"
+    ],
+    "municipio": "Nova Friburgo",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.285,
+    "lng": -42.53,
+    "circunscricao": "Circunscrição da 151ª DP abrangendo Nova Friburgo (Nova Friburgo, São Pedro da Serra, Lumiar, Amparo, Riograndina, Conselheiro Paulino e Campo do Coelho)"
+  },
+  {
+    "id": "cisp-152-128",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 152,
+    "delegaciaNome": "152ª DP - Duas Barras",
+    "unidadeTerritorial": "Duas Barras e Monnerat",
+    "bairros": [
+      "Duas Barras",
+      "Monnerat"
+    ],
+    "municipio": "Duas Barras",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.05,
+    "lng": -42.395,
+    "circunscricao": "Circunscrição da 152ª DP abrangendo Duas Barras (Duas Barras e Monnerat)"
+  },
+  {
+    "id": "cisp-153-129",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 153,
+    "delegaciaNome": "153ª DP - Cantagalo",
+    "unidadeTerritorial": "Cantagalo, Santa Rita da Floresta, Boa Sorte, Euclidelândia e São Sebastião do Paraíba",
+    "bairros": [
+      "Cantagalo",
+      "Santa Rita da Floresta",
+      "Boa Sorte",
+      "Euclidelândia",
+      "São Sebastião do Paraíba"
+    ],
+    "municipio": "Cantagalo",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -21.975,
+    "lng": -42.365,
+    "circunscricao": "Circunscrição da 153ª DP abrangendo Cantagalo (Cantagalo, Santa Rita da Floresta, Boa Sorte, Euclidelândia e São Sebastião do Paraíba)"
+  },
+  {
+    "id": "cisp-154-130",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 154,
+    "delegaciaNome": "154ª DP - Cordeiro",
+    "unidadeTerritorial": "Cordeiro",
+    "bairros": [
+      "Cordeiro"
+    ],
+    "municipio": "Cordeiro",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.025,
+    "lng": -42.25,
+    "circunscricao": "Circunscrição da 154ª DP abrangendo Cordeiro (Cordeiro)"
+  },
+  {
+    "id": "cisp-154-131",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 154,
+    "delegaciaNome": "154ª DP - Macuco",
+    "unidadeTerritorial": "Macuco",
+    "bairros": [
+      "Macuco"
+    ],
+    "municipio": "Macuco",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.025,
+    "lng": -42.25,
+    "circunscricao": "Circunscrição da 154ª DP abrangendo Macuco (Macuco)"
+  },
+  {
+    "id": "cisp-156-132",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 156,
+    "delegaciaNome": "156ª DP - Santa Maria Madalena",
+    "unidadeTerritorial": "Santa Maria Madalena, Doutor Loreti, Renascença, Santo Antônio do Imbé, Sossego e Triunfo",
+    "bairros": [
+      "Santa Maria Madalena",
+      "Doutor Loreti",
+      "Renascença",
+      "Santo Antônio do Imbé",
+      "Sossego",
+      "Triunfo"
+    ],
+    "municipio": "Santa Maria Madalena",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -21.95,
+    "lng": -42.005,
+    "circunscricao": "Circunscrição da 156ª DP abrangendo Santa Maria Madalena (Santa Maria Madalena, Doutor Loreti, Renascença, Santo Antônio do Imbé, Sossego e Triunfo)"
+  },
+  {
+    "id": "cisp-157-133",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 157,
+    "delegaciaNome": "157ª DP - Trajano de Moraes",
+    "unidadeTerritorial": "Trajano de Moraes, Doutor Elias, Sodrelândia, Vila da Grama e Visconde de Imbé",
+    "bairros": [
+      "Trajano de Moraes",
+      "Doutor Elias",
+      "Sodrelândia",
+      "Vila da Grama",
+      "Visconde de Imbé"
+    ],
+    "municipio": "Trajano de Moraes",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.06,
+    "lng": -42.06,
+    "circunscricao": "Circunscrição da 157ª DP abrangendo Trajano de Moraes (Trajano de Moraes, Doutor Elias, Sodrelândia, Vila da Grama e Visconde de Imbé)"
+  },
+  {
+    "id": "cisp-158-134",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 158,
+    "delegaciaNome": "158ª DP - Bom Jardim",
+    "unidadeTerritorial": "Bom Jardim, Banquete, Barra Alegre e São José do Ribeirão",
+    "bairros": [
+      "Bom Jardim",
+      "Banquete",
+      "Barra Alegre",
+      "São José do Ribeirão"
+    ],
+    "municipio": "Bom Jardim",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.165,
+    "lng": -42.42,
+    "circunscricao": "Circunscrição da 158ª DP abrangendo Bom Jardim (Bom Jardim, Banquete, Barra Alegre e São José do Ribeirão)"
+  },
+  {
+    "id": "cisp-159-135",
+    "risp": 7,
+    "aisp": 11,
+    "cisp": 159,
+    "delegaciaNome": "159ª DP - Cachoeiras de Macacu",
+    "unidadeTerritorial": "Cachoeiras de Macacu, Japuíba e Subaio",
+    "bairros": [
+      "Cachoeiras de Macacu",
+      "Japuíba",
+      "Subaio"
+    ],
+    "municipio": "Cachoeiras de Macacu",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "11º BPM (Nova Friburgo)",
+    "lat": -22.465,
+    "lng": -42.655,
+    "circunscricao": "Circunscrição da 159ª DP abrangendo Cachoeiras de Macacu (Cachoeiras de Macacu, Japuíba e Subaio)"
+  },
+  {
+    "id": "cisp-105-136",
+    "risp": 7,
+    "aisp": 26,
+    "cisp": 105,
+    "delegaciaNome": "105ª DP - Petrópolis",
+    "unidadeTerritorial": "Petrópolis e Cascatinha",
+    "bairros": [
+      "Petrópolis",
+      "Cascatinha"
+    ],
+    "municipio": "Petrópolis",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "26º BPM (Petrópolis)",
+    "lat": -22.505,
+    "lng": -43.18,
+    "circunscricao": "Circunscrição da 105ª DP abrangendo Petrópolis (Petrópolis e Cascatinha)"
+  },
+  {
+    "id": "cisp-106-137",
+    "risp": 7,
+    "aisp": 26,
+    "cisp": 106,
+    "delegaciaNome": "106ª DP - Petrópolis",
+    "unidadeTerritorial": "Itaipava, Pedro do Rio e Posse",
+    "bairros": [
+      "Itaipava",
+      "Pedro do Rio",
+      "Posse"
+    ],
+    "municipio": "Petrópolis",
+    "regiaoGoverno": "Metropolitana",
+    "batalhaoPMERJ": "26º BPM (Petrópolis)",
+    "lat": -22.42,
+    "lng": -43.13,
+    "circunscricao": "Circunscrição da 106ª DP abrangendo Petrópolis (Itaipava, Pedro do Rio e Posse)"
+  },
+  {
+    "id": "cisp-104-138",
+    "risp": 7,
+    "aisp": 30,
+    "cisp": 104,
+    "delegaciaNome": "104ª DP - São José do Vale do Rio Preto",
+    "unidadeTerritorial": "São José do Vale do Rio Preto",
+    "bairros": [
+      "São José do Vale do Rio Preto"
+    ],
+    "municipio": "São José do Vale do Rio Preto",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "30º BPM (Teresópolis)",
+    "lat": -22.152,
+    "lng": -42.925,
+    "circunscricao": "Circunscrição da 104ª DP abrangendo São José do Vale do Rio Preto (São José do Vale do Rio Preto)"
+  },
+  {
+    "id": "cisp-110-139",
+    "risp": 7,
+    "aisp": 30,
+    "cisp": 110,
+    "delegaciaNome": "110ª DP - Teresópolis",
+    "unidadeTerritorial": "Teresópolis, Vale do Bonsucesso e Vale do Paquequer",
+    "bairros": [
+      "Teresópolis",
+      "Vale do Bonsucesso",
+      "Vale do Paquequer"
+    ],
+    "municipio": "Teresópolis",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "30º BPM (Teresópolis)",
+    "lat": -22.412,
+    "lng": -42.965,
+    "circunscricao": "Circunscrição da 110ª DP abrangendo Teresópolis (Teresópolis, Vale do Bonsucesso e Vale do Paquequer)"
+  },
+  {
+    "id": "cisp-111-140",
+    "risp": 7,
+    "aisp": 30,
+    "cisp": 111,
+    "delegaciaNome": "111ª DP - Sumidouro",
+    "unidadeTerritorial": "Sumidouro",
+    "bairros": [
+      "Sumidouro"
+    ],
+    "municipio": "Sumidouro",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "30º BPM (Teresópolis)",
+    "lat": -22.045,
+    "lng": -42.675,
+    "circunscricao": "Circunscrição da 111ª DP abrangendo Sumidouro (Sumidouro)"
+  },
+  {
+    "id": "cisp-112-141",
+    "risp": 7,
+    "aisp": 30,
+    "cisp": 112,
+    "delegaciaNome": "112ª DP - Carmo",
+    "unidadeTerritorial": "Carmo, Córrego da Prata e Porto Velho do Cunha",
+    "bairros": [
+      "Carmo",
+      "Córrego da Prata",
+      "Porto Velho do Cunha"
+    ],
+    "municipio": "Carmo",
+    "regiaoGoverno": "Serrana",
+    "batalhaoPMERJ": "30º BPM (Teresópolis)",
+    "lat": -21.932,
+    "lng": -42.608,
+    "circunscricao": "Circunscrição da 112ª DP abrangendo Carmo (Carmo, Córrego da Prata e Porto Velho do Cunha)"
+  },
+  {
+    "id": "cisp-107-142",
+    "risp": 7,
+    "aisp": 38,
+    "cisp": 107,
+    "delegaciaNome": "107ª DP - Paraíba do Sul",
+    "unidadeTerritorial": "Paraíba do Sul, Werneck, Salutaris e Inconfidência",
+    "bairros": [
+      "Paraíba do Sul",
+      "Werneck",
+      "Salutaris",
+      "Inconfidência"
+    ],
+    "municipio": "Paraíba do Sul",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "38º BPM (Três Rios)",
+    "lat": -22.16,
+    "lng": -43.29,
+    "circunscricao": "Circunscrição da 107ª DP abrangendo Paraíba do Sul (Paraíba do Sul, Werneck, Salutaris e Inconfidência)"
+  },
+  {
+    "id": "cisp-108-143",
+    "risp": 7,
+    "aisp": 38,
+    "cisp": 108,
+    "delegaciaNome": "108ª DP - Areal",
+    "unidadeTerritorial": "Areal",
+    "bairros": [
+      "Areal"
+    ],
+    "municipio": "Areal",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "38º BPM (Três Rios)",
+    "lat": -22.115,
+    "lng": -43.21,
+    "circunscricao": "Circunscrição da 108ª DP abrangendo Areal (Areal)"
+  },
+  {
+    "id": "cisp-108-144",
+    "risp": 7,
+    "aisp": 38,
+    "cisp": 108,
+    "delegaciaNome": "108ª DP - Comendador Levy Gasparian",
+    "unidadeTerritorial": "Comendador Levy Gasparian e Afonso Arinos",
+    "bairros": [
+      "Comendador Levy Gasparian",
+      "Afonso Arinos"
+    ],
+    "municipio": "Comendador Levy Gasparian",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "38º BPM (Três Rios)",
+    "lat": -22.115,
+    "lng": -43.21,
+    "circunscricao": "Circunscrição da 108ª DP abrangendo Comendador Levy Gasparian (Comendador Levy Gasparian e Afonso Arinos)"
+  },
+  {
+    "id": "cisp-108-145",
+    "risp": 7,
+    "aisp": 38,
+    "cisp": 108,
+    "delegaciaNome": "108ª DP - Três Rios",
+    "unidadeTerritorial": "Três Rios e Bemposta",
+    "bairros": [
+      "Três Rios",
+      "Bemposta"
+    ],
+    "municipio": "Três Rios",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "38º BPM (Três Rios)",
+    "lat": -22.115,
+    "lng": -43.21,
+    "circunscricao": "Circunscrição da 108ª DP abrangendo Três Rios (Três Rios e Bemposta)"
+  },
+  {
+    "id": "cisp-109-146",
+    "risp": 7,
+    "aisp": 38,
+    "cisp": 109,
+    "delegaciaNome": "109ª DP - Sapucaia",
+    "unidadeTerritorial": "Sapucaia, Anta, Pião, Nossa Senhora Aparecida e Jamapara",
+    "bairros": [
+      "Sapucaia",
+      "Anta",
+      "Pião",
+      "Nossa Senhora Aparecida",
+      "Jamapara"
+    ],
+    "municipio": "Sapucaia",
+    "regiaoGoverno": "Centro-Sul Fluminense",
+    "batalhaoPMERJ": "38º BPM (Três Rios)",
+    "lat": -21.995,
+    "lng": -42.915,
+    "circunscricao": "Circunscrição da 109ª DP abrangendo Sapucaia (Sapucaia, Anta, Pião, Nossa Senhora Aparecida e Jamapara)"
+  }
+]
