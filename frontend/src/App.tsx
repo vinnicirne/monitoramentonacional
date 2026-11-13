@@ -17,7 +17,7 @@ import {
 } from './types';
 import Map from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
-import { Shield, Clock, Play, Pause } from 'lucide-react';
+import { Shield, Clock, Play, Pause, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 export function App() {
   const [registry, setRegistry] = useState<TerritorialRegistry | null>(null);
@@ -45,6 +45,7 @@ export function App() {
   const [selectedRispFilter, setSelectedRispFilter] = useState<number | 'all'>('all');
   const [selectedMunicipioFilter, setSelectedMunicipioFilter] = useState<string>('');
   const [selectedFactionFilter, setSelectedFactionFilter] = useState<string>('');
+  const [showFactionBar, setShowFactionBar] = useState<boolean>(true);
 
   // Selected Territory & Dossier state - starts closed until clicked!
   const [selectedCispId, setSelectedCispId] = useState<number | null>(null);
@@ -206,102 +207,122 @@ export function App() {
                 selectedFactionFilter={selectedFactionFilter}
               />
 
-              {/* Floating Quick Faction Intelligence Bar (Top Center) */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-slate-900/95 border border-slate-700/90 rounded-2xl p-1.5 shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-xs max-w-[95vw] overflow-x-auto">
-                <span className="text-[11px] font-bold text-slate-300 px-2 flex items-center gap-1 shrink-0">
+              {/* Floating Quick Faction Intelligence Bar (Top Center) with Open/Close Toggle */}
+              {showFactionBar ? (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-slate-900/95 border border-slate-700/90 rounded-2xl p-1.5 shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-xs max-w-[95vw] overflow-x-auto animate-in fade-in duration-150">
+                  <span className="text-[11px] font-bold text-slate-300 px-2 flex items-center gap-1 shrink-0">
+                    <Shield className="w-3.5 h-3.5 text-red-400" />
+                    <span className="hidden sm:inline">Facções:</span>
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter('');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && !selectedFactionFilter
+                        ? 'bg-slate-700 text-white font-bold ring-1 ring-slate-400'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>Todas</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter(selectedFactionFilter === 'CV' ? '' : 'CV');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && selectedFactionFilter === 'CV'
+                        ? 'bg-red-600 text-white font-bold shadow-md shadow-red-600/30 ring-1 ring-red-400'
+                        : 'text-red-300 hover:bg-red-950/60 hover:text-red-200'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
+                    <span>CV</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter(selectedFactionFilter === 'TCP' ? '' : 'TCP');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && selectedFactionFilter === 'TCP'
+                        ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30 ring-1 ring-blue-400'
+                        : 'text-blue-300 hover:bg-blue-950/60 hover:text-blue-200'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
+                    <span>TCP</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter(selectedFactionFilter === 'Milícia' ? '' : 'Milícia');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && selectedFactionFilter === 'Milícia'
+                        ? 'bg-purple-600 text-white font-bold shadow-md shadow-purple-600/30 ring-1 ring-purple-400'
+                        : 'text-purple-300 hover:bg-purple-950/60 hover:text-purple-200'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
+                    <span>Milícia</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter(selectedFactionFilter === 'Disputa' ? '' : 'Disputa');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && selectedFactionFilter === 'Disputa'
+                        ? 'bg-orange-600 text-white font-bold shadow-md shadow-orange-600/30 ring-1 ring-orange-400'
+                        : 'text-orange-300 hover:bg-orange-950/60 hover:text-orange-200'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block" />
+                    <span>Disputa</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setChoroplethMetric('faccao');
+                      setSelectedFactionFilter(selectedFactionFilter === 'Controle' ? '' : 'Controle');
+                    }}
+                    className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                      choroplethMetric === 'faccao' && selectedFactionFilter === 'Controle'
+                        ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400'
+                        : 'text-emerald-300 hover:bg-emerald-950/60 hover:text-emerald-200'
+                    }`}
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                    <span>Institucional</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowFactionBar(false)}
+                    title="Recolher barra de facções"
+                    className="p-1 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors ml-1 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowFactionBar(true)}
+                  title="Abrir filtros de facções"
+                  className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-2xl px-3 py-1.5 shadow-xl backdrop-blur-md text-xs font-semibold text-slate-200 flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                >
                   <Shield className="w-3.5 h-3.5 text-red-400" />
-                  <span className="hidden sm:inline">Facções:</span>
-                </span>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter('');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && !selectedFactionFilter
-                      ? 'bg-slate-700 text-white font-bold ring-1 ring-slate-400'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                  }`}
-                >
-                  <span>Todas</span>
+                  <span>Filtro de Facções</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </button>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter(selectedFactionFilter === 'CV' ? '' : 'CV');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && selectedFactionFilter === 'CV'
-                      ? 'bg-red-600 text-white font-bold shadow-md shadow-red-600/30 ring-1 ring-red-400'
-                      : 'text-red-300 hover:bg-red-950/60 hover:text-red-200'
-                  }`}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
-                  <span>CV</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter(selectedFactionFilter === 'TCP' ? '' : 'TCP');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && selectedFactionFilter === 'TCP'
-                      ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30 ring-1 ring-blue-400'
-                      : 'text-blue-300 hover:bg-blue-950/60 hover:text-blue-200'
-                  }`}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
-                  <span>TCP</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter(selectedFactionFilter === 'Milícia' ? '' : 'Milícia');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && selectedFactionFilter === 'Milícia'
-                      ? 'bg-purple-600 text-white font-bold shadow-md shadow-purple-600/30 ring-1 ring-purple-400'
-                      : 'text-purple-300 hover:bg-purple-950/60 hover:text-purple-200'
-                  }`}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
-                  <span>Milícia</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter(selectedFactionFilter === 'Disputa' ? '' : 'Disputa');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && selectedFactionFilter === 'Disputa'
-                      ? 'bg-orange-600 text-white font-bold shadow-md shadow-orange-600/30 ring-1 ring-orange-400'
-                      : 'text-orange-300 hover:bg-orange-950/60 hover:text-orange-200'
-                  }`}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block" />
-                  <span>Disputa</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setChoroplethMetric('faccao');
-                    setSelectedFactionFilter(selectedFactionFilter === 'Controle' ? '' : 'Controle');
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-medium transition-all text-xs shrink-0 flex items-center gap-1.5 ${
-                    choroplethMetric === 'faccao' && selectedFactionFilter === 'Controle'
-                      ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400'
-                      : 'text-emerald-300 hover:bg-emerald-950/60 hover:text-emerald-200'
-                  }`}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
-                  <span>Institucional</span>
-                </button>
-              </div>
+              )}
 
               {/* Floating Interactive Timeline Bar (ISP-RJ 2020 - 2025) */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-slate-900/95 border border-slate-700/80 rounded-2xl px-4 py-2 shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs">
