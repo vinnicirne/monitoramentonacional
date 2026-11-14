@@ -21,6 +21,8 @@ import {
   CodigoFaccaoPrecisa
 } from '../data/faccoesPrecisas';
 import { BRASIL_UFS_LIST, UfMetadataInfo } from '../data/brasilEstadosData';
+import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
+import { DelegaciaTerritorialMgEs } from '../types/delegaciaTerritorial';
 
 export type SidebarSection = 'layers' | 'filters' | 'cisps' | 'legend' | 'states';
 
@@ -43,6 +45,7 @@ interface LeftSidebarProps {
   setVisiblePreciseFactions: React.Dispatch<React.SetStateAction<Record<CodigoFaccaoPrecisa, boolean>>>;
   onSelectCISP: (cispId: number) => void;
   selectedCispId: number | null;
+  onSelectDelegaciaMgEs?: (delegacia: DelegaciaTerritorialMgEs) => void;
   onResetView: () => void;
   choroplethMetric: ChoroplethMetric;
   setChoroplethMetric: (m: ChoroplethMetric) => void;
@@ -71,6 +74,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   setVisiblePreciseFactions,
   onSelectCISP,
   selectedCispId,
+  onSelectDelegaciaMgEs,
   onResetView,
   choroplethMetric,
   setChoroplethMetric,
@@ -117,6 +121,15 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
       u => u.nome.toLowerCase().includes(q) || u.uf.toLowerCase().includes(q) || u.regiao.toLowerCase().includes(q)
     );
   }, [ufSearch]);
+
+  const filteredDelegaciasMgEs = React.useMemo(() => {
+    return DELEGACIAS_MG_ES_DATA.filter(del => {
+      if (estadoScope === 'MG' && del.uf !== 'MG') return false;
+      if (estadoScope === 'ES' && del.uf !== 'ES') return false;
+      if (selectedMunicipioFilter && del.municipio !== selectedMunicipioFilter) return false;
+      return true;
+    });
+  }, [estadoScope, selectedMunicipioFilter]);
 
   const toggleLayer = (key: keyof LayerVisibility) => {
     setLayers(prev => ({ ...prev, [key]: !prev[key] }));
@@ -548,42 +561,97 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               </div>
             )}
 
-            {/* --- SEÇÃO DELEGACIAS (137 CISPS) --- */}
+            {/* --- SEÇÃO DELEGACIAS (RJ, MG ou ES conforme escopo) --- */}
             {activeSection === 'cisps' && (
               <div className="space-y-1.5">
-                {filteredCisps.map(cisp => (
-                  <button
-                    key={cisp.cisp}
-                    onClick={() => {
-                      onSelectCISP(cisp.cisp);
-                      closeIfMobile();
-                    }}
-                    className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer ${
-                      selectedCispId === cisp.cisp
-                        ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
-                        : 'bg-slate-800/40 border-slate-800/60 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-xs text-blue-400">{cisp.cisp_formatado}</span>
-                        <span className="text-[11px] text-slate-200 truncate">
-                          {cisp.nome_oficial.replace(`${cisp.cisp_formatado} - `, '')}
-                        </span>
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate">
-                        {cisp.municipio} • {cisp.batalhao}
-                      </div>
-                      {cisp.bairros && cisp.bairros.length > 0 && (
-                        <div className="text-[9.5px] text-slate-400/90 truncate mt-0.5">
-                          Atende: {cisp.bairros.slice(0, 3).join(', ')}
-                          {cisp.bairros.length > 3 ? ` (+${cisp.bairros.length - 3})` : ''}
-                        </div>
-                      )}
+                {(estadoScope === 'MG' || estadoScope === 'ES' || estadoScope === 'MG_ES') && (
+                  <div className="space-y-1.5">
+                    <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-1 mb-1">
+                      <span>Delegacias {estadoScope === 'ES' ? 'PCES' : estadoScope === 'MG' ? 'PCMG' : 'MG & ES'}</span>
+                      <span className="font-mono text-emerald-400">{filteredDelegaciasMgEs.length} unidades</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-500 shrink-0 ml-1" />
-                  </button>
-                ))}
+
+                    {filteredDelegaciasMgEs.map(del => (
+                      <button
+                        key={del.id}
+                        onClick={() => {
+                          onSelectDelegaciaMgEs?.(del);
+                          closeIfMobile();
+                        }}
+                        className="w-full text-left p-2.5 md:p-2 rounded-lg border border-slate-800/80 bg-slate-900/60 hover:bg-slate-800/90 hover:border-slate-700 flex items-center justify-between transition-all cursor-pointer group"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
+                                del.uf === 'ES'
+                                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                  : 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                              }`}
+                            >
+                              {del.orgao}
+                            </span>
+                            <span className="font-bold text-xs text-slate-100 truncate group-hover:text-blue-300">
+                              {del.nomeCurto}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                            {del.municipio} - {del.uf} • {del.regional}
+                          </div>
+                          <div className="text-[9.5px] text-slate-400/90 truncate mt-0.5">
+                            Jurisdição: {del.bairros.slice(0, 3).join(', ')}
+                            {del.bairros.length > 3 ? ` (+${del.bairros.length - 3} bairros)` : ''}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-500 shrink-0 ml-1 group-hover:text-slate-300" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {(estadoScope === 'RJ' || estadoScope === 'TODOS') && (
+                  <div className="space-y-1.5">
+                    {estadoScope === 'TODOS' && (
+                      <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-1 mt-3 mb-1">
+                        <span>Rio de Janeiro (PCERJ)</span>
+                        <span className="font-mono text-blue-400">{filteredCisps.length} CISPs</span>
+                      </div>
+                    )}
+                    {filteredCisps.map(cisp => (
+                      <button
+                        key={cisp.cisp}
+                        onClick={() => {
+                          onSelectCISP(cisp.cisp);
+                          closeIfMobile();
+                        }}
+                        className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer ${
+                          selectedCispId === cisp.cisp
+                            ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
+                            : 'bg-slate-800/40 border-slate-800/60 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-xs text-blue-400">{cisp.cisp_formatado}</span>
+                            <span className="text-[11px] text-slate-200 truncate">
+                              {cisp.nome_oficial.replace(`${cisp.cisp_formatado} - `, '')}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate">
+                            {cisp.municipio} • {cisp.batalhao}
+                          </div>
+                          {cisp.bairros && cisp.bairros.length > 0 && (
+                            <div className="text-[9.5px] text-slate-400/90 truncate mt-0.5">
+                              Atende: {cisp.bairros.slice(0, 3).join(', ')}
+                              {cisp.bairros.length > 3 ? ` (+${cisp.bairros.length - 3})` : ''}
+                            </div>
+                          )}
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-500 shrink-0 ml-1" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

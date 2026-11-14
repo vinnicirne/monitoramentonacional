@@ -1,6 +1,7 @@
 import { UfMetadataInfo } from '../data/brasilEstadosData';
 import { DivisaoTerritorialRow, UnidadePolicialRow } from './sigBase';
 import { CodigoFaccaoPrecisa } from '../data/faccoesPrecisas';
+import { DelegaciaTerritorialMgEs } from './delegaciaTerritorial';
 
 export type BasemapType = 'osm' | 'satellite' | 'streets' | 'voyager';
 
@@ -114,7 +115,7 @@ export interface TerritorialRegistry {
 }
 
 export interface SelectedFeatureData {
-  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'FACCAO_COMUNIDADE' | 'DELEGACIA' | 'BATALHAO' | 'ESTADO_UF' | 'MGES_NODE';
+  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'FACCAO_COMUNIDADE' | 'DELEGACIA' | 'BATALHAO' | 'ESTADO_UF' | 'MGES_NODE' | 'DELEGACIA_MG_ES';
   id: string | number;
   nome: string;
   cisp?: number;
@@ -148,4 +149,5 @@ export interface SelectedFeatureData {
     divisao?: DivisaoTerritorialRow;
     unidade?: UnidadePolicialRow;
   };
+  delegaciaMgEs?: DelegaciaTerritorialMgEs;
 }

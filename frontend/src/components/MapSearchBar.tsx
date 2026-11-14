@@ -12,6 +12,8 @@ import { TerritorialRegistry } from '../types';
 import { EstadoScope } from '../types/sigBase';
 import { FAC_CATALOG, FACCAO_SEARCH_INDEX, FaccaoSearchEntry } from '../data/faccoesPrecisas';
 import { AddressSearchResult, searchAddressesFree } from '../utils/geocoding';
+import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
+import { DelegaciaTerritorialMgEs } from '../types/delegaciaTerritorial';
 
 interface MapSearchBarProps {
   registry: TerritorialRegistry | null;
@@ -22,6 +24,7 @@ interface MapSearchBarProps {
   onSelectCISP: (cispId: number) => void;
   onSelectCommunity: (entry: FaccaoSearchEntry) => void;
   onSelectAddress: (address: AddressSearchResult) => void;
+  onSelectDelegaciaMgEs?: (delegacia: DelegaciaTerritorialMgEs) => void;
   isTrackingLocation: boolean;
   onToggleLiveLocation: () => void;
 }
@@ -35,6 +38,7 @@ export const MapSearchBar: React.FC<MapSearchBarProps> = ({
   onSelectCISP,
   onSelectCommunity,
   onSelectAddress,
+  onSelectDelegaciaMgEs,
   isTrackingLocation,
   onToggleLiveLocation
 }) => {
@@ -109,11 +113,54 @@ export const MapSearchBar: React.FC<MapSearchBarProps> = ({
       id: string | number;
       label: string;
       sub: string;
-      type: 'CISP' | 'MUNICIPIO' | 'BAIRRO' | 'FACCAO' | 'COMUNIDADE';
+      type: 'CISP' | 'MUNICIPIO' | 'BAIRRO' | 'FACCAO' | 'COMUNIDADE' | 'DELEGACIA';
       cispId?: number;
       community?: FaccaoSearchEntry;
+      delegaciaMgEs?: DelegaciaTerritorialMgEs;
       color?: string;
     }> = [];
+
+    // Delegacias de MG e ES + Bairros da jurisdição
+    DELEGACIAS_MG_ES_DATA.forEach(del => {
+      if (results.length >= 16) return;
+      const normNome = del.nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normCurto = del.nomeCurto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normMuni = del.municipio.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const matchingBairro = del.bairros.find(b =>
+        b.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q)
+      );
+
+      if (normNome.includes(q) || normCurto.includes(q)) {
+        results.push({
+          id: `del-${del.id}`,
+          label: `${del.nomeCurto} (${del.orgao} - ${del.uf})`,
+          sub: `${del.municipio} • ${del.jurisdicao}`,
+          type: 'DELEGACIA',
+          delegaciaMgEs: del,
+          color: del.cor
+        });
+      } else if (matchingBairro) {
+        results.push({
+          id: `del-bairro-${del.id}-${matchingBairro}`,
+          label: `Bairro: ${matchingBairro} (${del.uf})`,
+          sub: `Jurisdição: ${del.nomeCurto} (${del.orgao})`,
+          type: 'BAIRRO',
+          delegaciaMgEs: del,
+          color: del.cor
+        });
+      } else if (normMuni.includes(q)) {
+        if (!results.some(r => r.delegaciaMgEs?.id === del.id)) {
+          results.push({
+            id: `del-muni-${del.id}`,
+            label: `${del.municipio} - ${del.uf} (${del.nomeCurto})`,
+            sub: `${del.regional} • ${del.totalBairros} Bairros`,
+            type: 'MUNICIPIO',
+            delegaciaMgEs: del,
+            color: del.cor
+          });
+        }
+      }
+    });
 
     for (const item of FACCAO_SEARCH_INDEX) {
       if (item.normNome.includes(q)) {
@@ -319,7 +366,9 @@ export const MapSearchBar: React.FC<MapSearchBarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => {
-                    if (item.community) {
+                    if (item.delegaciaMgEs && onSelectDelegaciaMgEs) {
+                      onSelectDelegaciaMgEs(item.delegaciaMgEs);
+                    } else if (item.community) {
                       onSelectCommunity(item.community);
                     } else if (item.cispId) {
                       onSelectCISP(item.cispId);

@@ -156,6 +156,172 @@ export const RightDossier: React.FC<RightDossierProps> = ({
     );
   }
 
+  // Specialized Dossier for MG/ES Territorial Police Stations (Delegacias de MG e ES)
+  if (data.tipo === 'DELEGACIA_MG_ES' && data.delegaciaMgEs) {
+    const del = data.delegaciaMgEs;
+    const isEs = del.uf === 'ES';
+    const filteredDelBairros = bairroSearch.trim()
+      ? del.bairros.filter(b => b.toLowerCase().includes(bairroSearch.toLowerCase()))
+      : del.bairros;
+
+    return (
+      <>
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/55 backdrop-blur-[2px] z-30 md:hidden"
+        />
+        <aside className="fixed inset-x-0 bottom-14 z-40 max-h-[82dvh] rounded-t-3xl border-t border-slate-700 bg-slate-900 flex flex-col shadow-2xl md:static md:inset-auto md:max-h-none md:w-96 md:h-full md:rounded-none md:border-t-0 md:border-l md:border-slate-800 md:z-10 md:shrink-0">
+          <div className="w-10 h-1 rounded-full bg-slate-600 mx-auto mt-2.5 mb-0.5 md:hidden shrink-0" />
+
+          {/* Header */}
+          <div className="p-3.5 md:p-4 border-b border-slate-800 bg-slate-950/70">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded font-mono uppercase tracking-wider border ${
+                    isEs
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                  }`}
+                >
+                  {del.orgao} · {del.uf}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                  {del.tipo}
+                </span>
+                {del.plantao24h && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30">
+                    24 Horas
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={onCenterOnMap}
+                  title="Centralizar no Mapa"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <Crosshair className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={onClose}
+                  title="Fechar Dossiê"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <h2 className="font-bold text-sm md:text-base text-slate-100 leading-snug">
+              {del.nomeCurto}
+            </h2>
+            <div className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+              {del.nome}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-3.5 md:p-4 space-y-3.5 text-xs">
+            {/* Jurisdição e Comarca */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px] uppercase tracking-wide">
+                <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Jurisdição & Circunscrição Policial</span>
+              </div>
+              <p className="text-slate-200 text-xs leading-relaxed font-medium">
+                {del.jurisdicao}
+              </p>
+              <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Comarca</span>
+                  <span className="text-slate-300 font-medium">{del.comarca}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Município</span>
+                  <span className="text-slate-300 font-medium">{del.municipio} - {del.uf}</span>
+                </div>
+                <div className="col-span-2 pt-1 border-t border-slate-800/60">
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Subordinação Regional / RISP</span>
+                  <span className="text-sky-300 font-medium">{del.regional} • {del.departamentoOuRisp}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bairros Atendidos */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[11px] uppercase tracking-wide">
+                  <Building className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  <span>Bairros sob Responsabilidade</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 font-bold">
+                  {del.totalBairros} bairros
+                </span>
+              </div>
+
+              {/* Busca de bairro local */}
+              <div className="relative">
+                <Search className="w-3 h-3 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filtrar bairro da circunscrição..."
+                  value={bairroSearch}
+                  onChange={e => setBairroSearch(e.target.value)}
+                  className="w-full pl-7 pr-2.5 py-1 text-xs rounded-lg bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Tags de Bairros */}
+              <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
+                {filteredDelBairros.map(bairro => (
+                  <span
+                    key={bairro}
+                    className="text-[11px] px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-200 font-medium"
+                  >
+                    {bairro}
+                  </span>
+                ))}
+                {filteredDelBairros.length === 0 && (
+                  <span className="text-xs text-slate-500 italic">Nenhum bairro encontrado para o filtro.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Sede e Contato */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[11px] uppercase tracking-wide">
+                <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                <span>Sede da Delegacia</span>
+              </div>
+              <div className="text-slate-200 text-xs leading-snug">
+                {del.endereco}
+              </div>
+              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 text-slate-300 font-mono">
+                  <Phone className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span>{del.telefone}</span>
+                </div>
+                <span className="text-[10px] text-slate-400">
+                  {del.horarioAtendimento}
+                </span>
+              </div>
+            </div>
+
+            {/* Ações */}
+            <button
+              onClick={onPrintDossier}
+              className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Imprimir Dossiê da Delegacia</span>
+            </button>
+          </div>
+        </aside>
+      </>
+    );
+  }
+
   // Specialized Dossier for MG/ES SIG Nodes
   if (data.tipo === 'MGES_NODE' && data.mgEsInfo) {
     const { divisao, unidade, uf, titulo, subtitulo } = data.mgEsInfo;
@@ -218,6 +384,172 @@ export const RightDossier: React.FC<RightDossierProps> = ({
             </div>
           )}
         </div>
+        </aside>
+      </>
+    );
+  }
+
+  // Specialized Dossier for MG/ES Territorial Police Stations (Delegacias de MG e ES)
+  if (data.tipo === 'DELEGACIA_MG_ES' && data.delegaciaMgEs) {
+    const del = data.delegaciaMgEs;
+    const isEs = del.uf === 'ES';
+    const filteredDelBairros = bairroSearch.trim()
+      ? del.bairros.filter(b => b.toLowerCase().includes(bairroSearch.toLowerCase()))
+      : del.bairros;
+
+    return (
+      <>
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/55 backdrop-blur-[2px] z-30 md:hidden"
+        />
+        <aside className="fixed inset-x-0 bottom-14 z-40 max-h-[82dvh] rounded-t-3xl border-t border-slate-700 bg-slate-900 flex flex-col shadow-2xl md:static md:inset-auto md:max-h-none md:w-96 md:h-full md:rounded-none md:border-t-0 md:border-l md:border-slate-800 md:z-10 md:shrink-0">
+          <div className="w-10 h-1 rounded-full bg-slate-600 mx-auto mt-2.5 mb-0.5 md:hidden shrink-0" />
+
+          {/* Header */}
+          <div className="p-3.5 md:p-4 border-b border-slate-800 bg-slate-950/70">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded font-mono uppercase tracking-wider border ${
+                    isEs
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                  }`}
+                >
+                  {del.orgao} · {del.uf}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                  {del.tipo}
+                </span>
+                {del.plantao24h && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30">
+                    24 Horas
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={onCenterOnMap}
+                  title="Centralizar no Mapa"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <Crosshair className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={onClose}
+                  title="Fechar Dossiê"
+                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <h2 className="font-bold text-sm md:text-base text-slate-100 leading-snug">
+              {del.nomeCurto}
+            </h2>
+            <div className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+              {del.nome}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-3.5 md:p-4 space-y-3.5 text-xs">
+            {/* Jurisdição e Comarca */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px] uppercase tracking-wide">
+                <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Jurisdição & Circunscrição Policial</span>
+              </div>
+              <p className="text-slate-200 text-xs leading-relaxed font-medium">
+                {del.jurisdicao}
+              </p>
+              <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Comarca</span>
+                  <span className="text-slate-300 font-medium">{del.comarca}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Município</span>
+                  <span className="text-slate-300 font-medium">{del.municipio} - {del.uf}</span>
+                </div>
+                <div className="col-span-2 pt-1 border-t border-slate-800/60">
+                  <span className="text-[10px] text-slate-500 uppercase block font-semibold">Subordinação Regional / RISP</span>
+                  <span className="text-sky-300 font-medium">{del.regional} • {del.departamentoOuRisp}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bairros Atendidos */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[11px] uppercase tracking-wide">
+                  <Building className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  <span>Bairros sob Responsabilidade</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 font-bold">
+                  {del.totalBairros} bairros
+                </span>
+              </div>
+
+              {/* Busca de bairro local */}
+              <div className="relative">
+                <Search className="w-3 h-3 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filtrar bairro da circunscrição..."
+                  value={bairroSearch}
+                  onChange={e => setBairroSearch(e.target.value)}
+                  className="w-full pl-7 pr-2.5 py-1 text-xs rounded-lg bg-slate-900 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Tags de Bairros */}
+              <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
+                {filteredDelBairros.map(bairro => (
+                  <span
+                    key={bairro}
+                    className="text-[11px] px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-200 font-medium"
+                  >
+                    {bairro}
+                  </span>
+                ))}
+                {filteredDelBairros.length === 0 && (
+                  <span className="text-xs text-slate-500 italic">Nenhum bairro encontrado para o filtro.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Sede e Contato */}
+            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[11px] uppercase tracking-wide">
+                <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                <span>Sede da Delegacia</span>
+              </div>
+              <div className="text-slate-200 text-xs leading-snug">
+                {del.endereco}
+              </div>
+              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 text-slate-300 font-mono">
+                  <Phone className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span>{del.telefone}</span>
+                </div>
+                <span className="text-[10px] text-slate-400">
+                  {del.horarioAtendimento}
+                </span>
+              </div>
+            </div>
+
+            {/* Ações */}
+            <button
+              onClick={onPrintDossier}
+              className="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Imprimir Dossiê da Delegacia</span>
+            </button>
+          </div>
         </aside>
       </>
     );

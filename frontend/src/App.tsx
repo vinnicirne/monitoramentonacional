@@ -30,6 +30,7 @@ import {
 } from './data/faccoesPrecisas';
 import { AddressSearchResult } from './utils/geocoding';
 import { UfMetadataInfo } from './data/brasilEstadosData';
+import { DelegaciaTerritorialMgEs } from './types/delegaciaTerritorial';
 import {
   INITIAL_DIVISAO_TERRITORIAL,
   INITIAL_UNIDADES_POLICIAIS,
@@ -241,6 +242,25 @@ function App() {
     setFocusTarget({ lat: ufInfo.lat, lng: ufInfo.lng, zoom: ufInfo.zoom, ts: Date.now() });
   };
 
+  const handleSelectDelegaciaMgEs = (del: DelegaciaTerritorialMgEs) => {
+    setSelectedCispId(null);
+    setSelectedCommunityName(null);
+    setSelectedUf(null);
+    setSelectedData({
+      tipo: 'DELEGACIA_MG_ES',
+      id: del.id,
+      nome: del.nome,
+      municipio: del.municipio,
+      bairros: del.bairros,
+      telefone: del.telefone,
+      endereco: del.endereco,
+      comando: `${del.regional} • ${del.departamentoOuRisp}`,
+      delegaciaMgEs: del
+    });
+    setIsDossierOpen(true);
+    setFocusTarget({ lat: del.latitude, lng: del.longitude, zoom: 13.5, ts: Date.now() });
+  };
+
   // Select a free OSM geocoded address, zoom straight to it, and cross-check CISP + Faction polygon
   const handleSelectAddress = (addr: AddressSearchResult) => {
     const ts = Date.now();
@@ -325,6 +345,14 @@ function App() {
 
   const handleCenterOnSelected = () => {
     if (!selectedData || !mapRef.current) return;
+    if (selectedData.delegaciaMgEs) {
+      mapRef.current.getView().animate({
+        center: fromLonLat([selectedData.delegaciaMgEs.longitude, selectedData.delegaciaMgEs.latitude]),
+        zoom: 13.2,
+        duration: 700
+      });
+      return;
+    }
     if (selectedData.cisp && registry?.cisps[selectedData.cisp]?.centroide) {
       const coord = registry.cisps[selectedData.cisp].centroide;
       mapRef.current.getView().animate({
@@ -378,6 +406,7 @@ function App() {
               setVisiblePreciseFactions={setVisiblePreciseFactions}
               onSelectCISP={handleSelectCISP}
               selectedCispId={selectedCispId}
+              onSelectDelegaciaMgEs={handleSelectDelegaciaMgEs}
               onResetView={handleResetView}
               choroplethMetric={choroplethMetric}
               setChoroplethMetric={setChoroplethMetric}
@@ -437,6 +466,29 @@ function App() {
                     return;
                   }
 
+                  // Toggle se clicar na mesma Delegacia de MG/ES
+                  if (
+                    feat.tipo === 'DELEGACIA_MG_ES' &&
+                    selectedData?.tipo === 'DELEGACIA_MG_ES' &&
+                    selectedData?.id === feat.id
+                  ) {
+                    setSelectedCispId(null);
+                    setSelectedCommunityName(null);
+                    setSelectedUf(null);
+                    setSelectedData(null);
+                    setIsDossierOpen(false);
+                    return;
+                  }
+
+                  if (feat.tipo === 'DELEGACIA_MG_ES') {
+                    setSelectedCispId(null);
+                    setSelectedCommunityName(null);
+                    setSelectedUf(null);
+                    setSelectedData(feat);
+                    setIsDossierOpen(true);
+                    return;
+                  }
+
                   if (feat.tipo === 'FACCAO_COMUNIDADE') {
                     setSelectedCommunityName(feat.nome);
                   } else {
@@ -484,6 +536,7 @@ function App() {
                 onSelectCISP={handleSelectCISP}
                 onSelectCommunity={handleSelectCommunity}
                 onSelectAddress={handleSelectAddress}
+                onSelectDelegaciaMgEs={handleSelectDelegaciaMgEs}
                 onResetView={handleResetView}
               />
 

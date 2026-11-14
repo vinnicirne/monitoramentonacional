@@ -10,6 +10,7 @@ import XYZ from 'ol/source/XYZ';
 import GeoJSON from 'ol/format/GeoJSON';
 import Feature, { FeatureLike } from 'ol/Feature';
 import Point from 'ol/geom/Point';
+import Polygon from 'ol/geom/Polygon';
 import CircleGeom from 'ol/geom/Circle';
 import { Style, Fill, Stroke, Text, Circle as CircleStyle } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
@@ -39,6 +40,8 @@ import {
 import { AddressSearchResult, reverseGeocodeFree } from '../utils/geocoding';
 import { FaccaoSearchEntry } from '../data/faccoesPrecisas';
 import { MapSearchBar } from './MapSearchBar';
+import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
+import { DelegaciaTerritorialMgEs } from '../types/delegaciaTerritorial';
 
 interface MapContainerProps {
   registry: TerritorialRegistry | null;
@@ -67,6 +70,7 @@ interface MapContainerProps {
   onSelectCISP?: (cispId: number) => void;
   onSelectCommunity?: (entry: FaccaoSearchEntry) => void;
   onSelectAddress?: (address: AddressSearchResult) => void;
+  onSelectDelegaciaMgEs?: (delegacia: DelegaciaTerritorialMgEs) => void;
   onResetView?: () => void;
 }
 
@@ -126,6 +130,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onSelectCISP,
   onSelectCommunity,
   onSelectAddress,
+  onSelectDelegaciaMgEs,
   onResetView
 }) => {
   const mapElement = useRef<HTMLDivElement>(null);
@@ -133,6 +138,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
   const selectedCispIdRef = useRef(selectedCispId);
   const selectedCommunityRef = useRef(selectedCommunityName);
+  const selectedDelegaciaIdRef = useRef<string | null>(null);
   const choroplethMetricRef = useRef(choroplethMetric);
   const layerOpacityRef = useRef(layerOpacity);
   const selectedYearRef = useRef(selectedYear);
@@ -625,6 +631,48 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         const props = feature.getProperties();
         const tipo = props.tipo || props.type;
 
+        if (tipo === 'DELEGACIA_MG_ES_POLYGON' || tipo === 'DELEGACIA_MG_ES') {
+          featureFound = true;
+          const del = props.delegacia as DelegaciaTerritorialMgEs;
+          if (selectedDelegaciaIdRef.current === del.id) {
+            selectedDelegaciaIdRef.current = null;
+            setMapPopup(null);
+            popupOverlayRef.current?.setPosition(undefined);
+            onSelectFeatureRef.current(null);
+            if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
+            return true;
+          }
+
+          selectedDelegaciaIdRef.current = del.id;
+          if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
+
+          setMapPopup({
+            visible: true,
+            title: del.nomeCurto,
+            factionLabel: `${del.orgao} · ${del.municipio} - ${del.uf}`,
+            factionShort: del.orgao,
+            color: del.cor,
+            cispLabel: del.regional,
+            source: `${del.totalBairros} Bairros atendidos · Comarca de ${del.municipio}`,
+            period: del.plantao24h ? 'Atendimento: Plantão 24 Horas' : del.horarioAtendimento,
+            methodologyNote: `Jurisdição: ${del.jurisdicao} | Endereço: ${del.endereco} | Tel: ${del.telefone}`
+          });
+          popupOverlayRef.current?.setPosition(evt.coordinate);
+
+          onSelectFeatureRef.current({
+            tipo: 'DELEGACIA_MG_ES',
+            id: del.id,
+            nome: del.nome,
+            municipio: del.municipio,
+            bairros: del.bairros,
+            telefone: del.telefone,
+            endereco: del.endereco,
+            comando: `${del.regional} • ${del.departamentoOuRisp}`,
+            delegaciaMgEs: del
+          });
+          return true;
+        }
+
         if (tipo === 'MGES_NODE') {
           featureFound = true;
           setMapPopup(null);
@@ -887,6 +935,23 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         if (hit) return true;
         const props = feature.getProperties();
         const tipo = props.tipo || props.type;
+
+        if (tipo === 'DELEGACIA_MG_ES_POLYGON' || tipo === 'DELEGACIA_MG_ES') {
+          hit = true;
+          const del = props.delegacia as DelegaciaTerritorialMgEs;
+          setTooltip({
+            visible: true,
+            x: safeX,
+            y: safeY,
+            title: del.nomeCurto,
+            sub: `${del.municipio} - ${del.uf} • ${del.totalBairros} Bairros na Jurisdição`,
+            type: `DELEGACIA · ${del.orgao} (${del.uf})`,
+            color: del.cor,
+            source: del.jurisdicao,
+            sourceDetail: `Principais Bairros: ${del.bairros.slice(0, 5).join(', ')}${del.bairros.length > 5 ? '...' : ''}`
+          });
+          return true;
+        }
 
         if (tipo === 'MGES_NODE') {
           hit = true;
@@ -1154,13 +1219,82 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     source.addFeatures(featuresToAdd);
   }, [visiblePreciseFactions, selectedFactionFilter]);
 
-  // Populate MG & ES Nodes
+  // Populate MG & ES Nodes and Territorial Delimitations
   useEffect(() => {
     const source = mgEsSourceRef.current;
     source.clear();
     if (estadoScope === 'RJ') return;
 
-    const features: Feature<Point>[] = [];
+    const features: Feature[] = [];
+
+    // 1. Demarcações Territoriais Poligonais das Delegacias (PCES & PCMG)
+    DELEGACIAS_MG_ES_DATA.forEach(del => {
+      if (estadoScope === 'MG' && del.uf !== 'MG') return;
+      if (estadoScope === 'ES' && del.uf !== 'ES') return;
+
+      const polyRings = del.coordinates.map(ring => ring.map(coord => fromLonLat(coord)));
+      const polyFeat = new Feature({
+        geometry: new Polygon(polyRings),
+        type: 'DELEGACIA_MG_ES_POLYGON',
+        id: del.id,
+        delegacia: del
+      });
+
+      polyFeat.setStyle((feature, resolution) => {
+        const isSelected = selectedDelegaciaIdRef.current === del.id;
+        const showLabel = resolution < 650;
+        return new Style({
+          fill: new Fill({
+            color: hexToRgba(del.cor, isSelected ? 0.45 : 0.22)
+          }),
+          stroke: new Stroke({
+            color: isSelected ? '#ffffff' : del.cor,
+            width: isSelected ? 3.5 : 2.0,
+            lineDash: isSelected ? undefined : [6, 4]
+          }),
+          text: showLabel
+            ? new Text({
+                text: `${del.nomeCurto}\n(${del.totalBairros} bairros)`,
+                font: isSelected ? "bold 11px 'Plus Jakarta Sans', sans-serif" : "600 10px 'Plus Jakarta Sans', sans-serif",
+                fill: new Fill({ color: isSelected ? '#ffffff' : '#f1f5f9' }),
+                stroke: new Stroke({ color: '#090d16', width: 3.5 }),
+                textAlign: 'center',
+                offsetY: 0
+              })
+            : undefined
+        });
+      });
+
+      features.push(polyFeat);
+
+      // 2. Marcador Pontual da Sede da Delegacia
+      const markerFeat = new Feature({
+        geometry: new Point(fromLonLat([del.longitude, del.latitude])),
+        type: 'DELEGACIA_MG_ES',
+        id: `sede-${del.id}`,
+        delegacia: del
+      });
+
+      const isEs = del.uf === 'ES';
+      markerFeat.setStyle(
+        new Style({
+          image: new CircleStyle({
+            radius: 9,
+            fill: new Fill({ color: isEs ? '#047857' : '#1d4ed8' }),
+            stroke: new Stroke({ color: '#ffffff', width: 2 })
+          }),
+          text: new Text({
+            text: del.orgao,
+            font: "bold 8px 'JetBrains Mono', monospace",
+            fill: new Fill({ color: '#ffffff' }),
+            offsetY: 14,
+            stroke: new Stroke({ color: '#020617', width: 3 })
+          })
+        })
+      );
+
+      features.push(markerFeat);
+    });
 
     mgEsDivisao.forEach(row => {
       if (estadoScope === 'MG' && row.UF !== 'MG') return;
@@ -1541,6 +1675,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             onSelectCISP={onSelectCISP}
             onSelectCommunity={onSelectCommunity}
             onSelectAddress={onSelectAddress}
+            onSelectDelegaciaMgEs={onSelectDelegaciaMgEs}
             isTrackingLocation={isTrackingLocation}
             onToggleLiveLocation={onToggleLiveLocation}
           />
