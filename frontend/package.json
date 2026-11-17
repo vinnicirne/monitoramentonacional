@@ -1,7 +1,10 @@
 {
-  "name": "frontend",
+  "name": "painel-monitoramento-territorial",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.5.0",
+  "description": "Sistema de Inteligência Geográfica e Monitoramento Territorial por Agência Ícone Digital by Vinicius Cirne",
+  "author": "Agência Ícone Digital by Vinicius Cirne",
+  "license": "Proprietary - Agência Ícone Digital by Vinicius Cirne",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +15,7 @@
   "dependencies": {
     "@types/papaparse": "^5.5.2",
     "clsx": "^2.1.1",
+    "firebase": "^13.4.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.2",

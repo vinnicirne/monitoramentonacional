@@ -10,7 +10,9 @@ import {
   Globe,
   X,
   Sliders,
-  MapPin
+  MapPin,
+  Lock,
+  Plus
 } from 'lucide-react';
 import { BasemapType, ChoroplethMetric, LayerVisibility, TerritorialRegistry } from '../types';
 import { EstadoScope } from '../types/sigBase';
@@ -46,6 +48,7 @@ interface LeftSidebarProps {
   onSelectCISP: (cispId: number) => void;
   selectedCispId: number | null;
   onSelectDelegaciaMgEs?: (delegacia: DelegaciaTerritorialMgEs) => void;
+  selectedDelegaciaMgEsId?: string | null;
   onResetView: () => void;
   choroplethMetric: ChoroplethMetric;
   setChoroplethMetric: (m: ChoroplethMetric) => void;
@@ -53,6 +56,10 @@ interface LeftSidebarProps {
   setLayerOpacity: (o: number) => void;
   activeSection?: SidebarSection | null;
   onActiveSectionChange?: (section: SidebarSection | null) => void;
+  companyDomain?: string;
+  totalCompanyIncidents?: number;
+  totalCompanyRoubos?: number;
+  onOpenIncidentModal?: () => void;
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -75,13 +82,18 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onSelectCISP,
   selectedCispId,
   onSelectDelegaciaMgEs,
+  selectedDelegaciaMgEsId = null,
   onResetView,
   choroplethMetric,
   setChoroplethMetric,
   layerOpacity,
   setLayerOpacity,
   activeSection: controlledSection,
-  onActiveSectionChange
+  onActiveSectionChange,
+  companyDomain = '',
+  totalCompanyIncidents = 0,
+  totalCompanyRoubos = 0,
+  onOpenIncidentModal
 }) => {
   const [internalSection, setInternalSection] = useState<SidebarSection | null>(null);
   const activeSection = controlledSection !== undefined ? controlledSection : internalSection;
@@ -148,7 +160,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   return (
     <div className="relative flex h-full z-20 shrink-0">
       {/* 1. Desktop Slim Vertical Rail (hidden on mobile to maximize map viewport) */}
-      <nav className="hidden md:flex w-14 bg-slate-950 border-r border-slate-800 flex-col items-center py-3 gap-3 justify-between shadow-xl">
+      <nav className="hidden md:flex w-14 bg-white border-r border-slate-200 flex-col items-center py-3 gap-3 justify-between shadow-sm">
         <div className="flex flex-col items-center gap-2">
           {/* Camadas & Mapa */}
           <button
@@ -156,8 +168,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             title="Camadas e Mapas Base"
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               activeSection === 'layers'
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400/40'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                ? 'bg-[#3483FA] text-white shadow-md shadow-[#3483FA]/25 ring-2 ring-[#3483FA]/30'
+                : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
             }`}
           >
             <Layers className="w-5 h-5" />
@@ -169,12 +181,18 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             title="Estados Integrados (RJ · MG · ES)"
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all relative cursor-pointer ${
               activeSection === 'states'
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-2 ring-emerald-400/40'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                ? 'bg-[#00A650] text-white shadow-md shadow-[#00A650]/25 ring-2 ring-[#00A650]/30'
+                : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
             }`}
           >
             <Globe className="w-5 h-5" />
-            <span className="absolute bottom-1 right-1 text-[8px] font-mono text-emerald-400 font-bold">3</span>
+            <span
+              className={`absolute bottom-1 right-1 text-[8px] font-mono font-bold ${
+                activeSection === 'states' ? 'text-white' : 'text-[#008744]'
+              }`}
+            >
+              3
+            </span>
           </button>
 
           {/* Filtros Territoriais & Coroplético */}
@@ -183,13 +201,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             title="Filtros Territoriais e Mapa Temático"
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all relative cursor-pointer ${
               activeSection === 'filters'
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400/40'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                ? 'bg-[#3483FA] text-white shadow-md shadow-[#3483FA]/25 ring-2 ring-[#3483FA]/30'
+                : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
             }`}
           >
             <Filter className="w-5 h-5" />
             {(selectedRispFilter !== 'all' || selectedMunicipioFilter || selectedFactionFilter) && (
-              <span className="w-2 h-2 rounded-full bg-amber-400 absolute top-1.5 right-1.5 ring-2 ring-slate-950" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FFE600] border border-[#2D3277] absolute top-1.5 right-1.5" />
             )}
           </button>
 
@@ -199,12 +217,18 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             title="Lista de Delegacias (137 CISPs)"
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all relative cursor-pointer ${
               activeSection === 'cisps'
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400/40'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                ? 'bg-[#2D3277] text-white shadow-md shadow-[#2D3277]/25 ring-2 ring-[#2D3277]/30'
+                : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
             }`}
           >
             <Building2 className="w-5 h-5" />
-            <span className="absolute bottom-1 right-1 text-[8px] font-mono text-slate-400 font-bold">137</span>
+            <span
+              className={`absolute bottom-0.5 right-1 text-[8px] font-mono font-bold ${
+                activeSection === 'cisps' ? 'text-[#FFE600]' : 'text-slate-500'
+              }`}
+            >
+              137
+            </span>
           </button>
 
           {/* Legenda Dinâmica Armada / 1.695 Áreas */}
@@ -213,8 +237,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             title="Facções Precisas (1.695 áreas ago/2026)"
             className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               activeSection === 'legend'
-                ? 'bg-red-600 text-white shadow-lg shadow-red-600/30 ring-2 ring-red-400/40'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                ? 'bg-red-600 text-white shadow-md shadow-red-600/25 ring-2 ring-red-400/40'
+                : 'text-slate-600 hover:text-red-600 hover:bg-red-50'
             }`}
           >
             <Flame className="w-5 h-5" />
@@ -226,7 +250,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           <button
             onClick={onResetView}
             title="Centralizar Escopo Atual"
-            className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 text-blue-400 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+            className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-[#2D3277] hover:bg-[#FFE600] hover:border-[#E6CF00] flex items-center justify-center transition-all cursor-pointer shadow-xs"
           >
             <Compass className="w-5 h-5" />
           </button>
@@ -237,18 +261,18 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
       {activeSection && (
         <div
           onClick={() => setActiveSection(null)}
-          className="fixed inset-0 bg-black/55 backdrop-blur-[2px] z-30 md:hidden"
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-30 md:hidden"
         />
       )}
 
       {/* 3. Drawer Panel: Desktop Side Flyout / Mobile Bottom Sheet */}
       {activeSection && (
-        <aside className="fixed inset-x-0 bottom-14 z-40 max-h-[76dvh] rounded-t-3xl border-t border-slate-700 bg-slate-900/98 flex flex-col shadow-2xl backdrop-blur-md md:static md:inset-auto md:max-h-none md:w-80 md:h-full md:rounded-none md:border-t-0 md:border-r md:border-slate-800">
+        <aside className="fixed inset-x-0 bottom-14 z-40 max-h-[76dvh] rounded-t-3xl border-t border-slate-200 bg-white flex flex-col shadow-2xl md:static md:inset-auto md:max-h-none md:w-80 md:h-full md:rounded-none md:border-t-0 md:border-r md:border-slate-200">
           {/* Mobile Sheet Grab Handle */}
-          <div className="w-10 h-1 rounded-full bg-slate-600 mx-auto mt-2.5 mb-0.5 md:hidden shrink-0" />
+          <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto mt-2.5 mb-0.5 md:hidden shrink-0" />
 
           {/* Mobile Quick Tool Switcher */}
-          <div className="flex md:hidden items-center gap-1 px-3 py-2 border-b border-slate-800 overflow-x-auto no-scrollbar shrink-0">
+          <div className="flex md:hidden items-center gap-1 px-3 py-2 border-b border-slate-200 overflow-x-auto no-scrollbar shrink-0">
             {(
               [
                 { id: 'layers', label: 'Camadas' },
@@ -263,8 +287,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 onClick={() => setActiveSection(tab.id)}
                 className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
                   activeSection === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-800/80 text-slate-300'
+                    ? 'bg-[#2D3277] text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {tab.label}
@@ -272,13 +296,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             ))}
           </div>
 
-          <div className="px-3.5 py-2.5 md:p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/70 shrink-0">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-              {activeSection === 'layers' && <Layers className="w-4 h-4 text-blue-400" />}
-              {activeSection === 'states' && <Globe className="w-4 h-4 text-emerald-400" />}
-              {activeSection === 'filters' && <Filter className="w-4 h-4 text-blue-400" />}
-              {activeSection === 'cisps' && <Building2 className="w-4 h-4 text-blue-400" />}
-              {activeSection === 'legend' && <Flame className="w-4 h-4 text-red-400" />}
+          <div className="px-3.5 py-2.5 md:p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#2D3277] flex items-center gap-2">
+              {activeSection === 'layers' && <Layers className="w-4 h-4 text-[#3483FA]" />}
+              {activeSection === 'states' && <Globe className="w-4 h-4 text-[#00A650]" />}
+              {activeSection === 'filters' && <Filter className="w-4 h-4 text-[#3483FA]" />}
+              {activeSection === 'cisps' && <Building2 className="w-4 h-4 text-[#2D3277]" />}
+              {activeSection === 'legend' && <Flame className="w-4 h-4 text-red-600" />}
               <span>
                 {activeSection === 'layers' && 'Camadas & Mapas Base'}
                 {activeSection === 'states' && 'Estados com Dados (RJ · MG · ES)'}
@@ -289,7 +313,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             </span>
             <button
               onClick={() => setActiveSection(null)}
-              className="p-2 md:p-1 rounded-lg md:rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-2 md:p-1 rounded-lg md:rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 transition-colors cursor-pointer"
               title="Fechar painel"
             >
               <X className="w-4 h-4" />
@@ -301,7 +325,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             {activeSection === 'layers' && (
               <>
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
                     Mapa Base (OpenLayers v9.2.4)
                   </span>
                   <div className="grid grid-cols-2 gap-1.5">
@@ -318,8 +342,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         onClick={() => setBasemap(bm.id)}
                         className={`px-2.5 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
                           basemap === bm.id
-                            ? 'bg-blue-600/20 border-blue-500 text-blue-300 font-bold'
-                            : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                            ? 'bg-[#3483FA]/10 border-[#3483FA] text-[#2968C8] font-bold'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
                         }`}
                       >
                         {bm.label}
@@ -328,48 +352,111 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-slate-800">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
                     Camadas Vetoriais
                   </span>
                   {(
                     [
                       { key: 'faccoesPrecisas', label: 'Facções Precisas (1.695 áreas)', dot: '#E0342C' },
-                      { key: 'cisp', label: 'Circunscrições CISP (137 DPs)', dot: '#3b82f6' },
-                      { key: 'aisp', label: 'Áreas Integradas AISP (41 BPMs)', dot: '#f59e0b' },
-                      { key: 'risp', label: 'Regiões RISP (7 CPAs)', dot: '#10b981' },
-                      { key: 'delegacias', label: 'Sedes das Delegacias (PCERJ)', dot: '#38bdf8' },
+                      { key: 'cisp', label: 'Circunscrições CISP (137 DPs)', dot: '#3483FA' },
+                      { key: 'aisp', label: 'Áreas Integradas AISP (41 BPMs)', dot: '#D97706' },
+                      { key: 'risp', label: 'Regiões RISP (7 CPAs)', dot: '#00A650' },
+                      { key: 'delegacias', label: 'Sedes das Delegacias (PCERJ)', dot: '#2D3277' },
                       { key: 'batalhoes', label: 'Sedes dos Batalhões (PMERJ)', dot: '#0891b2' },
                       { key: 'focos', label: 'Focos Especiais KML (8)', dot: '#ef4444' },
-                      { key: 'mgEs', label: 'Sedes RISP / Regionais (MG·ES)', dot: '#34d399' },
-                      { key: 'brasilEstados', label: 'Limites Estaduais (RJ · MG · ES)', dot: '#94a3b8' }
+                      { key: 'mgEs', label: 'Sedes RISP / Regionais (MG·ES)', dot: '#00A650' },
+                      { key: 'brasilEstados', label: 'Limites Estaduais (RJ · MG · ES)', dot: '#64748b' }
                     ] as const
                   ).map(item => (
                     <label
                       key={item.key}
-                      className="flex items-center justify-between p-2 rounded-lg bg-slate-950/40 border border-slate-800/80 hover:border-slate-700 cursor-pointer"
+                      className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={layers[item.key]}
                           onChange={() => toggleLayer(item.key)}
-                          className="rounded bg-slate-900 border-slate-700 text-blue-500 focus:ring-0"
+                          className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
                         />
-                        <span className="text-slate-200">{item.label}</span>
+                        <span className="text-slate-800 font-medium">{item.label}</span>
                       </div>
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.dot }} />
                     </label>
                   ))}
+
+                  {companyDomain && (
+                    <div className="p-3 rounded-2xl bg-[#2D3277]/5 border border-[#2D3277]/20 space-y-2 mt-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-extrabold text-[11px] text-[#2D3277] flex items-center gap-1.5 uppercase">
+                          <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
+                          <span>Ocorrências (@{companyDomain})</span>
+                        </span>
+                        {totalCompanyRoubos > 0 && (
+                          <span className="px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">
+                            {totalCompanyRoubos} {totalCompanyRoubos === 1 ? 'roubo' : 'roubos'}
+                          </span>
+                        )}
+                      </div>
+
+                      <label className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={layers.corporateHeatmap !== false}
+                            onChange={() =>
+                              setLayers(prev => ({
+                                ...prev,
+                                corporateHeatmap: prev.corporateHeatmap === false ? true : false
+                              }))
+                            }
+                            className="rounded border-slate-300 text-red-600 focus:ring-0"
+                          />
+                          <span className="text-slate-800 font-bold text-xs">Mapa de Calor da Empresa</span>
+                        </div>
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0" />
+                      </label>
+
+                      <label className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={layers.corporateIncidents !== false}
+                            onChange={() =>
+                              setLayers(prev => ({
+                                ...prev,
+                                corporateIncidents: prev.corporateIncidents === false ? true : false
+                              }))
+                            }
+                            className="rounded border-slate-300 text-orange-600 focus:ring-0"
+                          />
+                          <span className="text-slate-800 font-bold text-xs">Pontos de Ocorrências ({totalCompanyIncidents})</span>
+                        </div>
+                        <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shrink-0" />
+                      </label>
+
+                      {onOpenIncidentModal && (
+                        <button
+                          type="button"
+                          onClick={onOpenIncidentModal}
+                          className="w-full py-2 rounded-xl bg-[#2D3277] hover:bg-[#1E2355] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5 text-[#FFE600]" />
+                          <span>+ Registrar Ocorrência</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-1.5 pt-2 border-t border-slate-800">
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span className="flex items-center gap-1.5 font-semibold text-[11px] uppercase tracking-wider text-slate-400">
-                      <Sliders className="w-3.5 h-3.5 text-blue-400" />
+                <div className="space-y-1.5 pt-2 border-t border-slate-200">
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="flex items-center gap-1.5 font-semibold text-[11px] uppercase tracking-wider text-slate-500">
+                      <Sliders className="w-3.5 h-3.5 text-[#3483FA]" />
                       Opacidade Polígonos CISP
                     </span>
-                    <span className="font-mono text-blue-400">{Math.round(layerOpacity * 100)}%</span>
+                    <span className="font-mono font-bold text-[#3483FA]">{Math.round(layerOpacity * 100)}%</span>
                   </div>
                   <input
                     type="range"
@@ -378,7 +465,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                     step={0.05}
                     value={layerOpacity}
                     onChange={e => setLayerOpacity(parseFloat(e.target.value))}
-                    className="w-full accent-blue-500 cursor-pointer"
+                    className="w-full accent-[#3483FA] cursor-pointer"
                   />
                 </div>
               </>
@@ -402,8 +489,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                       onClick={() => setEstadoScope(sc.id)}
                       className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
                         estadoScope === sc.id
-                          ? 'bg-emerald-600/25 border-emerald-500 text-emerald-300'
-                          : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:text-white'
+                          ? 'bg-[#00A650]/10 border-[#00A650] text-[#008744]'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
                       }`}
                     >
                       {sc.label}
@@ -416,7 +503,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                   value={ufSearch}
                   onChange={e => setUfSearch(e.target.value)}
                   placeholder="Filtrar estado com dados (RJ, MG, ES)..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3483FA]"
                 />
 
                 <div className="space-y-1 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1">
@@ -429,28 +516,28 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           onSelectUf(u);
                           closeIfMobile();
                         }}
-                        className="w-full text-left p-2.5 md:p-2 rounded-lg bg-slate-950/50 hover:bg-slate-800 border border-slate-800/70 flex items-center justify-between gap-2 transition-colors cursor-pointer"
+                        className="w-full text-left p-2.5 md:p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-between gap-2 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <span
                             className={`w-7 h-7 rounded font-mono font-bold text-[11px] flex items-center justify-center shrink-0 ${
                               u.uf === 'RJ'
-                                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                                ? 'bg-[#3483FA]/15 text-[#2968C8] border border-[#3483FA]/30'
                                 : isIntegrado
-                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                                : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                ? 'bg-[#00A650]/15 text-[#008744] border border-[#00A650]/30'
+                                : 'bg-slate-200 text-slate-700 border border-slate-300'
                             }`}
                           >
                             {u.uf}
                           </span>
                           <div className="min-w-0">
-                            <div className="font-semibold text-slate-200 truncate">{u.nome}</div>
-                            <div className="text-[10px] text-slate-400 truncate">
+                            <div className="font-semibold text-slate-900 truncate">{u.nome}</div>
+                            <div className="text-[10px] text-slate-600 truncate">
                               {u.regiao} · {u.orgaoPC} / {u.orgaoPM}
                             </div>
                           </div>
                         </div>
-                        <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       </button>
                     );
                   })}
@@ -462,13 +549,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             {activeSection === 'filters' && (
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
                     Mapa Temático (Coroplético CISP)
                   </label>
                   <select
                     value={choroplethMetric}
                     onChange={e => setChoroplethMetric(e.target.value as ChoroplethMetric)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
                   >
                     <option value="none">Delimitação Padrão (CISP)</option>
                     <option value="faccao">Dinâmica Territorial / Facção</option>
@@ -481,13 +568,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
                     Região Integrada (RISP)
                   </label>
                   <select
                     value={selectedRispFilter}
                     onChange={e => setSelectedRispFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
                   >
                     <option value="all">Todas as 7 RISPs</option>
                     {[1, 2, 3, 4, 5, 6, 7].map(r => (
@@ -499,13 +586,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
                     Município (RJ)
                   </label>
                   <select
                     value={selectedMunicipioFilter}
                     onChange={e => setSelectedMunicipioFilter(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
                   >
                     <option value="">Todos os 92 Municípios</option>
                     {municipios.map(m => (
@@ -517,13 +604,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
                     Dinâmica Armada / Facção
                   </label>
                   <select
                     value={selectedFactionFilter}
                     onChange={e => setSelectedFactionFilter(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
                   >
                     <option value="">Todas as Situações</option>
                     <option value="CV">Comando Vermelho (CV)</option>
@@ -545,14 +632,14 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                       setSelectedMunicipioFilter('');
                       setSelectedFactionFilter('');
                     }}
-                    className="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition-colors cursor-pointer"
+                    className="w-full py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Limpar Todos os Filtros
                   </button>
                 )}
 
-                <div className="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800 text-[11px] space-y-1 text-slate-400">
-                  <div className="font-semibold text-slate-300">Filtro Ativo:</div>
+                <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] space-y-1 text-slate-600">
+                  <div className="font-semibold text-slate-900">Filtro Ativo:</div>
                   <div>
                     • {filteredCisps.length} de {registry ? Object.keys(registry.cisps).length : 137} circunscrições
                   </div>
@@ -566,9 +653,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
               <div className="space-y-1.5">
                 {(estadoScope === 'MG' || estadoScope === 'ES' || estadoScope === 'MG_ES') && (
                   <div className="space-y-1.5">
-                    <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-1 mb-1">
+                    <div className="px-2 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-1 mb-1">
                       <span>Delegacias {estadoScope === 'ES' ? 'PCES' : estadoScope === 'MG' ? 'PCMG' : 'MG & ES'}</span>
-                      <span className="font-mono text-emerald-400">{filteredDelegaciasMgEs.length} unidades</span>
+                      <span className="font-mono text-[#008744] font-bold">{filteredDelegaciasMgEs.length} unidades</span>
                     </div>
 
                     {filteredDelegaciasMgEs.map(del => (
@@ -578,32 +665,36 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                           onSelectDelegaciaMgEs?.(del);
                           closeIfMobile();
                         }}
-                        className="w-full text-left p-2.5 md:p-2 rounded-lg border border-slate-800/80 bg-slate-900/60 hover:bg-slate-800/90 hover:border-slate-700 flex items-center justify-between transition-all cursor-pointer group"
+                        className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer group ${
+                          selectedDelegaciaMgEsId === del.id
+                            ? 'bg-[#FFE600]/30 border-[#2D3277] text-slate-900 shadow-sm'
+                            : 'border-slate-200 bg-slate-50/70 hover:bg-slate-100 hover:border-slate-300'
+                        }`}
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
                             <span
                               className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
                                 del.uf === 'ES'
-                                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                  : 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                                  ? 'bg-[#00A650]/10 text-[#008744] border-[#00A650]/30'
+                                  : 'bg-[#3483FA]/10 text-[#2968C8] border-[#3483FA]/30'
                               }`}
                             >
                               {del.orgao}
                             </span>
-                            <span className="font-bold text-xs text-slate-100 truncate group-hover:text-blue-300">
+                            <span className="font-bold text-xs text-slate-900 truncate group-hover:text-[#2D3277]">
                               {del.nomeCurto}
                             </span>
                           </div>
-                          <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                          <div className="text-[10px] text-slate-600 truncate mt-0.5">
                             {del.municipio} - {del.uf} • {del.regional}
                           </div>
-                          <div className="text-[9.5px] text-slate-400/90 truncate mt-0.5">
+                          <div className="text-[9.5px] text-slate-500 truncate mt-0.5">
                             Jurisdição: {del.bairros.slice(0, 3).join(', ')}
                             {del.bairros.length > 3 ? ` (+${del.bairros.length - 3} bairros)` : ''}
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-500 shrink-0 ml-1 group-hover:text-slate-300" />
+                        <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-1 group-hover:text-[#2D3277]" />
                       </button>
                     ))}
                   </div>
@@ -612,9 +703,9 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 {(estadoScope === 'RJ' || estadoScope === 'TODOS') && (
                   <div className="space-y-1.5">
                     {estadoScope === 'TODOS' && (
-                      <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-1 mt-3 mb-1">
+                      <div className="px-2 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-1 mt-3 mb-1">
                         <span>Rio de Janeiro (PCERJ)</span>
-                        <span className="font-mono text-blue-400">{filteredCisps.length} CISPs</span>
+                        <span className="font-mono text-[#3483FA] font-bold">{filteredCisps.length} CISPs</span>
                       </div>
                     )}
                     {filteredCisps.map(cisp => (
@@ -626,28 +717,28 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                         }}
                         className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer ${
                           selectedCispId === cisp.cisp
-                            ? 'bg-blue-600/30 border-blue-500 text-white shadow-sm'
-                            : 'bg-slate-800/40 border-slate-800/60 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                            ? 'bg-[#FFE600]/30 border-[#2D3277] text-slate-900 shadow-sm'
+                            : 'bg-slate-50/70 border-slate-200 text-slate-800 hover:bg-slate-100 hover:border-slate-300'
                         }`}
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-blue-400">{cisp.cisp_formatado}</span>
-                            <span className="text-[11px] text-slate-200 truncate">
+                            <span className="font-bold text-xs text-[#2D3277]">{cisp.cisp_formatado}</span>
+                            <span className="text-[11px] text-slate-900 font-medium truncate">
                               {cisp.nome_oficial.replace(`${cisp.cisp_formatado} - `, '')}
                             </span>
                           </div>
-                          <div className="text-[10px] text-slate-400 truncate">
+                          <div className="text-[10px] text-slate-600 truncate">
                             {cisp.municipio} • {cisp.batalhao}
                           </div>
                           {cisp.bairros && cisp.bairros.length > 0 && (
-                            <div className="text-[9.5px] text-slate-400/90 truncate mt-0.5">
+                            <div className="text-[9.5px] text-slate-500 truncate mt-0.5">
                               Atende: {cisp.bairros.slice(0, 3).join(', ')}
                               {cisp.bairros.length > 3 ? ` (+${cisp.bairros.length - 3})` : ''}
                             </div>
                           )}
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-500 shrink-0 ml-1" />
+                        <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-1" />
                       </button>
                     ))}
                   </div>
@@ -658,13 +749,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
             {/* --- SEÇÃO LEGENDA & FACÇÕES PRECISAS --- */}
             {activeSection === 'legend' && (
               <div className="space-y-3">
-                <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800 space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
+                      <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
                       Dados de Riscos (ago/2026)
                     </span>
-                    <span className="font-mono text-white">1.695 áreas</span>
+                    <span className="font-mono text-[#2D3277] font-bold">1.695 áreas</span>
                   </span>
 
                   <div className="space-y-1.5 text-[11px]">
@@ -674,7 +765,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                       return (
                         <label
                           key={code}
-                          className={`flex items-center justify-between p-1.5 rounded bg-slate-900/60 border border-slate-800/70 cursor-pointer transition-opacity ${
+                          className={`flex items-center justify-between p-1.5 rounded bg-white border border-slate-200 cursor-pointer transition-opacity ${
                             isOn ? 'opacity-100' : 'opacity-50'
                           }`}
                         >
@@ -688,20 +779,20 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
                                   [code]: e.target.checked
                                 }))
                               }
-                              className="rounded bg-slate-900 border-slate-700 focus:ring-0"
+                              className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
                             />
                             <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: meta.color }} />
-                            <span className="text-slate-200 font-medium truncate">{meta.label}</span>
+                            <span className="text-slate-800 font-medium truncate">{meta.label}</span>
                           </div>
-                          <span className="font-mono text-[10px] text-slate-400 shrink-0">{FACCAO_COUNTS[code]}</span>
+                          <span className="font-mono text-[10px] text-slate-600 shrink-0">{FACCAO_COUNTS[code]}</span>
                         </label>
                       );
                     })}
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-950/40 rounded-lg border border-slate-800 text-[10px] text-slate-400 leading-relaxed">
-                  <strong>Fontes Públicas Consolidadas:</strong> Dados de Riscos (base ago/2026 — 1.695 polígonos por comunidade), Observatório GENI-UFF, Instituto Fogo Cruzado, MP-RJ (GAECO) e ISP-RJ.
+                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-600 leading-relaxed">
+                  <strong className="text-slate-900">Fontes Públicas Consolidadas:</strong> Dados de Riscos (base ago/2026 — 1.695 polígonos por comunidade), Observatório GENI-UFF, Instituto Fogo Cruzado, MP-RJ (GAECO) e ISP-RJ.
                 </div>
               </div>
             )}

@@ -125,39 +125,39 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white border border-slate-200 w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div className="px-6 py-4 border-b border-[#E6CF00] flex items-center justify-between bg-[#FFE600]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
+            <div className="w-9 h-9 rounded-lg bg-[#2D3277] flex items-center justify-center text-[#FFE600] shadow-xs">
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100">
+              <h2 className="text-base font-extrabold text-[#2D3277]">
                 Módulo de Importação e Tratamento de Dados
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#2D3277]/80 font-medium">
                 Cruzamento automático por códigos oficiais (RISP, AISP, CISP)
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 text-lg font-mono p-1"
+            className="text-[#2D3277] hover:bg-black/10 rounded-lg text-lg font-mono px-2 py-1 cursor-pointer transition-colors"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Subtabs */}
-        <div className="flex border-b border-slate-800 px-6 bg-slate-950/30 text-xs">
+        <div className="flex overflow-x-auto border-b border-slate-200 px-6 bg-slate-50 text-xs">
           <button
             onClick={() => setActiveTab('excel')}
-            className={`py-3 px-4 font-medium border-b-2 flex items-center gap-2 transition-all ${
+            className={`py-3 px-4 font-semibold border-b-2 flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'excel'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#3483FA] text-[#2968C8]'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileSpreadsheet className="w-4 h-4" />
@@ -165,10 +165,10 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
           </button>
           <button
             onClick={() => setActiveTab('pdf')}
-            className={`py-3 px-4 font-medium border-b-2 flex items-center gap-2 transition-all ${
+            className={`py-3 px-4 font-semibold border-b-2 flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'pdf'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#3483FA] text-[#2968C8]'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -176,10 +176,10 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
           </button>
           <button
             onClick={() => setActiveTab('geo')}
-            className={`py-3 px-4 font-medium border-b-2 flex items-center gap-2 transition-all ${
+            className={`py-3 px-4 font-semibold border-b-2 flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'geo'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#3483FA] text-[#2968C8]'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
             <Globe className="w-4 h-4" />
@@ -188,18 +188,18 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 flex-1 overflow-y-auto space-y-6 text-xs text-slate-300">
+        <div className="p-6 flex-1 overflow-y-auto space-y-6 text-xs text-slate-700">
           {activeTab === 'excel' && (
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl p-8 text-center transition-all bg-slate-950/40">
-                <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <h4 className="font-semibold text-slate-200 text-sm mb-1">
+              <div className="border-2 border-dashed border-slate-300 hover:border-[#3483FA] rounded-xl p-8 text-center transition-all bg-slate-50">
+                <Upload className="w-10 h-10 text-[#3483FA] mx-auto mb-3" />
+                <h4 className="font-bold text-slate-900 text-sm mb-1">
                   Selecione ou arraste seu arquivo Excel ou CSV
                 </h4>
-                <p className="text-xs text-slate-400 max-w-md mx-auto mb-4">
-                  O sistema aceita planilhas com colunas <code>CISP</code>, <code>AISP</code>, <code>RISP</code>, <code>Município</code>, <code>Bairros</code> ou indicadores estatísticos do ISP-RJ.
+                <p className="text-xs text-slate-600 max-w-md mx-auto mb-4">
+                  O sistema aceita planilhas com colunas <code className="text-[#2968C8] font-semibold">CISP</code>, <code className="text-[#2968C8] font-semibold">AISP</code>, <code className="text-[#2968C8] font-semibold">RISP</code>, <code className="text-[#2968C8] font-semibold">Município</code>, <code className="text-[#2968C8] font-semibold">Bairros</code> ou indicadores estatísticos do ISP-RJ.
                 </p>
-                <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium cursor-pointer shadow-sm transition-colors">
+                <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3483FA] hover:bg-[#2968C8] text-white font-semibold cursor-pointer shadow-sm transition-colors">
                   <Upload className="w-4 h-4" />
                   <span>Escolher Arquivo</span>
                   <input
@@ -210,7 +210,7 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
                   />
                 </label>
                 {fileName && (
-                  <div className="mt-3 text-xs text-emerald-400 font-mono">
+                  <div className="mt-3 text-xs text-[#008744] font-mono font-semibold">
                     ✓ Arquivo carregado: {fileName} ({parsedData.length} linhas)
                   </div>
                 )}
@@ -220,7 +220,7 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
 
           {activeTab === 'pdf' && (
             <div className="space-y-4">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600">
                 Cole o texto tabular copiado de relatórios em PDF do ISP-RJ ou do Diário Oficial. O sistema identificará automaticamente os números de circunscrição e batalhão.
               </p>
               <textarea
@@ -228,11 +228,11 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
                 onChange={(e) => setPdfText(e.target.value)}
                 placeholder="Cole o texto tabular aqui..."
                 rows={7}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-xs text-slate-900 font-mono focus:outline-none focus:border-[#3483FA] focus:bg-white"
               />
               <button
                 onClick={handleProcessPdfText}
-                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-[#3483FA] hover:bg-[#2968C8] text-white font-semibold flex items-center gap-2 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Processar e Cruzar Códigos</span>
@@ -241,29 +241,29 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
           )}
 
           {activeTab === 'geo' && (
-            <div className="space-y-3 p-4 bg-slate-950/60 rounded-xl border border-slate-800">
-              <h4 className="font-semibold text-slate-200 text-xs">
+            <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 className="font-bold text-[#2D3277] text-xs">
                 Pipeline de Conversão KML / RAR Integrado
               </h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                As bases cartográficas de demarcação oficial contidas na pasta <code>/Documentação</code> (CISPkml.rar e RISPkml.rar) já foram convertidas em GeoJSON contíguo e otimizado com topologia preservada:
+              <p className="text-xs text-slate-600 leading-relaxed">
+                As bases cartográficas de demarcação oficial contidas na pasta <code className="text-[#2968C8] font-semibold">/Documentação</code> (CISPkml.rar e RISPkml.rar) já foram convertidas em GeoJSON contíguo e otimizado com topologia preservada:
               </p>
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                <div className="p-3 bg-slate-900 rounded border border-slate-700">
-                  <div className="font-bold text-blue-400">cisp.geojson</div>
-                  <div className="text-[11px] text-slate-400">137 Polígonos de Delegacias da PCERJ</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs">
+                  <div className="font-bold text-[#2968C8]">cisp.geojson</div>
+                  <div className="text-[11px] text-slate-600">137 Polígonos de Delegacias da PCERJ</div>
                 </div>
-                <div className="p-3 bg-slate-900 rounded border border-slate-700">
-                  <div className="font-bold text-amber-400">aisp.geojson</div>
-                  <div className="text-[11px] text-slate-400">41 Polígonos de Batalhões da PMERJ</div>
+                <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs">
+                  <div className="font-bold text-amber-700">aisp.geojson</div>
+                  <div className="text-[11px] text-slate-600">41 Polígonos de Batalhões da PMERJ</div>
                 </div>
-                <div className="p-3 bg-slate-900 rounded border border-slate-700">
-                  <div className="font-bold text-purple-400">risp.geojson</div>
-                  <div className="text-[11px] text-slate-400">7 Regiões Integradas (CPAs)</div>
+                <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs">
+                  <div className="font-bold text-purple-700">risp.geojson</div>
+                  <div className="text-[11px] text-slate-600">7 Regiões Integradas (CPAs)</div>
                 </div>
-                <div className="p-3 bg-slate-900 rounded border border-slate-700">
-                  <div className="font-bold text-red-400">focos_especiais.geojson</div>
-                  <div className="text-[11px] text-slate-400">Polígonos de Dinâmicas de Facções e Conflitos</div>
+                <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-xs">
+                  <div className="font-bold text-red-700">focos_especiais.geojson</div>
+                  <div className="text-[11px] text-slate-600">Polígonos de Dinâmicas de Facções e Conflitos</div>
                 </div>
               </div>
             </div>
@@ -271,21 +271,21 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
 
           {/* Cross-reference results report */}
           {crossReport && (
-            <div className="space-y-3 pt-4 border-t border-slate-800">
+            <div className="space-y-3 pt-4 border-t border-slate-200">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-slate-100 text-xs flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <h4 className="font-bold text-[#2D3277] text-xs flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-[#008744]" />
                   Relatório de Cruzamento Territorial
                 </h4>
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="text-emerald-400 font-semibold">{crossReport.matched} Correspondências</span>
-                  <span className="text-rose-400 font-semibold">{crossReport.unmatched} Inconsistências</span>
+                  <span className="text-[#008744] font-bold">{crossReport.matched} Correspondências</span>
+                  <span className="text-rose-700 font-bold">{crossReport.unmatched} Inconsistências</span>
                 </div>
               </div>
 
-              <div className="border border-slate-800 rounded-lg overflow-hidden max-h-56 overflow-y-auto">
+              <div className="border border-slate-200 rounded-lg overflow-hidden max-h-56 overflow-y-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 text-[10px] uppercase">
                     <tr>
                       <th className="p-2">Linha</th>
                       <th className="p-2">Código Detectado</th>
@@ -293,23 +293,23 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
                       <th className="p-2">Resultado do Cruzamento</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-200">
                     {crossReport.details.map((d, i) => (
-                      <tr key={i} className="hover:bg-slate-800/40">
-                        <td className="p-2 text-slate-400 font-mono">#{d.row}</td>
-                        <td className="p-2 font-bold text-slate-200">{d.code}</td>
+                      <tr key={i} className="hover:bg-slate-50">
+                        <td className="p-2 text-slate-500 font-mono">#{d.row}</td>
+                        <td className="p-2 font-bold text-slate-900">{d.code}</td>
                         <td className="p-2">
                           {d.status === 'ok' ? (
-                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-semibold">
+                            <span className="px-1.5 py-0.5 rounded bg-[#00A650]/15 text-[#008744] text-[10px] font-bold">
                               OK
                             </span>
                           ) : (
-                            <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[10px] font-semibold">
+                            <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-bold">
                               PENDENTE
                             </span>
                           )}
                         </td>
-                        <td className="p-2 text-slate-300">{d.reason}</td>
+                        <td className="p-2 text-slate-700">{d.reason}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -320,13 +320,13 @@ export const DataImporterModal: React.FC<DataImporterProps> = ({ registry, onClo
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+        <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
           <span className="text-[11px] text-slate-500">
             Validação algorítmica rigorosa contra homônimos e grafias divergentes.
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+            className="px-4 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors cursor-pointer"
           >
             Fechar Módulo
           </button>

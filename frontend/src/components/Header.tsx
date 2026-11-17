@@ -6,45 +6,69 @@ import {
   Database,
   Info,
   Layers,
-  Building2
+  Building2,
+  LogIn,
+  Crown,
+  UserCheck,
+  Clock
 } from 'lucide-react';
 import { EstadoScope } from '../types/sigBase';
+import { useAuth } from '../contexts/AuthContext';
 
-export type MainActiveTab = 'map' | 'sig_mges' | 'stats' | 'audit' | 'import' | 'about';
+export type MainActiveTab = 'map' | 'sig_mges' | 'stats' | 'audit' | 'import' | 'about' | 'admin' | 'company_admin';
 
 interface HeaderProps {
   activeTab: MainActiveTab;
   setActiveTab: (tab: MainActiveTab) => void;
   estadoScope: EstadoScope;
   setEstadoScope: (scope: EstadoScope) => void;
+  onOpenLicense?: () => void;
+  onOpenCompanyRegister?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   estadoScope,
-  setEstadoScope
+  setEstadoScope,
+  onOpenLicense,
+  onOpenCompanyRegister
 }) => {
+  const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal } = useAuth();
+
   return (
-    <header className="h-[52px] md:h-16 bg-slate-900/95 border-b border-slate-800 px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0">
-      {/* 1. Brand Identity — Clean, never clipped on mobile */}
+    <header className="h-[52px] md:h-16 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
+      {/* 1. Brand Identity — Agência Ícone Digital by Vinicius Cirne */}
       <div className="flex items-center gap-2.5 shrink-0">
-        <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
+        <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-[#2D3277] border border-[#1E2258] flex items-center justify-center text-[#FFE600] shadow-sm shrink-0">
           <Shield className="w-4 h-4 md:w-5 md:h-5" />
         </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <h1 className="font-bold text-sm lg:text-[15px] text-slate-100 tracking-tight whitespace-nowrap">
-            <span className="hidden md:inline">Monitoramento Territorial</span>
-            <span className="md:hidden">Territorial</span>
-          </h1>
-          <span className="hidden lg:inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 border border-blue-500/30 font-mono">
-            RJ · MG · ES
-          </span>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <h1 className="font-bold text-xs sm:text-sm lg:text-[15px] text-[#2D3277] tracking-tight whitespace-nowrap">
+              <span className="hidden md:inline">Monitoramento Territorial</span>
+              <span className="md:hidden">Territorial</span>
+            </h1>
+            <span className="hidden xl:inline-flex text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-[#2D3277]/10 text-[#2D3277] border border-[#2D3277]/20 font-mono">
+              RJ · MG · ES
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenLicense}
+            className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#2D3277]/80 hover:text-[#2D3277] font-semibold tracking-tight whitespace-nowrap text-left cursor-pointer transition-colors"
+            title="Visualizar Licença e Titularidade (Agência Ícone Digital by Vinicius Cirne)"
+          >
+            <span>Agência Ícone Digital</span>
+            <span className="text-[#2D3277]/40">•</span>
+            <span className="text-slate-600 font-normal hidden sm:inline">by</span>
+            <span className="text-[#2D3277] font-bold hover:underline">Vinicius Cirne</span>
+          </button>
         </div>
       </div>
 
       {/* 2. State Scope Segmented Control — Fits cleanly on 375px+ mobile */}
-      <div className="flex items-center gap-0.5 bg-slate-950/90 p-1 rounded-xl border border-slate-800 min-w-0 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-0.5 bg-[#F2DA00] p-1 rounded-xl border border-[#DFC700] min-w-0 overflow-x-auto no-scrollbar">
         {(
           [
             { id: 'TODOS', label: 'Todos' },
@@ -62,10 +86,10 @@ export const Header: React.FC<HeaderProps> = ({
                 setActiveTab('map');
               }
             }}
-            className={`px-2.5 py-1.5 md:py-1 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+            className={`px-2.5 py-1.5 md:py-1 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               estadoScope === uf.id
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-[#2D3277] text-white shadow-sm'
+                : 'text-[#2D3277]/80 hover:text-[#1A1D4D] hover:bg-black/5'
             }`}
           >
             {uf.label}
@@ -73,83 +97,158 @@ export const Header: React.FC<HeaderProps> = ({
         ))}
       </div>
 
-      {/* 3. Desktop Navigation Tabs (on mobile, handled by Thumb-Zone Bottom Tab Bar) */}
-      <nav className="hidden md:flex items-center gap-1 shrink-0">
-        <button
-          onClick={() => setActiveTab('map')}
-          title="Mapa & Dossiê"
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-            activeTab === 'map'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5 shrink-0" />
-          <span>Mapa</span>
-        </button>
+      {/* 3. Desktop Navigation + Account & Admin Controls */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        <nav className="hidden md:flex items-center gap-1 shrink-0">
+          <button
+            onClick={() => setActiveTab('map')}
+            title="Mapa & Dossiê"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'map'
+                ? 'bg-[#2D3277] text-white shadow-sm'
+                : 'text-[#2D3277] hover:bg-black/10'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 shrink-0" />
+            <span>Mapa</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('sig_mges')}
-          title="Base SIG MG & ES"
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-            activeTab === 'sig_mges'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'sig_mges' ? 'text-white' : 'text-emerald-400'}`} />
-          <span className="hidden lg:inline">SIG MG·ES</span>
-          <span className="lg:hidden">SIG</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('sig_mges')}
+            title="Base SIG MG & ES"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'sig_mges'
+                ? 'bg-[#00A650] text-white shadow-sm'
+                : 'text-[#2D3277] hover:bg-black/10'
+            }`}
+          >
+            <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'sig_mges' ? 'text-white' : 'text-[#008744]'}`} />
+            <span className="hidden lg:inline">SIG MG·ES</span>
+            <span className="lg:hidden">SIG</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('stats')}
-          title="Estatísticas ISP-RJ"
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-            activeTab === 'stats'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <BarChart3 className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden lg:inline">Estatísticas</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('stats')}
+            title="Estatísticas ISP-RJ"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'stats'
+                ? 'bg-[#3483FA] text-white shadow-sm'
+                : 'text-[#2D3277] hover:bg-black/10'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden lg:inline">Estatísticas</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('audit')}
-          title="Auditoria Territorial"
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-            activeTab === 'audit'
-              ? 'bg-amber-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'audit' ? 'text-white' : 'text-amber-300'}`} />
-          <span className="hidden lg:inline">Auditoria</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('audit')}
+            title="Auditoria Territorial"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'audit'
+                ? 'bg-amber-700 text-white shadow-sm'
+                : 'text-[#2D3277] hover:bg-black/10'
+            }`}
+          >
+            <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'audit' ? 'text-white' : 'text-amber-800'}`} />
+            <span className="hidden lg:inline">Auditoria</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('import')}
-          title="Importar Planilhas & GeoJSON"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer whitespace-nowrap"
-        >
-          <Database className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden lg:inline">Importar</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('import')}
+            title="Importar Planilhas & GeoJSON"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors text-[#2D3277] hover:bg-black/10 cursor-pointer whitespace-nowrap"
+          >
+            <Database className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden xl:inline">Importar</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('about')}
-          title="Metodologia & Fontes"
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-            activeTab === 'about'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-          }`}
-        >
-          <Info className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden lg:inline">Metodologia</span>
-        </button>
-      </nav>
+          <button
+            onClick={() => setActiveTab('about')}
+            title="Metodologia & Fontes"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === 'about'
+                ? 'bg-[#2D3277] text-white shadow-sm'
+                : 'text-[#2D3277] hover:bg-black/10'
+            }`}
+          >
+            <Info className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden xl:inline">Metodologia</span>
+          </button>
+        </nav>
+
+        {onOpenCompanyRegister && (
+          <button
+            onClick={onOpenCompanyRegister}
+            title="Criar Conta Corporativa (Acesso Corporativo & Gestão de Equipe)"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] border-[#1E2258]"
+          >
+            <Building2 className="w-3.5 h-3.5 shrink-0 text-[#FFE600]" />
+            <span className="hidden sm:inline">Criar Conta Corporativa</span>
+            <span className="sm:hidden">+ Corporativo</span>
+          </button>
+        )}
+
+        {(isCompanyAdmin || isAdmin) && (
+          <button
+            onClick={() => setActiveTab('company_admin')}
+            title="Abrir Painel da Empresa (Usuários, Licenças & Ocorrências)"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
+              activeTab === 'company_admin'
+                ? 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]'
+                : 'bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5 shrink-0 text-[#3483FA]" />
+            <span className="hidden sm:inline">Painel Empresa</span>
+            <span className="sm:hidden">Empresa</span>
+          </button>
+        )}
+
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab('admin')}
+            title="Abrir Painel Administrativo (ADM)"
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
+              activeTab === 'admin'
+                ? 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]'
+                : 'bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white'
+            }`}
+          >
+            <Crown className="w-3.5 h-3.5 shrink-0 text-[#2D3277] fill-[#FFE600]" />
+            <span>ADM</span>
+          </button>
+        )}
+
+        {/* Auth Account Pill */}
+        {!firebaseUser ? (
+          <button
+            onClick={() => openAuthModal()}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-bold text-xs shadow-sm transition-colors cursor-pointer shrink-0"
+          >
+            <LogIn className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden sm:inline">Entrar</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => openAuthModal()}
+            title={userProfile?.email || 'Minha Conta'}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold shadow-xs transition-colors cursor-pointer shrink-0 ${
+              userProfile?.status === 'approved'
+                ? 'bg-white/95 hover:bg-white text-[#2D3277] border-[#2D3277]/20'
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
+            }`}
+          >
+            {userProfile?.status === 'approved' ? (
+              <UserCheck className="w-3.5 h-3.5 text-[#008744] shrink-0" />
+            ) : (
+              <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+            )}
+            <span className="hidden sm:inline max-w-[100px] truncate">
+              {userProfile?.displayName?.split(' ')[0] || 'Conta'}
+            </span>
+          </button>
+        )}
+      </div>
     </header>
   );
 };

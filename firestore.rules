@@ -1,0 +1,822 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidDomainId(domain) {
+      return domain is string && domain.size() >= 3 && domain.size() <= 120 && domain.matches('^[a-z0-9.\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isEmailVerified() && (
+        request.auth.token.email.lower() in [
+          'adm.desbloqueio@gmail.com',
+          'viniciuscirne@gmail.com',
+          'agenciaiconedigital@gmail.com',
+          'vinnicirne@gmail.com'
+        ] ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function userEmailDomain() {
+      return request.auth.token.email.lower().split('@')[1];
+    }
+
+    function isFreeDomain(domain) {
+      return isValidDomainId(domain) && (
+        exists(/databases/$(database)/documents/free_domains/$(domain))
+          ? get(/databases/$(database)/documents/free_domains/$(domain)).data.active == true
+          : domain == 'mercadolivre.com'
+      );
+    }
+
+    function isAutoApproveDomain(domain) {
+      return isValidDomainId(domain) && (
+        exists(/databases/$(database)/documents/free_domains/$(domain))
+          ? (
+              get(/databases/$(database)/documents/free_domains/$(domain)).data.active == true &&
+              get(/databases/$(database)/documents/free_domains/$(domain)).data.autoApproveReferrals == true
+            )
+          : domain == 'mercadolivre.com'
+      );
+    }
+
+    function isAutoApprovedReferral(code) {
+      return code is string && code.size() >= 3 && code.size() <= 32 &&
+        code.matches('^[a-zA-Z0-9_\\-]+$') &&
+        exists(/databases/$(database)/documents/referral_codes/$(code)) &&
+        get(/databases/$(database)/documents/referral_codes/$(code)).data.active == true &&
+        isAutoApproveDomain(get(/databases/$(database)/documents/referral_codes/$(code)).data.ownerDomain);
+    }
+
+    function isCorporateLicenseActive(domain) {
+      return isValidDomainId(domain) &&
+        exists(/databases/$(database)/documents/corporate_companies/$(domain)) &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)).data.active == true &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)).data.autoApprove == true;
+    }
+
+    function isCompanyAdmin(domain) {
+      return isEmailVerified() &&
+        isValidDomainId(domain) &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyRole == 'company_admin' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain == domain &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+    }
+
+    function isCompanyMember(domain) {
+      return isEmailVerified() &&
+        isValidDomainId(domain) &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain == domain ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain == domain
+        ) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+    }
+
+    function myEmailLicenseId() {
+      return 'lic_' + request.auth.token.email.lower().replace('[^a-z0-9]+', '_');
+    }
+
+    function hasActiveAssignedLicense(domain) {
+      return isValidDomainId(domain) &&
+        request.auth.token.email.size() <= 120 &&
+        exists(/databases/$(database)/documents/corporate_companies/$(domain)) &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)).data.active == true &&
+        exists(/databases/$(database)/documents/corporate_companies/$(domain)/licenses/$(myEmailLicenseId())) &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)/licenses/$(myEmailLicenseId())).data.status == 'active' &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)/licenses/$(myEmailLicenseId())).data.email.lower() == request.auth.token.email.lower() &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)/licenses/$(myEmailLicenseId())).data.companyDomain == domain;
+    }
+
+    // 3. Entity Validation Blueprints
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+          'uid', 'email', 'domain', 'displayName', 'photoURL',
+          'role', 'status', 'planId', 'referralCode',
+          'referredByCode', 'referredByUid', 'referredByDomain',
+          'autoApprovedBy', 'accessCount', 'notes',
+          'createdAt', 'updatedAt', 'lastLoginAt'
+        ]) &&
+        data.keys().hasOnly([
+          'uid', 'email', 'domain', 'displayName', 'photoURL',
+          'role', 'status', 'planId', 'referralCode',
+          'referredByCode', 'referredByUid', 'referredByDomain',
+          'autoApprovedBy', 'licenseKey', 'companyDomain', 'licenseStatus', 'companyRole',
+          'accessCount', 'notes',
+          'createdAt', 'updatedAt', 'lastLoginAt'
+        ]) &&
+        isValidId(data.uid) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 160 &&
+        isValidDomainId(data.domain) &&
+        data.displayName is string && data.displayName.size() <= 120 &&
+        data.photoURL is string && data.photoURL.size() <= 500 &&
+        data.role in ['user', 'admin'] &&
+        data.status in ['approved', 'pending', 'blocked'] &&
+        isValidId(data.planId) && data.planId.size() <= 64 &&
+        isValidId(data.referralCode) && data.referralCode.size() <= 32 &&
+        data.referredByCode is string && data.referredByCode.size() <= 32 &&
+        data.referredByUid is string && data.referredByUid.size() <= 128 &&
+        data.referredByDomain is string && data.referredByDomain.size() <= 120 &&
+        data.autoApprovedBy in ['admin_bootstrap', 'free_domain', 'meli_referral', 'manual_admin', 'pending_approval', 'corporate_license'] &&
+        (!('licenseKey' in data) || (data.licenseKey is string && data.licenseKey.size() <= 64)) &&
+        (!('companyDomain' in data) || (data.companyDomain is string && data.companyDomain.size() <= 120)) &&
+        (!('licenseStatus' in data) || data.licenseStatus in ['active', 'none', 'suspended']) &&
+        (!('companyRole' in data) || data.companyRole in ['member', 'company_admin']) &&
+        data.accessCount is number && data.accessCount >= 0 &&
+        data.notes is string && data.notes.size() <= 500 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        data.lastLoginAt is timestamp;
+    }
+
+    function isValidReferralCode(data) {
+      return data.keys().hasAll([
+          'code', 'ownerUid', 'ownerName', 'ownerDomain',
+          'active', 'totalReferrals', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'code', 'ownerUid', 'ownerName', 'ownerDomain',
+          'active', 'totalReferrals', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.code) && data.code.size() <= 32 &&
+        isValidId(data.ownerUid) &&
+        data.ownerName is string && data.ownerName.size() <= 120 &&
+        isValidDomainId(data.ownerDomain) &&
+        data.active is bool &&
+        data.totalReferrals is number && data.totalReferrals >= 0 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidReferralRecord(data) {
+      return data.keys().hasAll([
+          'id', 'code', 'referrerUid', 'referrerName', 'referrerDomain',
+          'referredUid', 'referredName', 'referredEmail', 'referredDomain',
+          'status', 'autoApproved', 'commissionEnabled', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'code', 'referrerUid', 'referrerName', 'referrerDomain',
+          'referredUid', 'referredName', 'referredEmail', 'referredDomain',
+          'status', 'autoApproved', 'commissionEnabled', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.code) && data.code.size() <= 32 &&
+        isValidId(data.referrerUid) &&
+        data.referrerName is string && data.referrerName.size() <= 120 &&
+        data.referrerDomain is string && data.referrerDomain.size() <= 120 &&
+        isValidId(data.referredUid) &&
+        data.referredName is string && data.referredName.size() <= 120 &&
+        data.referredEmail is string && data.referredEmail.size() >= 3 && data.referredEmail.size() <= 160 &&
+        isValidDomainId(data.referredDomain) &&
+        data.status in ['approved', 'pending', 'revoked'] &&
+        data.autoApproved is bool &&
+        data.commissionEnabled is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidFreeDomain(data) {
+      return data.keys().hasAll([
+          'domain', 'label', 'active', 'autoApproveReferrals', 'defaultPlanId',
+          'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'domain', 'label', 'active', 'autoApproveReferrals', 'defaultPlanId',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidDomainId(data.domain) &&
+        data.label is string && data.label.size() >= 1 && data.label.size() <= 100 &&
+        data.active is bool &&
+        data.autoApproveReferrals is bool &&
+        isValidId(data.defaultPlanId) && data.defaultPlanId.size() <= 64 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidCorporateCompany(data) {
+      return data.keys().hasAll([
+          'domain', 'companyName', 'planId', 'pricePerLicense',
+          'licensedSeats', 'autoApprove', 'active', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'domain', 'companyName', 'planId', 'pricePerLicense',
+          'licensedSeats', 'autoApprove', 'active', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidDomainId(data.domain) &&
+        data.companyName is string && data.companyName.size() >= 1 && data.companyName.size() <= 120 &&
+        isValidId(data.planId) && data.planId.size() <= 64 &&
+        data.pricePerLicense is number && data.pricePerLicense >= 0 &&
+        data.licensedSeats is number && data.licensedSeats >= 0 &&
+        data.autoApprove is bool &&
+        data.active is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidCorporateUserLicense(data) {
+      return data.keys().hasAll([
+          'id', 'email', 'displayName', 'companyDomain', 'planId',
+          'licenseKey', 'status', 'companyRole', 'assignedUid', 'invitedByUid',
+          'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'email', 'displayName', 'companyDomain', 'planId',
+          'licenseKey', 'status', 'companyRole', 'assignedUid', 'invitedByUid',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 120 &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120 &&
+        isValidDomainId(data.companyDomain) &&
+        isValidId(data.planId) && data.planId.size() <= 64 &&
+        data.licenseKey is string && data.licenseKey.size() >= 4 && data.licenseKey.size() <= 64 &&
+        data.status in ['active', 'suspended'] &&
+        data.companyRole in ['member', 'company_admin'] &&
+        data.assignedUid is string && data.assignedUid.size() <= 128 &&
+        isValidId(data.invitedByUid) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidCorporatePackageIncident(data) {
+      return data.keys().hasAll([
+          'id', 'companyDomain', 'trackingCode', 'incidentType', 'boNumber',
+          'delegaciaId', 'delegaciaName', 'delegaciaUf', 'delegaciaMunicipio',
+          'packageAtStation', 'custodyStatus', 'estimatedValue', 'notes',
+          'createdByUid', 'createdByName', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'companyDomain', 'trackingCode', 'incidentType', 'boNumber',
+          'delegaciaId', 'delegaciaName', 'delegaciaUf', 'delegaciaMunicipio',
+          'packageAtStation', 'custodyStatus', 'estimatedValue', 'notes',
+          'lat', 'lng', 'address', 'bairro', 'history',
+          'createdByUid', 'createdByName', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidDomainId(data.companyDomain) &&
+        data.trackingCode is string && data.trackingCode.size() >= 1 && data.trackingCode.size() <= 80 &&
+        data.incidentType in ['extravio', 'fraude', 'roubo_carga', 'roubo', 'furto', 'apreensao', 'outros'] &&
+        data.boNumber is string && data.boNumber.size() <= 64 &&
+        data.delegaciaId is string && data.delegaciaId.size() >= 1 && data.delegaciaId.size() <= 64 &&
+        data.delegaciaName is string && data.delegaciaName.size() >= 1 && data.delegaciaName.size() <= 160 &&
+        data.delegaciaUf is string && data.delegaciaUf.size() >= 1 && data.delegaciaUf.size() <= 8 &&
+        data.delegaciaMunicipio is string && data.delegaciaMunicipio.size() <= 100 &&
+        data.packageAtStation is bool &&
+        data.custodyStatus in [
+          'em_ocorrencia_delegacia',
+          'aguardando_pericia',
+          'liberado_retirada',
+          'devolvido_empresa',
+          'extraviado_nao_localizado'
+        ] &&
+        data.estimatedValue is number && data.estimatedValue >= 0 &&
+        data.notes is string && data.notes.size() <= 1000 &&
+        (!('lat' in data) || data.lat is number) &&
+        (!('lng' in data) || data.lng is number) &&
+        (!('address' in data) || (data.address is string && data.address.size() <= 250)) &&
+        (!('bairro' in data) || (data.bairro is string && data.bairro.size() <= 120)) &&
+        (!('history' in data) || data.history is list) &&
+        isValidId(data.createdByUid) &&
+        data.createdByName is string && data.createdByName.size() <= 120 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidPlanConfig(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'description', 'priceMonthly', 'maxQueriesPerMonth',
+          'features', 'active', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'name', 'description', 'priceMonthly', 'billingModel', 'pricePerLicense',
+          'maxQueriesPerMonth', 'features', 'active', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) && data.id.size() <= 64 &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 80 &&
+        data.description is string && data.description.size() <= 300 &&
+        data.priceMonthly is number && data.priceMonthly >= 0 &&
+        (!('billingModel' in data) || data.billingModel in ['fixed', 'per_user']) &&
+        (!('pricePerLicense' in data) || (data.pricePerLicense is number && data.pricePerLicense >= 0)) &&
+        data.maxQueriesPerMonth is number && data.maxQueriesPerMonth >= 0 &&
+        data.features is list && data.features.size() <= 10 &&
+        (data.features.size() == 0 || (data.features[0] is string && data.features[0].size() <= 100)) &&
+        data.active is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAccessLog(data) {
+      return data.keys().hasAll([
+          'id', 'uid', 'userName', 'userEmail', 'userDomain',
+          'targetType', 'targetName', 'uf', 'municipio', 'cisp', 'createdAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'uid', 'userName', 'userEmail', 'userDomain',
+          'targetType', 'targetName', 'uf', 'municipio', 'cisp', 'createdAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.uid) &&
+        data.userName is string && data.userName.size() <= 120 &&
+        data.userEmail is string && data.userEmail.size() >= 3 && data.userEmail.size() <= 160 &&
+        isValidDomainId(data.userDomain) &&
+        data.targetType is string && data.targetType.size() >= 1 && data.targetType.size() <= 40 &&
+        data.targetName is string && data.targetName.size() >= 1 && data.targetName.size() <= 160 &&
+        data.uf is string && data.uf.size() <= 16 &&
+        data.municipio is string && data.municipio.size() <= 100 &&
+        data.cisp is number && data.cisp >= 0 &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidAdminRegistry(data) {
+      return data.keys().hasAll(['uid', 'email', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'createdAt']) &&
+        isValidId(data.uid) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 160 &&
+        data.createdAt is timestamp;
+    }
+
+    // 4. Collection Rules
+
+    // /users/{userId}
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin() || isCompanyAdmin(resource.data.domain));
+      allow list: if isAdmin() || (
+        isEmailVerified() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyRole == 'company_admin' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved' &&
+        resource.data.domain == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain
+      );
+
+      allow create: if isValidId(userId) &&
+        isOwner(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().uid == request.auth.uid &&
+        incoming().email.lower() == request.auth.token.email.lower() &&
+        incoming().domain == userEmailDomain() &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        incoming().lastLoginAt == request.time &&
+        incoming().accessCount == 0 &&
+        (
+          isAdmin() || (
+            incoming().role == 'user' &&
+            (
+              (
+                incoming().status == 'approved' && (
+                  (
+                    isEmailVerified() &&
+                    isFreeDomain(incoming().domain) &&
+                    incoming().autoApprovedBy == 'free_domain' &&
+                    incoming().get('companyRole', 'member') == 'member'
+                  ) ||
+                  (
+                    isEmailVerified() &&
+                    hasActiveAssignedLicense(incoming().domain) &&
+                    incoming().autoApprovedBy == 'corporate_license' &&
+                    incoming().get('companyDomain', '') == incoming().domain &&
+                    incoming().get('licenseStatus', 'none') == 'active' &&
+                    incoming().get('licenseKey', '') == get(/databases/$(database)/documents/corporate_companies/$(incoming().domain)/licenses/$(myEmailLicenseId())).data.licenseKey &&
+                    incoming().get('companyRole', 'member') == get(/databases/$(database)/documents/corporate_companies/$(incoming().domain)/licenses/$(myEmailLicenseId())).data.companyRole &&
+                    incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(incoming().domain)/licenses/$(myEmailLicenseId())).data.planId
+                  ) ||
+                  (
+                    isEmailVerified() &&
+                    isCorporateLicenseActive(incoming().domain) &&
+                    incoming().autoApprovedBy == 'corporate_license' &&
+                    incoming().get('companyDomain', '') == incoming().domain &&
+                    incoming().get('licenseStatus', 'none') == 'active' &&
+                    incoming().get('licenseKey', '').size() >= 4 &&
+                    incoming().get('companyRole', 'member') == 'member' &&
+                    incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(incoming().domain)).data.planId
+                  ) ||
+                  (
+                    isAutoApprovedReferral(incoming().referredByCode) &&
+                    incoming().autoApprovedBy == 'meli_referral' &&
+                    incoming().get('companyRole', 'member') == 'member'
+                  )
+                )
+              ) ||
+              (
+                incoming().status == 'pending' &&
+                incoming().autoApprovedBy == 'pending_approval' &&
+                incoming().get('licenseStatus', 'none') == 'none' &&
+                incoming().get('companyRole', 'member') == 'member'
+              )
+            )
+          )
+        );
+
+      allow update: if isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        incoming().domain == existing().domain &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (
+            isAdmin() &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'status', 'planId', 'role', 'notes', 'autoApprovedBy',
+              'licenseKey', 'companyDomain', 'licenseStatus', 'companyRole',
+              'displayName', 'photoURL', 'lastLoginAt', 'accessCount', 'updatedAt'
+            ])
+          ) ||
+          (
+            isCompanyAdmin(existing().domain) &&
+            existing().role == 'user' &&
+            incoming().role == 'user' &&
+            userId != request.auth.uid &&
+            incoming().referralCode == existing().referralCode &&
+            incoming().referredByCode == existing().referredByCode &&
+            incoming().referredByUid == existing().referredByUid &&
+            incoming().referredByDomain == existing().referredByDomain &&
+            incoming().notes == existing().notes &&
+            incoming().accessCount == existing().accessCount &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'status', 'planId', 'autoApprovedBy', 'licenseKey', 'companyDomain',
+              'licenseStatus', 'companyRole', 'updatedAt'
+            ])
+          ) ||
+          (
+            isOwner(userId) &&
+            (
+              (
+                incoming().role == existing().role &&
+                incoming().status == existing().status &&
+                incoming().planId == existing().planId &&
+                incoming().referralCode == existing().referralCode &&
+                incoming().referredByCode == existing().referredByCode &&
+                incoming().referredByUid == existing().referredByUid &&
+                incoming().referredByDomain == existing().referredByDomain &&
+                incoming().autoApprovedBy == existing().autoApprovedBy &&
+                incoming().get('licenseKey', '') == existing().get('licenseKey', '') &&
+                incoming().get('companyDomain', '') == existing().get('companyDomain', '') &&
+                incoming().get('licenseStatus', 'none') == existing().get('licenseStatus', 'none') &&
+                incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                incoming().notes == existing().notes &&
+                incoming().accessCount >= existing().accessCount &&
+                incoming().accessCount <= existing().accessCount + 1 &&
+                incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'lastLoginAt', 'updatedAt', 'accessCount'])
+              ) ||
+              (
+                isEmailVerified() &&
+                existing().status == 'pending' &&
+                incoming().status == 'approved' &&
+                incoming().role == existing().role &&
+                incoming().referralCode == existing().referralCode &&
+                incoming().referredByCode == existing().referredByCode &&
+                incoming().referredByUid == existing().referredByUid &&
+                incoming().referredByDomain == existing().referredByDomain &&
+                incoming().notes == existing().notes &&
+                incoming().accessCount == existing().accessCount &&
+                (
+                  (
+                    isFreeDomain(existing().domain) &&
+                    incoming().planId == existing().planId &&
+                    incoming().autoApprovedBy == 'free_domain' &&
+                    incoming().get('licenseKey', '') == existing().get('licenseKey', '') &&
+                    incoming().get('companyDomain', '') == existing().get('companyDomain', '') &&
+                    incoming().get('licenseStatus', 'none') == existing().get('licenseStatus', 'none') &&
+                    incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status', 'autoApprovedBy', 'displayName', 'photoURL', 'lastLoginAt', 'updatedAt'])
+                  ) ||
+                  (
+                    hasActiveAssignedLicense(existing().domain) &&
+                    incoming().autoApprovedBy == 'corporate_license' &&
+                    incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(existing().domain)/licenses/$(myEmailLicenseId())).data.planId &&
+                    incoming().get('companyDomain', '') == existing().domain &&
+                    incoming().get('licenseStatus', 'none') == 'active' &&
+                    incoming().get('licenseKey', '') == get(/databases/$(database)/documents/corporate_companies/$(existing().domain)/licenses/$(myEmailLicenseId())).data.licenseKey &&
+                    incoming().get('companyRole', 'member') == get(/databases/$(database)/documents/corporate_companies/$(existing().domain)/licenses/$(myEmailLicenseId())).data.companyRole &&
+                    incoming().diff(existing()).affectedKeys().hasOnly([
+                      'status', 'autoApprovedBy', 'planId', 'licenseKey', 'companyDomain', 'licenseStatus', 'companyRole',
+                      'displayName', 'photoURL', 'lastLoginAt', 'updatedAt'
+                    ])
+                  ) ||
+                  (
+                    isCorporateLicenseActive(existing().domain) &&
+                    incoming().autoApprovedBy == 'corporate_license' &&
+                    incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(existing().domain)).data.planId &&
+                    incoming().get('companyDomain', '') == existing().domain &&
+                    incoming().get('licenseStatus', 'none') == 'active' &&
+                    incoming().get('licenseKey', '').size() >= 4 &&
+                    incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                    incoming().diff(existing()).affectedKeys().hasOnly([
+                      'status', 'autoApprovedBy', 'planId', 'licenseKey', 'companyDomain', 'licenseStatus',
+                      'displayName', 'photoURL', 'lastLoginAt', 'updatedAt'
+                    ])
+                  )
+                )
+              )
+            )
+          )
+        );
+
+      allow delete: if isValidId(userId) && isAdmin();
+    }
+
+    // /referral_codes/{code}
+    match /referral_codes/{code} {
+      allow get: if isValidId(code) && isSignedIn();
+      allow list: if isAdmin() || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
+
+      allow create: if isValidId(code) &&
+        isEmailVerified() &&
+        isValidReferralCode(incoming()) &&
+        incoming().code == code &&
+        incoming().ownerUid == request.auth.uid &&
+        incoming().ownerDomain == userEmailDomain() &&
+        incoming().totalReferrals == 0 &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isValidId(code) &&
+        isValidReferralCode(incoming()) &&
+        incoming().code == existing().code &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().ownerDomain == existing().ownerDomain &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (
+            isAdmin() &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['active', 'ownerName', 'totalReferrals', 'updatedAt'])
+          ) ||
+          (
+            isSignedIn() &&
+            incoming().active == existing().active &&
+            incoming().ownerName == existing().ownerName &&
+            incoming().totalReferrals == existing().totalReferrals + 1 &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['totalReferrals', 'updatedAt'])
+          )
+        );
+
+      allow delete: if isValidId(code) && isAdmin();
+    }
+
+    // /referrals/{referralId}
+    match /referrals/{referralId} {
+      allow get: if isValidId(referralId) && (
+        isAdmin() ||
+        (isSignedIn() && (resource.data.referrerUid == request.auth.uid || resource.data.referredUid == request.auth.uid))
+      );
+      allow list: if isAdmin() || (isSignedIn() && resource.data.referrerUid == request.auth.uid);
+
+      allow create: if isValidId(referralId) &&
+        isSignedIn() &&
+        isValidReferralRecord(incoming()) &&
+        incoming().id == referralId &&
+        incoming().referredUid == request.auth.uid &&
+        incoming().referredEmail.lower() == request.auth.token.email.lower() &&
+        incoming().referredDomain == userEmailDomain() &&
+        incoming().commissionEnabled == false &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        exists(/databases/$(database)/documents/referral_codes/$(incoming().code)) &&
+        incoming().referrerUid == get(/databases/$(database)/documents/referral_codes/$(incoming().code)).data.ownerUid &&
+        incoming().referrerDomain == get(/databases/$(database)/documents/referral_codes/$(incoming().code)).data.ownerDomain &&
+        (
+          (incoming().status == 'approved' && incoming().autoApproved == true && isAutoApprovedReferral(incoming().code)) ||
+          (incoming().status == 'pending' && incoming().autoApproved == false)
+        );
+
+      allow update: if isValidId(referralId) &&
+        isAdmin() &&
+        isValidReferralRecord(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().code == existing().code &&
+        incoming().referrerUid == existing().referrerUid &&
+        incoming().referredUid == existing().referredUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'commissionEnabled', 'updatedAt']);
+
+      allow delete: if isValidId(referralId) && isAdmin();
+    }
+
+    // /free_domains/{domainId}
+    match /free_domains/{domainId} {
+      allow get: if isValidDomainId(domainId) && isSignedIn();
+      allow list: if isAdmin();
+
+      allow create: if isValidDomainId(domainId) &&
+        isAdmin() &&
+        isValidFreeDomain(incoming()) &&
+        incoming().domain == domainId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isValidDomainId(domainId) &&
+        isAdmin() &&
+        isValidFreeDomain(incoming()) &&
+        incoming().domain == existing().domain &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['label', 'active', 'autoApproveReferrals', 'defaultPlanId', 'updatedAt']);
+
+      allow delete: if isValidDomainId(domainId) && isAdmin();
+    }
+
+    // /corporate_companies/{domainId}
+    match /corporate_companies/{domainId} {
+      allow get: if isValidDomainId(domainId) && isSignedIn();
+      allow list: if isAdmin();
+
+      allow create: if isValidDomainId(domainId) &&
+        isAdmin() &&
+        isValidCorporateCompany(incoming()) &&
+        incoming().domain == domainId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isValidDomainId(domainId) &&
+        (isAdmin() || isCompanyAdmin(domainId)) &&
+        isValidCorporateCompany(incoming()) &&
+        incoming().domain == existing().domain &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'companyName', 'planId', 'pricePerLicense', 'licensedSeats',
+          'autoApprove', 'active', 'updatedAt'
+        ]);
+
+      allow delete: if isValidDomainId(domainId) && isAdmin();
+
+      // /corporate_companies/{domainId}/licenses/{licenseId}
+      match /licenses/{licenseId} {
+        allow get: if isValidDomainId(domainId) && isValidId(licenseId) && (
+          isAdmin() ||
+          isCompanyAdmin(domainId) ||
+          (isEmailVerified() && licenseId == myEmailLicenseId())
+        );
+        allow list: if isValidDomainId(domainId) && (isAdmin() || isCompanyAdmin(domainId));
+
+        allow create: if isValidDomainId(domainId) && isValidId(licenseId) &&
+          (isAdmin() || isCompanyAdmin(domainId)) &&
+          isValidCorporateUserLicense(incoming()) &&
+          incoming().id == licenseId &&
+          incoming().companyDomain == domainId &&
+          incoming().email.lower().split('@')[1] == domainId &&
+          incoming().invitedByUid == request.auth.uid &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
+
+        allow update: if isValidDomainId(domainId) && isValidId(licenseId) &&
+          isValidCorporateUserLicense(incoming()) &&
+          incoming().id == existing().id &&
+          incoming().email == existing().email &&
+          incoming().companyDomain == existing().companyDomain &&
+          incoming().invitedByUid == existing().invitedByUid &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          (
+            (
+              (isAdmin() || isCompanyAdmin(domainId)) &&
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'displayName', 'planId', 'licenseKey', 'status', 'companyRole', 'assignedUid', 'updatedAt'
+              ])
+            ) ||
+            (
+              isEmailVerified() &&
+              licenseId == myEmailLicenseId() &&
+              existing().email.lower() == request.auth.token.email.lower() &&
+              incoming().displayName == existing().displayName &&
+              incoming().planId == existing().planId &&
+              incoming().licenseKey == existing().licenseKey &&
+              incoming().status == existing().status &&
+              incoming().companyRole == existing().companyRole &&
+              incoming().assignedUid == request.auth.uid &&
+              incoming().diff(existing()).affectedKeys().hasOnly(['assignedUid', 'updatedAt'])
+            )
+          );
+
+        allow delete: if isValidDomainId(domainId) && isValidId(licenseId) && (isAdmin() || isCompanyAdmin(domainId));
+      }
+
+      // /corporate_companies/{domainId}/incidents/{incidentId}
+      match /incidents/{incidentId} {
+        allow get: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
+        allow list: if isValidDomainId(domainId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
+
+        allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId)) &&
+          isValidCorporatePackageIncident(incoming()) &&
+          incoming().id == incidentId &&
+          incoming().companyDomain == domainId &&
+          incoming().createdByUid == request.auth.uid &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
+
+        allow update: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId)) &&
+          isValidCorporatePackageIncident(incoming()) &&
+          incoming().id == existing().id &&
+          incoming().companyDomain == existing().companyDomain &&
+          incoming().createdByUid == existing().createdByUid &&
+          incoming().createdByName == existing().createdByName &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'trackingCode', 'incidentType', 'boNumber', 'delegaciaId', 'delegaciaName',
+            'delegaciaUf', 'delegaciaMunicipio', 'packageAtStation', 'custodyStatus',
+            'estimatedValue', 'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
+          ]);
+
+        allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (isAdmin() || isCompanyAdmin(domainId));
+      }
+    }
+
+    // /plans/{planId}
+    match /plans/{planId} {
+      allow get: if isValidId(planId) && isSignedIn();
+      allow list: if isSignedIn();
+
+      allow create: if isValidId(planId) &&
+        isAdmin() &&
+        isValidPlanConfig(incoming()) &&
+        incoming().id == planId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isValidId(planId) &&
+        isAdmin() &&
+        isValidPlanConfig(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'description', 'priceMonthly', 'billingModel', 'pricePerLicense',
+          'maxQueriesPerMonth', 'features', 'active', 'updatedAt'
+        ]);
+
+      allow delete: if isValidId(planId) && isAdmin();
+    }
+
+    // /access_logs/{logId}
+    match /access_logs/{logId} {
+      allow get: if isValidId(logId) && (
+        isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid)
+      );
+      allow list: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+
+      allow create: if isValidId(logId) &&
+        isSignedIn() &&
+        isValidAccessLog(incoming()) &&
+        incoming().id == logId &&
+        incoming().uid == request.auth.uid &&
+        incoming().userEmail.lower() == request.auth.token.email.lower() &&
+        incoming().userDomain == userEmailDomain() &&
+        incoming().createdAt == request.time;
+
+      allow update, delete: if isValidId(logId) && isAdmin();
+    }
+
+    // /admins/{userId}
+    match /admins/{userId} {
+      allow get: if isValidId(userId) && (isAdmin() || isOwner(userId));
+      allow list: if isAdmin();
+      allow create: if isValidId(userId) &&
+        isAdmin() &&
+        isValidAdminRegistry(incoming()) &&
+        incoming().uid == userId &&
+        incoming().createdAt == request.time;
+      allow update, delete: if isValidId(userId) && isAdmin();
+    }
+  }
+}

@@ -228,10 +228,12 @@ export const PrintableDossierModal: React.FC<PrintableDossierProps> = ({ data, o
           {/* Footer Note */}
           <div className="pt-6 border-t border-slate-300 text-[9px] text-slate-500 flex justify-between items-center">
             <div>
-              Documento emitido pelo Painel de Monitoramento Territorial — Rio de Janeiro.
+              Documento emitido pelo <strong>Painel de Monitoramento Territorial</strong> — Desenvolvido e Licenciado por <strong>Agência Ícone Digital by Vinicius Cirne</strong>.
+              <span className="block text-[8px] text-slate-400">Licença Vinculada Homologada • AID-VC-GIS-2026-BR-RJ</span>
             </div>
-            <div>
-              Chave de Autenticação: {Math.random().toString(36).substring(2, 10).toUpperCase()}
+            <div className="text-right">
+              <div>Chave de Autenticação: {Math.random().toString(36).substring(2, 10).toUpperCase()}</div>
+              <div className="text-[8px] text-slate-400">Todos os direitos reservados © {new Date().getFullYear()}</div>
             </div>
           </div>
         </div>

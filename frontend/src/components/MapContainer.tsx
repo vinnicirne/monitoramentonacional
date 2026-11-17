@@ -4,6 +4,7 @@ import View from 'ol/View';
 import Overlay from 'ol/Overlay';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
+import Heatmap from 'ol/layer/Heatmap';
 import VectorSource from 'ol/source/Vector';
 import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
@@ -15,7 +16,7 @@ import CircleGeom from 'ol/geom/Circle';
 import { Style, Fill, Stroke, Text, Circle as CircleStyle } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { defaults as defaultControls } from 'ol/control/defaults';
-import { Database, ExternalLink, X, LocateFixed, Navigation, Crosshair, Square, Compass } from 'lucide-react';
+import { Database, ExternalLink, X, LocateFixed, Navigation, Crosshair, Square, Compass, ShieldAlert, Lock, Flame } from 'lucide-react';
 import {
   BasemapType,
   ChoroplethMetric,
@@ -24,6 +25,8 @@ import {
   TerritorialRegistry
 } from '../types';
 import { DivisaoTerritorialRow, EstadoScope, UnidadePolicialRow } from '../types/sigBase';
+import { CorporatePackageIncident } from '../types/admin';
+import { INCIDENT_TYPE_META } from './CorporateIncidentModal';
 import {
   FAC_CATALOG,
   FACCAO_PRECISA_GEOJSON,
@@ -50,6 +53,7 @@ interface MapContainerProps {
   basemap: BasemapType;
   selectedCispId: number | null;
   selectedCommunityName: string | null;
+  selectedDelegaciaMgEsId?: string | null;
   onSelectFeature: (data: SelectedFeatureData | null) => void;
   mapRefOut: React.MutableRefObject<Map | null>;
   choroplethMetric: ChoroplethMetric;
@@ -72,6 +76,11 @@ interface MapContainerProps {
   onSelectAddress?: (address: AddressSearchResult) => void;
   onSelectDelegaciaMgEs?: (delegacia: DelegaciaTerritorialMgEs) => void;
   onResetView?: () => void;
+  canViewDetails?: boolean;
+  companyIncidents?: CorporatePackageIncident[];
+  companyDomain?: string;
+  onSelectCorporateIncident?: (incident: CorporatePackageIncident) => void;
+  onRequestRegisterIncident?: (coords?: { lat: number; lng: number }) => void;
 }
 
 const FAC_STYLE_CACHE: Record<string, Style> = {};
@@ -110,6 +119,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   basemap,
   selectedCispId,
   selectedCommunityName,
+  selectedDelegaciaMgEsId = null,
   onSelectFeature,
   mapRefOut,
   choroplethMetric,
@@ -131,14 +141,19 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onSelectCommunity,
   onSelectAddress,
   onSelectDelegaciaMgEs,
-  onResetView
+  onResetView,
+  canViewDetails = true,
+  companyIncidents = [],
+  companyDomain = '',
+  onSelectCorporateIncident,
+  onRequestRegisterIncident
 }) => {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
 
   const selectedCispIdRef = useRef(selectedCispId);
   const selectedCommunityRef = useRef(selectedCommunityName);
-  const selectedDelegaciaIdRef = useRef<string | null>(null);
+  const selectedDelegaciaIdRef = useRef<string | null>(selectedDelegaciaMgEsId);
   const choroplethMetricRef = useRef(choroplethMetric);
   const layerOpacityRef = useRef(layerOpacity);
   const selectedYearRef = useRef(selectedYear);
@@ -146,6 +161,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const selectedFactionFilterRef = useRef(selectedFactionFilter);
   const estadoScopeRef = useRef(estadoScope);
   const onSelectFeatureRef = useRef(onSelectFeature);
+  const onResetViewRef = useRef(onResetView);
+  const canViewDetailsRef = useRef(canViewDetails);
 
   useEffect(() => {
     selectedCispIdRef.current = selectedCispId;
@@ -157,6 +174,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     selectedCommunityRef.current = selectedCommunityName;
     if (faccoesPrecisasVectorRef.current) faccoesPrecisasVectorRef.current.changed();
   }, [selectedCommunityName]);
+
+  useEffect(() => {
+    selectedDelegaciaIdRef.current = selectedDelegaciaMgEsId;
+    if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
+  }, [selectedDelegaciaMgEsId]);
 
   useEffect(() => {
     choroplethMetricRef.current = choroplethMetric;
@@ -194,6 +216,18 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     onSelectFeatureRef.current = onSelectFeature;
   }, [onSelectFeature]);
 
+  useEffect(() => {
+    onResetViewRef.current = onResetView;
+  }, [onResetView]);
+
+  useEffect(() => {
+    canViewDetailsRef.current = canViewDetails;
+    if (!canViewDetails) {
+      setMapPopup(null);
+      popupOverlayRef.current?.setPosition(undefined);
+    }
+  }, [canViewDetails]);
+
   // Basemap refs
   const basemapOsmRef = useRef<TileLayer<OSM> | null>(null);
   const basemapVoyagerRef = useRef<TileLayer<XYZ> | null>(null);
@@ -217,6 +251,21 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const addressVectorRef = useRef<VectorLayer<any> | null>(null);
   const userLocSourceRef = useRef<VectorSource>(new VectorSource());
   const userLocVectorRef = useRef<VectorLayer<any> | null>(null);
+
+  // Corporate Heatmap & Incidents Refs (Confidential to company)
+  const corporateIncidentsSourceRef = useRef<VectorSource>(new VectorSource());
+  const corporateHeatmapRef = useRef<any>(null);
+  const corporatePinsRef = useRef<VectorLayer<any> | null>(null);
+  const onSelectCorporateIncidentRef = useRef<((inc: CorporatePackageIncident) => void) | undefined>(undefined);
+  const onRequestRegisterIncidentRef = useRef<((coords?: { lat: number; lng: number }) => void) | undefined>(undefined);
+
+  useEffect(() => {
+    onSelectCorporateIncidentRef.current = onSelectCorporateIncident;
+  }, [onSelectCorporateIncident]);
+
+  useEffect(() => {
+    onRequestRegisterIncidentRef.current = onRequestRegisterIncident;
+  }, [onRequestRegisterIncident]);
 
   const hoveredFacFeatureRef = useRef<Feature | null>(null);
   const popupElementRef = useRef<HTMLDivElement | null>(null);
@@ -504,17 +553,17 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         return new Style({
           image: new CircleStyle({
             radius: isSelected ? 14 : 10.5,
-            fill: new Fill({ color: isSelected ? '#2563eb' : '#0f172a' }),
+            fill: new Fill({ color: isSelected ? '#3483FA' : '#2D3277' }),
             stroke: new Stroke({
-              color: isSelected ? '#93c5fd' : '#38bdf8',
-              width: isSelected ? 3 : 2
+              color: isSelected ? '#FFE600' : '#ffffff',
+              width: isSelected ? 3.2 : 2
             })
           }),
           text: new Text({
             text: String(cispNum),
             font: isSelected ? 'bold 11px Arial, sans-serif' : 'bold 9px Arial, sans-serif',
             fill: new Fill({ color: '#ffffff' }),
-            stroke: new Stroke({ color: '#020617', width: 2.5 }),
+            stroke: new Stroke({ color: '#1E2258', width: 2.5 }),
             textAlign: 'center',
             textBaseline: 'middle'
           })
@@ -570,6 +619,50 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     });
     userLocVectorRef.current = userLocationLayer;
 
+    // 11. Corporate Incidents Heatmap Layer (confidential to company)
+    const corporateHeatmapLayer = new Heatmap({
+      source: corporateIncidentsSourceRef.current,
+      blur: 24,
+      radius: 18,
+      weight: feature => {
+        const incType = feature.get('incidentType');
+        if (incType === 'roubo_carga') return 1.0;
+        if (incType === 'roubo') return 0.9;
+        if (incType === 'furto') return 0.7;
+        if (incType === 'fraude') return 0.6;
+        if (incType === 'apreensao') return 0.5;
+        return 0.5;
+      },
+      visible: layers.corporateHeatmap !== false,
+      zIndex: 9
+    });
+    corporateHeatmapRef.current = corporateHeatmapLayer;
+
+    // 12. Corporate Incidents Pin Markers Layer
+    const corporatePinsLayer = new VectorLayer({
+      source: corporateIncidentsSourceRef.current,
+      visible: layers.corporateIncidents !== false,
+      zIndex: 9.5,
+      style: feature => {
+        const incType = feature.get('incidentType');
+        const isRoubo = incType === 'roubo_carga' || incType === 'roubo';
+        return new Style({
+          image: new CircleStyle({
+            radius: 8.5,
+            fill: new Fill({ color: isRoubo ? '#dc2626' : '#ea580c' }),
+            stroke: new Stroke({ color: '#ffffff', width: 2.5 })
+          }),
+          text: new Text({
+            text: isRoubo ? '!' : '●',
+            font: 'bold 11px Arial, sans-serif',
+            fill: new Fill({ color: '#ffffff' }),
+            offsetY: 1
+          })
+        });
+      }
+    });
+    corporatePinsRef.current = corporatePinsLayer;
+
     const view = new View({
       center: fromLonLat([-43.28, -22.86]),
       zoom: 10.3,
@@ -593,6 +686,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         delegaciasLayer,
         batalhoesLayer,
         mgEsLayer,
+        corporateHeatmapLayer,
+        corporatePinsLayer,
         addressMarkerLayer,
         userLocationLayer
       ],
@@ -640,24 +735,27 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             popupOverlayRef.current?.setPosition(undefined);
             onSelectFeatureRef.current(null);
             if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
+            onResetViewRef.current?.();
             return true;
           }
 
-          selectedDelegaciaIdRef.current = del.id;
-          if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
+          if (canViewDetailsRef.current) {
+            selectedDelegaciaIdRef.current = del.id;
+            if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
 
-          setMapPopup({
-            visible: true,
-            title: del.nomeCurto,
-            factionLabel: `${del.orgao} · ${del.municipio} - ${del.uf}`,
-            factionShort: del.orgao,
-            color: del.cor,
-            cispLabel: del.regional,
-            source: `${del.totalBairros} Bairros atendidos · Comarca de ${del.municipio}`,
-            period: del.plantao24h ? 'Atendimento: Plantão 24 Horas' : del.horarioAtendimento,
-            methodologyNote: `Jurisdição: ${del.jurisdicao} | Endereço: ${del.endereco} | Tel: ${del.telefone}`
-          });
-          popupOverlayRef.current?.setPosition(evt.coordinate);
+            setMapPopup({
+              visible: true,
+              title: del.nomeCurto,
+              factionLabel: `${del.orgao} · ${del.municipio} - ${del.uf}`,
+              factionShort: del.orgao,
+              color: del.cor,
+              cispLabel: del.regional,
+              source: `${del.totalBairros} Bairros atendidos · Comarca de ${del.municipio}`,
+              period: del.plantao24h ? 'Atendimento: Plantão 24 Horas' : del.horarioAtendimento,
+              methodologyNote: `Jurisdição: ${del.jurisdicao} | Endereço: ${del.endereco} | Tel: ${del.telefone}`
+            });
+            popupOverlayRef.current?.setPosition(evt.coordinate);
+          }
 
           onSelectFeatureRef.current({
             tipo: 'DELEGACIA_MG_ES',
@@ -686,6 +784,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           return true;
         }
 
+        if (tipo === 'CORPORATE_INCIDENT') {
+          featureFound = true;
+          const inc = props.incident as CorporatePackageIncident;
+          if (onSelectCorporateIncidentRef.current) {
+            onSelectCorporateIncidentRef.current(inc);
+            return true;
+          }
+        }
+
         if (tipo === 'FACCAO_PRECISA') {
           featureFound = true;
           const nome = props.n as string;
@@ -693,6 +800,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             setMapPopup(null);
             popupOverlayRef.current?.setPosition(undefined);
             onSelectFeatureRef.current(null);
+            onResetViewRef.current?.();
             return true;
           }
           const code = props.f as CodigoFaccaoPrecisa;
@@ -704,19 +812,21 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           const reg = registryRef.current;
           const regRecord = cispNum ? reg?.cisps[cispNum] : undefined;
 
-          setMapPopup({
-            visible: true,
-            title: nome,
-            factionLabel: meta.label,
-            factionShort: meta.shortLabel,
-            color: meta.color,
-            cispLabel: regRecord?.nome_oficial || (cispNum ? `${cispNum}ª DP` : undefined),
-            source: 'Dados de Riscos · Mapa RJ Risco Facções',
-            sourceUrl: 'https://dadosderiscos.com.br/mapa-rj-risco-faccoes.html',
-            period: 'Base Agosto/2026 (1.695 áreas)',
-            methodologyNote: 'Mapeamento comunitário compilado a partir de fontes públicas (GENI-UFF, Fogo Cruzado e Disque-Denúncia).'
-          });
-          popupOverlayRef.current?.setPosition(evt.coordinate);
+          if (canViewDetailsRef.current) {
+            setMapPopup({
+              visible: true,
+              title: nome,
+              factionLabel: meta.label,
+              factionShort: meta.shortLabel,
+              color: meta.color,
+              cispLabel: regRecord?.nome_oficial || (cispNum ? `${cispNum}ª DP` : undefined),
+              source: 'Dados de Riscos · Mapa RJ Risco Facções',
+              sourceUrl: 'https://dadosderiscos.com.br/mapa-rj-risco-faccoes.html',
+              period: 'Base Agosto/2026 (1.695 áreas)',
+              methodologyNote: 'Mapeamento comunitário compilado a partir de fontes públicas (GENI-UFF, Fogo Cruzado e Disque-Denúncia).'
+            });
+            popupOverlayRef.current?.setPosition(evt.coordinate);
+          }
 
           onSelectFeatureRef.current({
             tipo: 'FACCAO_COMUNIDADE',
@@ -749,25 +859,28 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         if (tipo === 'FOCO_ESPECIAL') {
           featureFound = true;
-          setMapPopup({
-            visible: true,
-            title: props.nome,
-            factionLabel: props.faccao || 'Foco Especial',
-            factionShort: 'FOCO',
-            color: props.cor || '#ef4444',
-            cispLabel: props.cisp ? `${props.cisp}ª DP` : undefined,
-            source: props.fonte || 'Registros Públicos Consolidados',
-            period: props.data_registro || 'Atualizado 2026',
-            methodologyNote: props.grau_confiabilidade || 'Registro georreferenciado KML / fontes públicas.'
-          });
-          popupOverlayRef.current?.setPosition(evt.coordinate);
+          if (canViewDetailsRef.current) {
+            setMapPopup({
+              visible: true,
+              title: props.nome,
+              factionLabel: props.faccao || 'Foco Especial',
+              factionShort: props.grupoArmado || 'FOCO',
+              color: props.cor || '#ef4444',
+              cispLabel: props.cisp ? `${props.cisp}ª DP` : undefined,
+              source: props.fonte || 'Registros Públicos Consolidados',
+              period: props.data_registro || 'Atualizado 2026',
+              methodologyNote: props.detalhes || props.descricao || props.grau_confiabilidade || 'Registro georreferenciado KML / fontes públicas.'
+            });
+            popupOverlayRef.current?.setPosition(evt.coordinate);
+          }
 
           onSelectFeatureRef.current({
             tipo: 'FOCO_ESPECIAL',
-            id: feature.getId() || 'foco',
+            id: feature.getId() || props.id || 'foco',
             nome: props.nome,
+            municipio: props.municipio,
             faccao: props.faccao,
-            descricao: props.descricao,
+            descricao: props.descricao || props.detalhes,
             fonte: props.fonte,
             data_registro: props.data_registro,
             grau_confiabilidade: props.grau_confiabilidade,
@@ -780,11 +893,13 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         if (tipo === 'CISP') {
           featureFound = true;
-          const cispNum = props.cisp;
-          if (selectedCispIdRef.current === cispNum) {
+          const cispNum = Number(props.cisp);
+          if (selectedCispIdRef.current !== null && Number(selectedCispIdRef.current) === cispNum) {
+            selectedCispIdRef.current = null;
             setMapPopup(null);
             popupOverlayRef.current?.setPosition(undefined);
             onSelectFeatureRef.current(null);
+            onResetViewRef.current?.();
             return true;
           }
           const reg = registryRef.current;
@@ -849,11 +964,13 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         if (tipo === 'DELEGACIA') {
           featureFound = true;
-          const cispNum = props.cisp;
-          if (selectedCispIdRef.current === cispNum) {
+          const cispNum = Number(props.cisp);
+          if (selectedCispIdRef.current !== null && Number(selectedCispIdRef.current) === cispNum) {
+            selectedCispIdRef.current = null;
             setMapPopup(null);
             popupOverlayRef.current?.setPosition(undefined);
             onSelectFeatureRef.current(null);
+            onResetViewRef.current?.();
             return true;
           }
           const regRecord = registryRef.current?.cisps[cispNum];
@@ -907,8 +1024,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       if (!featureFound) {
         setMapPopup(null);
         popupOverlayRef.current?.setPosition(undefined);
-        if (selectedCispIdRef.current || selectedCommunityRef.current) {
+        if (selectedCispIdRef.current || selectedCommunityRef.current || selectedDelegaciaIdRef.current) {
+          selectedDelegaciaIdRef.current = null;
           onSelectFeatureRef.current(null);
+          if (mgEsVectorRef.current) mgEsVectorRef.current.changed();
         }
       }
     });
@@ -935,6 +1054,40 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         if (hit) return true;
         const props = feature.getProperties();
         const tipo = props.tipo || props.type;
+
+        if (!canViewDetailsRef.current) {
+          if (
+            tipo === 'DELEGACIA_MG_ES_POLYGON' ||
+            tipo === 'DELEGACIA_MG_ES' ||
+            tipo === 'FACCAO_PRECISA' ||
+            tipo === 'FOCO_ESPECIAL' ||
+            tipo === 'MGES_NODE' ||
+            (tipo === 'BRASIL_UF' && estadoScopeRef.current === 'TODOS') ||
+            props.nome ||
+            props.cisp_formatado
+          ) {
+            hit = true;
+            const title =
+              tipo === 'DELEGACIA_MG_ES_POLYGON' || tipo === 'DELEGACIA_MG_ES'
+                ? (props.delegacia as DelegaciaTerritorialMgEs)?.nomeCurto || 'Delegacia Territorial'
+                : tipo === 'FACCAO_PRECISA'
+                ? String(props.n || 'Área Mapeada')
+                : props.cisp_formatado
+                ? `${props.cisp_formatado}`
+                : String(props.nome || 'Localização no Mapa');
+            setTooltip({
+              visible: true,
+              x: safeX,
+              y: safeY,
+              title,
+              sub: 'Clique para entrar ou criar conta e ver o dossiê completo',
+              type: 'ACESSO RESTRITO',
+              color: '#3483FA'
+            });
+            return true;
+          }
+          return false;
+        }
 
         if (tipo === 'DELEGACIA_MG_ES_POLYGON' || tipo === 'DELEGACIA_MG_ES') {
           hit = true;
@@ -964,6 +1117,24 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             sub: info.subtitulo,
             type: 'SIG MG·ES',
             source: info.divisao?.Fonte_Legal || info.unidade?.Fonte_Legal || 'SEJUSP-MG / SESP-ES'
+          });
+          return true;
+        }
+
+        if (tipo === 'CORPORATE_INCIDENT') {
+          hit = true;
+          const inc = props.incident as CorporatePackageIncident;
+          const meta = INCIDENT_TYPE_META[inc.incidentType] || INCIDENT_TYPE_META.outros;
+          setTooltip({
+            visible: true,
+            x: safeX,
+            y: safeY,
+            title: `[${meta.label}] ${inc.trackingCode}`,
+            sub: `${inc.delegaciaName} · B.O. ${inc.boNumber || 'S/N'}${inc.estimatedValue ? ` · R$ ${inc.estimatedValue.toLocaleString('pt-BR')}` : ''}`,
+            type: `OCORRÊNCIA @${inc.companyDomain}`,
+            color: meta.isRoubo ? '#dc2626' : '#ea580c',
+            source: 'Ocorrência Confidencial da Empresa',
+            sourceDetail: 'Visível exclusivamente para colaboradores homologados'
           });
           return true;
         }
@@ -1005,11 +1176,13 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             x: safeX,
             y: safeY,
             title: props.nome,
-            sub: props.faccao || 'Área de Foco Especial',
+            sub: props.faccao
+              ? `${props.faccao}${props.situacao ? ` · ${props.situacao}` : ''}`
+              : 'Área de Foco Especial',
             type: 'FOCO ESPECIAL',
             color: props.cor || '#ef4444',
             source: props.fonte || 'Fontes Públicas Consolidadas',
-            sourceDetail: `${props.data_registro || ''}${props.grau_confiabilidade ? ` · ${props.grau_confiabilidade}` : ''}`
+            sourceDetail: `${props.municipio ? `${props.municipio} · ` : ''}${props.data_registro || ''}${props.grau_confiabilidade ? ` · ${props.grau_confiabilidade}` : ''}`
           });
           return true;
         }
@@ -1372,6 +1545,45 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     source.addFeatures(features);
   }, [estadoScope, mgEsDivisao, mgEsUnidades]);
 
+  // Sync corporate incidents to OpenLayers VectorSource for Heatmap & Pins
+  useEffect(() => {
+    if (!corporateIncidentsSourceRef.current) return;
+    corporateIncidentsSourceRef.current.clear();
+    if (!companyIncidents || companyIncidents.length === 0) return;
+
+    const feats: Feature[] = [];
+    companyIncidents.forEach(inc => {
+      if (
+        typeof inc.lat === 'number' &&
+        typeof inc.lng === 'number' &&
+        !Number.isNaN(inc.lat) &&
+        !Number.isNaN(inc.lng)
+      ) {
+        const f = new Feature({
+          geometry: new Point(fromLonLat([inc.lng, inc.lat])),
+          incident: inc,
+          incidentType: inc.incidentType,
+          trackingCode: inc.trackingCode,
+          boNumber: inc.boNumber,
+          type: 'CORPORATE_INCIDENT',
+          tipo: 'CORPORATE_INCIDENT'
+        });
+        feats.push(f);
+      }
+    });
+    corporateIncidentsSourceRef.current.addFeatures(feats);
+  }, [companyIncidents]);
+
+  // Sync visibility of Corporate Heatmap and Pins
+  useEffect(() => {
+    if (corporateHeatmapRef.current) {
+      corporateHeatmapRef.current.setVisible(layers.corporateHeatmap !== false);
+    }
+    if (corporatePinsRef.current) {
+      corporatePinsRef.current.setVisible(layers.corporateIncidents !== false);
+    }
+  }, [layers.corporateHeatmap, layers.corporateIncidents]);
+
   // Auto-frame when estadoScope changes
   useEffect(() => {
     if (!mapInstance.current) return;
@@ -1431,14 +1643,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       new Style({
         image: new CircleStyle({
           radius: 10,
-          fill: new Fill({ color: '#0284c7' }),
-          stroke: new Stroke({ color: '#ffffff', width: 3 })
+          fill: new Fill({ color: '#3483FA' }),
+          stroke: new Stroke({ color: '#FFE600', width: 3 })
         }),
         text: new Text({
           text: selectedAddress.shortTitle,
           font: "bold 11px 'Plus Jakarta Sans', sans-serif",
           fill: new Fill({ color: '#ffffff' }),
-          stroke: new Stroke({ color: '#020617', width: 3.5 }),
+          stroke: new Stroke({ color: '#2D3277', width: 3.5 }),
           offsetY: -18
         })
       })
@@ -1451,8 +1663,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       new Style({
         image: new CircleStyle({
           radius: 19,
-          fill: new Fill({ color: 'rgba(14, 165, 233, 0.22)' }),
-          stroke: new Stroke({ color: '#38bdf8', width: 1.5 })
+          fill: new Fill({ color: 'rgba(52, 131, 250, 0.22)' }),
+          stroke: new Stroke({ color: '#3483FA', width: 1.5 })
         })
       })
     );
@@ -1464,21 +1676,23 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     const cispNum = (cispFeatAtAddr?.get('cisp') as number | undefined) ?? findCispForCoords(selectedAddress.lng, selectedAddress.lat);
     const regRecord = cispNum ? registryRef.current?.cisps[cispNum] : undefined;
 
-    setMapPopup({
-      visible: true,
-      title: selectedAddress.shortTitle,
-      factionLabel: facMatch ? `${facMatch.label} (${facMatch.nome})` : 'Sem polígono de facção mapeado neste ponto',
-      factionShort: facMatch ? facMatch.shortLabel : 'ENDEREÇO',
-      color: facMatch ? facMatch.color : '#0284c7',
-      cispLabel: regRecord?.nome_oficial || (cispNum ? `${cispNum}ª DP` : undefined),
-      source: facMatch
-        ? 'OpenStreetMap (Nominatim) + Dados de Riscos'
-        : 'OpenStreetMap Nominatim / Photon (Free)',
-      sourceUrl: facMatch ? 'https://dadosderiscos.com.br/mapa-rj-risco-faccoes.html' : undefined,
-      period: selectedAddress.subtitle || 'Geocodificação em tempo real (OSM Free)',
-      methodologyNote: selectedAddress.displayName
-    });
-    popupOverlayRef.current?.setPosition(coord);
+    if (canViewDetailsRef.current) {
+      setMapPopup({
+        visible: true,
+        title: selectedAddress.shortTitle,
+        factionLabel: facMatch ? `${facMatch.label} (${facMatch.nome})` : 'Sem polígono de facção mapeado neste ponto',
+        factionShort: facMatch ? facMatch.shortLabel : 'ENDEREÇO',
+        color: facMatch ? facMatch.color : '#0284c7',
+        cispLabel: regRecord?.nome_oficial || (cispNum ? `${cispNum}ª DP` : undefined),
+        source: facMatch
+          ? 'OpenStreetMap (Nominatim) + Dados de Riscos'
+          : 'OpenStreetMap Nominatim / Photon (Free)',
+        sourceUrl: facMatch ? 'https://dadosderiscos.com.br/mapa-rj-risco-faccoes.html' : undefined,
+        period: selectedAddress.subtitle || 'Geocodificação em tempo real (OSM Free)',
+        methodologyNote: selectedAddress.displayName
+      });
+      popupOverlayRef.current?.setPosition(coord);
+    }
   }, [selectedAddress]);
 
   // Real-Time GPS Location Tracking (watchPosition)
@@ -1521,8 +1735,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         });
         accuracyFeature.setStyle(
           new Style({
-            fill: new Fill({ color: 'rgba(16, 185, 129, 0.14)' }),
-            stroke: new Stroke({ color: 'rgba(52, 211, 153, 0.7)', width: 1.5 })
+            fill: new Fill({ color: 'rgba(0, 166, 80, 0.14)' }),
+            stroke: new Stroke({ color: 'rgba(0, 166, 80, 0.7)', width: 1.5 })
           })
         );
 
@@ -1533,14 +1747,14 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           new Style({
             image: new CircleStyle({
               radius: 9,
-              fill: new Fill({ color: '#10b981' }),
+              fill: new Fill({ color: '#00A650' }),
               stroke: new Stroke({ color: '#ffffff', width: 3 })
             }),
             text: new Text({
               text: 'VOCÊ (AO VIVO)',
               font: "bold 10px 'JetBrains Mono', monospace",
-              fill: new Fill({ color: '#6ee7b7' }),
-              stroke: new Stroke({ color: '#020617', width: 3 }),
+              fill: new Fill({ color: '#ffffff' }),
+              stroke: new Stroke({ color: '#006832', width: 3 }),
               offsetY: -16
             })
           })
@@ -1630,7 +1844,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-slate-950 overflow-hidden">
+    <div className="relative w-full h-full bg-[#E8ECF1] overflow-hidden">
       <div ref={mapElement} className="w-full h-full" />
 
       {/* Floating GPS Real-Time Button directly below OpenLayers Zoom (+ / -) */}
@@ -1642,10 +1856,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
               ? 'Desativar localização em tempo real'
               : 'Ativar minha localização em tempo real (GPS)'
           }
-          className={`absolute top-[10.1rem] right-3 md:top-[6.25rem] md:right-4 z-20 w-10 h-10 md:w-9 md:h-9 rounded-xl md:rounded-lg border flex items-center justify-center shadow-lg transition-all cursor-pointer ${
+          className={`absolute top-[10.1rem] right-3 md:top-[6.25rem] md:right-4 z-20 w-10 h-10 md:w-9 md:h-9 rounded-xl md:rounded-lg border flex items-center justify-center shadow-md transition-all cursor-pointer ${
             isTrackingLocation
-              ? 'bg-emerald-600 border-emerald-400 text-white shadow-emerald-600/40 ring-2 ring-emerald-400/40'
-              : 'bg-slate-900/95 hover:bg-blue-600 border-slate-700 text-slate-200 hover:text-white hover:border-blue-500'
+              ? 'bg-[#00A650] border-[#008744] text-white shadow-[#00A650]/30 ring-2 ring-[#00A650]/30'
+              : 'bg-white/95 hover:bg-[#3483FA] border-slate-300 text-[#2D3277] hover:text-white hover:border-[#2968C8]'
           }`}
         >
           <LocateFixed className={`w-4 h-4 ${isTrackingLocation ? 'animate-pulse' : ''}`} />
@@ -1657,7 +1871,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         <button
           onClick={onResetView}
           title="Centralizar Escopo Atual"
-          className="md:hidden absolute top-[13.1rem] right-3 z-20 w-10 h-10 rounded-xl bg-slate-900/95 hover:bg-blue-600 border border-slate-700 text-blue-400 hover:text-white flex items-center justify-center shadow-lg transition-all cursor-pointer"
+          className="md:hidden absolute top-[13.1rem] right-3 z-20 w-10 h-10 rounded-xl bg-white/95 hover:bg-[#FFE600] border border-slate-300 text-[#2D3277] flex items-center justify-center shadow-md transition-all cursor-pointer"
         >
           <Compass className="w-4 h-4" />
         </button>
@@ -1683,11 +1897,11 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         {/* Searched Address Pill (leaves room for zoom/GPS on right on mobile) */}
         {selectedAddress && !isTrackingLocation && (
-          <div className="w-[calc(100%-3.5rem)] md:w-[420px] max-w-full bg-slate-900/95 border border-sky-500/50 rounded-xl px-3 py-2 shadow-2xl backdrop-blur-md text-xs flex items-center gap-2.5">
-            <Navigation className="w-4 h-4 text-sky-400 shrink-0" />
+          <div className="w-[calc(100%-3.5rem)] md:w-[420px] max-w-full bg-white/95 border border-[#3483FA]/40 rounded-xl px-3 py-2 shadow-lg backdrop-blur-md text-xs flex items-center gap-2.5">
+            <Navigation className="w-4 h-4 text-[#3483FA] shrink-0" />
             <div className="min-w-0 flex-1">
-              <div className="font-semibold text-white truncate">{selectedAddress.shortTitle}</div>
-              <div className="text-[10px] text-slate-400 truncate">{selectedAddress.subtitle}</div>
+              <div className="font-semibold text-slate-900 truncate">{selectedAddress.shortTitle}</div>
+              <div className="text-[10px] text-slate-600 truncate">{selectedAddress.subtitle}</div>
             </div>
             {onClearAddress && (
               <button
@@ -1696,7 +1910,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                   setMapPopup(null);
                   popupOverlayRef.current?.setPosition(undefined);
                 }}
-                className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer shrink-0"
+                className="p-1.5 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer shrink-0"
                 title="Remover marcador do endereço"
               >
                 <X className="w-3.5 h-3.5" />
@@ -1707,98 +1921,119 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
         {/* Live Real-Time GPS Telemetry HUD */}
         {isTrackingLocation && (
-          <div className="w-[calc(100%-3.5rem)] md:w-80 max-w-full bg-slate-900/95 border border-emerald-500/50 rounded-xl p-3 shadow-2xl backdrop-blur-md text-xs space-y-2">
-          <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-              <span className="font-bold text-emerald-300 uppercase tracking-wider text-[10px]">
-                Localização em Tempo Real
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              {liveGps && (
-                <button
-                  onClick={() => {
-                    setFollowUser(true);
-                    if (mapInstance.current) {
-                      mapInstance.current.getView().animate({
-                        center: fromLonLat([liveGps.lng, liveGps.lat]),
-                        zoom: 16.5,
-                        duration: 500
-                      });
-                    }
-                  }}
-                  title="Centralizar e seguir minha posição"
-                  className={`px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
-                    followUser
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                  }`}
-                >
-                  <Crosshair className="w-3 h-3" />
-                  <span>{followUser ? 'Seguindo' : 'Centralizar'}</span>
-                </button>
-              )}
-              {onToggleLiveLocation && (
-                <button
-                  onClick={onToggleLiveLocation}
-                  title="Parar rastreamento GPS"
-                  className="p-1 rounded bg-red-500/15 hover:bg-red-500/30 text-red-300 border border-red-500/30 cursor-pointer"
-                >
-                  <Square className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {gpsError ? (
-            <div className="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg p-2">
-              {gpsError}
-            </div>
-          ) : liveGps ? (
-            <div className="space-y-1.5">
-              {liveGps.streetAddress && (
-                <div className="text-slate-100 font-semibold leading-snug">{liveGps.streetAddress}</div>
-              )}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-mono text-slate-400">
-                <span>
-                  {liveGps.lat.toFixed(5)}, {liveGps.lng.toFixed(5)}
+          <div className="w-[calc(100%-3.5rem)] md:w-80 max-w-full bg-white/95 border border-[#00A650]/50 rounded-xl p-3 shadow-lg backdrop-blur-md text-xs space-y-2">
+            <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00A650] animate-ping" />
+                <span className="font-bold text-[#008744] uppercase tracking-wider text-[10px]">
+                  Localização em Tempo Real
                 </span>
-                <span>±{liveGps.accuracy}m</span>
-                {liveGps.speedKmh !== null && <span>{liveGps.speedKmh} km/h</span>}
-                <span>{liveGps.updatedAt}</span>
               </div>
-              {(liveGps.cispLabel || liveGps.factionLabel) && (
-                <div className="pt-1.5 border-t border-slate-800 space-y-1 text-[11px]">
-                  {liveGps.cispLabel && (
-                    <div className="text-blue-300 font-medium">
-                      Jurisdição: <span className="text-white">{liveGps.cispLabel}</span>
-                    </div>
-                  )}
-                  {liveGps.factionLabel && (
-                    <div className="flex items-center gap-1.5 text-slate-200">
-                      <span
-                        className="w-2.5 h-2.5 rounded-sm shrink-0"
-                        style={{ backgroundColor: liveGps.factionColor || '#ef4444' }}
-                      />
-                      <span>Área mapeada: {liveGps.factionLabel}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              <div className="flex items-center gap-1">
+                {liveGps && (
+                  <button
+                    onClick={() => {
+                      setFollowUser(true);
+                      if (mapInstance.current) {
+                        mapInstance.current.getView().animate({
+                          center: fromLonLat([liveGps.lng, liveGps.lat]),
+                          zoom: 16.5,
+                          duration: 500
+                        });
+                      }
+                    }}
+                    title="Centralizar e seguir minha posição"
+                    className={`px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
+                      followUser
+                        ? 'bg-[#00A650]/15 text-[#008744] border border-[#00A650]/35'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                    }`}
+                  >
+                    <Crosshair className="w-3 h-3" />
+                    <span>{followUser ? 'Seguindo' : 'Centralizar'}</span>
+                  </button>
+                )}
+                {onToggleLiveLocation && (
+                  <button
+                    onClick={onToggleLiveLocation}
+                    title="Parar rastreamento GPS"
+                    className="p-1 rounded bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 cursor-pointer"
+                  >
+                    <Square className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="text-[11px] text-slate-400">Obtendo sinal GPS em alta precisão...</div>
+
+            {gpsError ? (
+              <div className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                {gpsError}
+              </div>
+            ) : liveGps ? (
+              <div className="space-y-1.5">
+                {liveGps.streetAddress && (
+                  <div className="text-slate-900 font-semibold leading-snug">{liveGps.streetAddress}</div>
+                )}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-mono text-slate-600">
+                  <span>
+                    {liveGps.lat.toFixed(5)}, {liveGps.lng.toFixed(5)}
+                  </span>
+                  <span>±{liveGps.accuracy}m</span>
+                  {liveGps.speedKmh !== null && <span>{liveGps.speedKmh} km/h</span>}
+                  <span>{liveGps.updatedAt}</span>
+                </div>
+                {(liveGps.cispLabel || liveGps.factionLabel) && (
+                  <div className="pt-1.5 border-t border-slate-200 space-y-1 text-[11px]">
+                    {liveGps.cispLabel && (
+                      <div className="text-[#2D3277] font-medium">
+                        Jurisdição: <span className="font-bold">{liveGps.cispLabel}</span>
+                      </div>
+                    )}
+                    {liveGps.factionLabel && (
+                      <div className="flex items-center gap-1.5 text-slate-800 font-medium">
+                        <span
+                          className="w-2.5 h-2.5 rounded-sm shrink-0"
+                          style={{ backgroundColor: liveGps.factionColor || '#ef4444' }}
+                        />
+                        <span>Área mapeada: {liveGps.factionLabel}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-[11px] text-slate-600">Obtendo sinal GPS em alta precisão...</div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Floating Corporate Incident & Heatmap Pill */}
+      {companyDomain && (
+        <div className="absolute top-[16.5rem] md:top-3 md:right-16 z-20 flex items-center gap-2">
+          {onRequestRegisterIncident && (
+            <button
+              onClick={() => onRequestRegisterIncident()}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white font-extrabold text-xs shadow-lg flex items-center gap-2 border border-red-400/40 backdrop-blur-md cursor-pointer transition-all transform hover:scale-[1.02]"
+              title={`Registrar Ocorrência Confidencial (@${companyDomain})`}
+            >
+              <ShieldAlert className="w-4 h-4 text-[#FFE600] shrink-0" />
+              <span>Registrar Ocorrência</span>
+              {companyIncidents && companyIncidents.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-white/20 font-mono text-[10px]">
+                  {companyIncidents.length}
+                </span>
+              )}
+            </button>
           )}
         </div>
       )}
-      </div>
 
       {/* Anchored Map Popup (on Click over Demarcated Faction Area or Searched Address) */}
       <div ref={popupElementRef} className="z-30 pointer-events-auto">
         {mapPopup?.visible && (
-          <div className="w-[min(18rem,calc(100vw-2rem))] bg-slate-900/98 border border-slate-700 rounded-xl shadow-2xl p-3 text-slate-100 text-xs backdrop-blur-md">
-            <div className="flex items-start justify-between gap-2 pb-2 border-b border-slate-800">
+          <div className="w-[min(18rem,calc(100vw-2rem))] bg-white border border-slate-200 rounded-xl shadow-2xl p-3 text-slate-900 text-xs">
+            <div className="flex items-start justify-between gap-2 pb-2 border-b border-slate-200">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 mb-1">
                   <span
@@ -1808,18 +2043,18 @@ export const MapContainer: React.FC<MapContainerProps> = ({
                     {mapPopup.factionShort}
                   </span>
                   {mapPopup.cispLabel && (
-                    <span className="text-[10px] font-mono text-blue-400 truncate">{mapPopup.cispLabel}</span>
+                    <span className="text-[10px] font-mono text-[#3483FA] font-semibold truncate">{mapPopup.cispLabel}</span>
                   )}
                 </div>
-                <div className="font-bold text-sm text-white leading-snug">{mapPopup.title}</div>
-                <div className="text-[11px] text-slate-300 mt-0.5">{mapPopup.factionLabel}</div>
+                <div className="font-bold text-sm text-[#2D3277] leading-snug">{mapPopup.title}</div>
+                <div className="text-[11px] text-slate-700 mt-0.5">{mapPopup.factionLabel}</div>
               </div>
               <button
                 onClick={() => {
                   setMapPopup(null);
                   popupOverlayRef.current?.setPosition(undefined);
                 }}
-                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white shrink-0 cursor-pointer"
+                className="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-900 shrink-0 cursor-pointer"
                 title="Fechar popup"
               >
                 <X className="w-3.5 h-3.5" />
@@ -1827,19 +2062,19 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             </div>
 
             <div className="pt-2 space-y-1.5 text-[11px]">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-400">
-                <Database className="w-3 h-3 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#2D3277]">
+                <Database className="w-3 h-3 shrink-0 text-[#3483FA]" />
                 <span>Origem dos Dados</span>
               </div>
-              <div className="text-slate-200 font-semibold">{mapPopup.source}</div>
-              <div className="text-[10px] text-slate-400">{mapPopup.period}</div>
-              <p className="text-[10px] text-slate-400 leading-relaxed">{mapPopup.methodologyNote}</p>
+              <div className="text-slate-900 font-semibold">{mapPopup.source}</div>
+              <div className="text-[10px] text-slate-600">{mapPopup.period}</div>
+              <p className="text-[10px] text-slate-600 leading-relaxed">{mapPopup.methodologyNote}</p>
               {mapPopup.sourceUrl && (
                 <a
                   href={mapPopup.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:text-sky-300 underline underline-offset-2 pt-0.5"
+                  className="inline-flex items-center gap-1 text-[10px] text-[#3483FA] hover:text-[#2968C8] font-medium underline underline-offset-2 pt-0.5"
                 >
                   <span>dadosderiscos.com.br/mapa-rj-risco-faccoes.html</span>
                   <ExternalLink className="w-3 h-3 shrink-0" />
@@ -1853,27 +2088,27 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       {/* Floating Hover Tooltip ("hover popup") */}
       {tooltip.visible && (
         <div
-          className="absolute pointer-events-none z-30 px-3 py-2 bg-slate-900/95 border border-blue-500/50 rounded-xl shadow-2xl text-slate-100 text-xs backdrop-blur-sm max-w-xs"
+          className="absolute pointer-events-none z-30 px-3 py-2 bg-white/95 border border-[#3483FA]/40 rounded-xl shadow-xl text-slate-900 text-xs backdrop-blur-sm max-w-xs"
           style={{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }}
         >
           <div className="flex items-center gap-1.5 mb-0.5">
             {tooltip.color && (
               <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: tooltip.color }} />
             )}
-            <span className="text-[9px] px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-400 font-mono font-bold uppercase shrink-0">
+            <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold uppercase shrink-0">
               {tooltip.type}
             </span>
-            <span className="font-semibold text-slate-100 truncate">{tooltip.title}</span>
+            <span className="font-bold text-slate-900 truncate">{tooltip.title}</span>
           </div>
-          {tooltip.sub && <div className="text-[11px] text-slate-300 truncate">{tooltip.sub}</div>}
+          {tooltip.sub && <div className="text-[11px] text-slate-700 truncate">{tooltip.sub}</div>}
           {tooltip.source && (
-            <div className="mt-1.5 pt-1.5 border-t border-slate-800 space-y-0.5">
-              <div className="flex items-center gap-1 text-[10px] text-amber-300 font-semibold">
-                <Database className="w-3 h-3 shrink-0 text-amber-400" />
+            <div className="mt-1.5 pt-1.5 border-t border-slate-200 space-y-0.5">
+              <div className="flex items-center gap-1 text-[10px] text-[#2D3277] font-semibold">
+                <Database className="w-3 h-3 shrink-0 text-[#3483FA]" />
                 <span className="truncate">Origem: {tooltip.source}</span>
               </div>
               {tooltip.sourceDetail && (
-                <div className="text-[10px] text-slate-400 leading-snug">{tooltip.sourceDetail}</div>
+                <div className="text-[10px] text-slate-600 leading-snug">{tooltip.sourceDetail}</div>
               )}
             </div>
           )}
@@ -1881,10 +2116,10 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       )}
 
       {/* Map Attribution badge */}
-      <div className="hidden sm:flex absolute bottom-2 left-2 bg-slate-900/85 border border-slate-800 text-[10px] text-slate-400 px-2 py-0.5 rounded backdrop-blur-sm pointer-events-none items-center gap-2">
+      <div className="hidden sm:flex absolute bottom-2 left-2 bg-white/90 border border-slate-300 text-[10px] text-slate-600 px-2 py-0.5 rounded backdrop-blur-sm pointer-events-none items-center gap-2 shadow-xs">
         <span>EPSG:3857 (OpenLayers v9.2.4)</span>
         <span>•</span>
-        <span className="text-blue-400 font-medium">ISP-RJ • Dados de Riscos ago/2026 • SIG RJ·MG·ES</span>
+        <span className="text-[#2D3277] font-semibold">GIS Territorial • ISP-RJ • Dados de Riscos ago/2026</span>
       </div>
     </div>
   );

@@ -1,5 +1,8 @@
 # Painel de Monitoramento Territorial - Rio de Janeiro (GIS & Governança Policial)
 
+> **Titularidade & Desenvolvimento Oficial:** Agência Ícone Digital by Vinicius Cirne  
+> **Licença Registrada:** `AID-VC-GIS-2026-BR-RJ` • Licença de Uso Vinculada
+
 Sistema de Inteligência Geográfica (GIS) e Governança Policial para monitoramento, análise de circunscrições e dinâmicas de segurança pública no Estado do Rio de Janeiro.
 
 ## 🗺️ Funcionalidades
@@ -59,4 +62,20 @@ npm run build
 ```
 
 Acesse em `http://localhost:5173/`.
+
+---
+
+## ⚖️ Titularidade, Licença & Propriedade Intelectual
+
+Este software, arquitetura tecnológica, geoprocessamento e documentação são de titularidade e propriedade exclusiva de:
+
+- **Entidade Titular:** Agência Ícone Digital
+- **Autor & Responsável Técnico:** Vinicius Cirne
+- **Código de Registro:** `AID-VC-GIS-2026-BR-RJ`
+- **Regime Jurídico:** Lei Federal nº 9.609/1998 (Proteção de Software) e Lei Federal nº 9.610/1998 (Direitos Autorais).
+- **Licença:** Licença de Uso Vinculada à Agência Ícone Digital by Vinicius Cirne. Todos os direitos reservados. É vedada a reprodução ou redistribuição sem prévia autorização expressa.
+
+---
+*© 2026 Agência Ícone Digital by Vinicius Cirne. Todos os direitos reservados.*
+
 

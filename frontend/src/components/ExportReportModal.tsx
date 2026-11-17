@@ -282,9 +282,12 @@ export const ExportReportModal: React.FC<ExportReportModalProps> = ({
                 <span>Fonte Oficial dos Dados: {indicadores.fonte}</span>
                 <br />
                 <span>Base Territorial: Relacao_RISPxAISPxCISP e Geoprocessamento SEPM/PCERJ</span>
+                <br />
+                <span className="text-slate-400 font-semibold">Titularidade: Agência Ícone Digital by Vinicius Cirne • Licença Vinculada Homologada</span>
               </div>
-              <div className="font-mono text-slate-400">
-                HASH: RJ-TERR-{unit.cisp}-{unit.aisp}-{Date.now().toString(36).toUpperCase()}
+              <div className="font-mono text-slate-400 text-right">
+                <div>HASH: RJ-TERR-{unit.cisp}-{unit.aisp}-{Date.now().toString(36).toUpperCase()}</div>
+                <div className="text-[9px] text-slate-500">© {new Date().getFullYear()} Agência Ícone Digital</div>
               </div>
             </div>
           </div>

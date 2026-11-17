@@ -19,6 +19,16 @@ import { AboutMethodologyView } from './components/AboutMethodologyView';
 import { DataImporterModal } from './components/DataImporterModal';
 import { PrintableDossierModal } from './components/PrintableDossierModal';
 import { SigBaseMgEsPanel } from './components/SigBaseMgEsPanel';
+import { LicenseModal } from './components/LicenseModal';
+import { CompanyRegisterModal } from './components/CompanyRegisterModal';
+import { AdminDashboardView } from './components/AdminDashboardView';
+import { CompanyAdminView } from './components/CompanyAdminView';
+import { CorporateIncidentModal } from './components/CorporateIncidentModal';
+import { AuthGateModal } from './components/AuthGateModal';
+import { useAuth } from './contexts/AuthContext';
+import { CorporatePackageIncident } from './types/admin';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { db } from './firebase';
 import {
   FAC_CATALOG,
   FAC_ORDER,
@@ -49,15 +59,36 @@ import {
   AlertTriangle,
   Database,
   Info,
-  X
+  X,
+  MessageCircle,
+  Crown,
+  ShieldCheck,
+  Award
 } from 'lucide-react';
 
 function App() {
+  const { userProfile, hasFullAccess, isAdmin, isCompanyAdmin, openAuthModal, logLocationAccess } = useAuth();
   const [registry, setRegistry] = useState<TerritorialRegistry | null>(null);
   const [estadoScope, setEstadoScope] = useState<EstadoScope>('RJ');
   const [activeTab, setActiveTab] = useState<MainActiveTab>('map');
+  const [companyAdminDomainOverride, setCompanyAdminDomainOverride] = useState<string>('');
   const [showImporter, setShowImporter] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [showLicenseModal, setShowLicenseModal] = useState(false);
+  const [showCompanyRegisterModal, setShowCompanyRegisterModal] = useState(false);
+
+  // Corporate Incidents & Heatmap State (Strict Multi-tenant by domain)
+  const [companyIncidents, setCompanyIncidents] = useState<CorporatePackageIncident[]>([]);
+  const [isIncidentModalOpen, setIsIncidentModalOpen] = useState(false);
+  const [selectedCorporateIncident, setSelectedCorporateIncident] = useState<CorporatePackageIncident | null>(null);
+  const [incidentInitialCoords, setIncidentInitialCoords] = useState<{ lat: number; lng: number } | undefined>(undefined);
+
+  const effectiveCompanyDomain = (
+    companyAdminDomainOverride ||
+    userProfile?.companyDomain ||
+    userProfile?.domain ||
+    ''
+  ).toLowerCase();
 
   // Search and Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,7 +127,9 @@ function App() {
     delegacias: true,
     batalhoes: false,
     focos: false,
-    mgEs: true
+    mgEs: true,
+    corporateHeatmap: true,
+    corporateIncidents: true
   });
 
   // MG & ES SIG Base State
@@ -126,6 +159,28 @@ function App() {
     }
   }, [isDossierOpen]);
 
+  useEffect(() => {
+    if (!hasFullAccess) {
+      setIsDossierOpen(false);
+      setSelectedData(null);
+      setSelectedCispId(null);
+      setSelectedCommunityName(null);
+      setSelectedUf(null);
+      setShowImporter(false);
+      if (activeTab !== 'map' && activeTab !== 'about') {
+        setActiveTab('map');
+      }
+    }
+  }, [hasFullAccess, activeTab]);
+
+  const requireApprovedAccess = (reason: string, action: () => void) => {
+    if (hasFullAccess) {
+      action();
+      return;
+    }
+    openAuthModal(reason, action);
+  };
+
   // Load main territorial registry JSON from repository's /data/territorial_registry.json
   useEffect(() => {
     fetch('/data/territorial_registry.json')
@@ -135,6 +190,33 @@ function App() {
       })
       .catch(err => console.error('Erro ao carregar registro territorial:', err));
   }, []);
+
+  // Listen to Corporate Incidents in real-time (Strictly isolated by companyDomain)
+  useEffect(() => {
+    if (!effectiveCompanyDomain || !hasFullAccess) {
+      setCompanyIncidents([]);
+      return;
+    }
+
+    const q = query(
+      collection(db, 'corporate_companies', effectiveCompanyDomain, 'incidents'),
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsub = onSnapshot(
+      q,
+      snapshot => {
+        const list = snapshot.docs.map(d => d.data() as CorporatePackageIncident);
+        setCompanyIncidents(list);
+      },
+      error => {
+        console.warn('Ocorrências corporativas não carregadas ou sem permissão:', error);
+        setCompanyIncidents([]);
+      }
+    );
+
+    return () => unsub();
+  }, [effectiveCompanyDomain, hasFullAccess]);
 
   // Timeline Auto-Play effect
   useEffect(() => {
@@ -161,169 +243,241 @@ function App() {
       return;
     }
 
-    setSelectedCispId(cispId);
-    setSelectedCommunityName(null);
-    setSelectedUf(null);
-    if (registry && registry.cisps[cispId]) {
-      const rec = registry.cisps[cispId];
-      setSelectedData({
-        tipo: 'CISP',
-        id: rec.cisp,
-        cisp: rec.cisp,
-        nome: rec.nome_oficial,
-        aisp: rec.aisp,
-        risp: rec.risp,
-        batalhao: rec.batalhao,
-        comando: rec.comando_regional,
-        municipio: rec.municipio,
-        bairros: rec.bairros,
-        telefone: rec.telefone,
-        endereco: rec.endereco,
-        marcolegal: rec.marcolegal,
-        areakm2: rec.areakm2,
-        indicadores: rec.indicadores,
-        dinamica_territorial: rec.dinamica_territorial
-      });
-      setIsDossierOpen(true);
-    }
+    requireApprovedAccess(
+      `Para visualizar o dossiê completo da ${cispId}ª DP e seus indicadores, entre ou crie sua conta.`,
+      () => {
+        setSelectedCispId(cispId);
+        setSelectedCommunityName(null);
+        setSelectedUf(null);
+        const rec = registry?.cisps[cispId];
+        if (rec) {
+          setSelectedData({
+            tipo: 'CISP',
+            id: rec.cisp,
+            cisp: rec.cisp,
+            nome: rec.nome_oficial,
+            aisp: rec.aisp,
+            risp: rec.risp,
+            batalhao: rec.batalhao,
+            comando: rec.comando_regional,
+            municipio: rec.municipio,
+            bairros: rec.bairros,
+            telefone: rec.telefone,
+            endereco: rec.endereco,
+            marcolegal: rec.marcolegal,
+            areakm2: rec.areakm2,
+            indicadores: rec.indicadores,
+            dinamica_territorial: rec.dinamica_territorial
+          });
+          setIsDossierOpen(true);
+        }
+        logLocationAccess({
+          targetType: 'CISP',
+          targetName: rec?.nome_oficial || `${cispId}ª DP`,
+          uf: 'RJ',
+          municipio: rec?.municipio || '',
+          cisp: cispId
+        });
+      }
+    );
   };
 
   // Select a Dados de Riscos community from Header Search
   const handleSelectCommunity = (entry: FaccaoSearchEntry) => {
-    const meta = FAC_CATALOG[entry.f];
-    const cispNum = findCispForCoords(entry.lng, entry.lat);
-    const rec = cispNum && registry ? registry.cisps[cispNum] : undefined;
+    requireApprovedAccess(
+      `Para consultar os dados territoriais de "${entry.nome}", entre ou crie sua conta.`,
+      () => {
+        const meta = FAC_CATALOG[entry.f];
+        const cispNum = findCispForCoords(entry.lng, entry.lat);
+        const rec = cispNum && registry ? registry.cisps[cispNum] : undefined;
 
-    setSelectedCommunityName(entry.nome);
-    setSelectedUf(null);
-    if (cispNum) setSelectedCispId(cispNum);
+        setSelectedCommunityName(entry.nome);
+        setSelectedUf(null);
+        if (cispNum) setSelectedCispId(cispNum);
 
-    setSelectedData({
-      tipo: 'FACCAO_COMUNIDADE',
-      id: `dr-${entry.nome}`,
-      nome: entry.nome,
-      faccao: meta.label,
-      faccaoCode: entry.f,
-      descricao: `Polígono delimitado de "${entry.nome}" (${meta.label}) na circunscrição da ${
-        rec?.nome_oficial || (cispNum ? `${cispNum}ª DP` : 'Rio de Janeiro')
-      }.`,
-      fonte: 'Dados de Riscos · Mapa RJ Risco Facções',
-      data_registro: 'Agosto/2026',
-      grau_confiabilidade: 'Precisão Poligonal (1.695 áreas)',
-      cisp: rec?.cisp || cispNum,
-      aisp: rec?.aisp,
-      risp: rec?.risp,
-      batalhao: rec?.batalhao,
-      comando: rec?.comando_regional,
-      municipio: rec?.municipio || 'Rio de Janeiro',
-      bairros: rec?.bairros || [],
-      telefone: rec?.telefone,
-      endereco: rec?.endereco,
-      marcolegal: rec?.marcolegal,
-      areakm2: rec?.areakm2,
-      indicadores: rec?.indicadores,
-      dinamica_territorial: rec?.dinamica_territorial
-    });
-    setIsDossierOpen(true);
-    setFocusTarget({ lat: entry.lat, lng: entry.lng, zoom: 14.2, ts: Date.now() });
+        setSelectedData({
+          tipo: 'FACCAO_COMUNIDADE',
+          id: `dr-${entry.nome}`,
+          nome: entry.nome,
+          faccao: meta.label,
+          faccaoCode: entry.f,
+          descricao: `Polígono delimitado de "${entry.nome}" (${meta.label}) na circunscrição da ${
+            rec?.nome_oficial || (cispNum ? `${cispNum}ª DP` : 'Rio de Janeiro')
+          }.`,
+          fonte: 'Dados de Riscos · Mapa RJ Risco Facções',
+          data_registro: 'Agosto/2026',
+          grau_confiabilidade: 'Precisão Poligonal (1.695 áreas)',
+          cisp: rec?.cisp || cispNum,
+          aisp: rec?.aisp,
+          risp: rec?.risp,
+          batalhao: rec?.batalhao,
+          comando: rec?.comando_regional,
+          municipio: rec?.municipio || 'Rio de Janeiro',
+          bairros: rec?.bairros || [],
+          telefone: rec?.telefone,
+          endereco: rec?.endereco,
+          marcolegal: rec?.marcolegal,
+          areakm2: rec?.areakm2,
+          indicadores: rec?.indicadores,
+          dinamica_territorial: rec?.dinamica_territorial
+        });
+        setIsDossierOpen(true);
+        setFocusTarget({ lat: entry.lat, lng: entry.lng, zoom: 14.2, ts: Date.now() });
+        logLocationAccess({
+          targetType: 'FACCAO_COMUNIDADE',
+          targetName: `${entry.nome} (${meta.shortLabel})`,
+          uf: 'RJ',
+          municipio: rec?.municipio || 'Rio de Janeiro',
+          cisp: rec?.cisp || cispNum || 0
+        });
+      }
+    );
   };
 
   const handleSelectUf = (ufInfo: UfMetadataInfo) => {
-    setSelectedUf(ufInfo);
-    setSelectedCispId(null);
-    setSelectedCommunityName(null);
-    setSelectedData({
-      tipo: 'ESTADO_UF',
-      id: ufInfo.uf,
-      nome: ufInfo.nome,
-      ufInfo
-    });
-    setIsDossierOpen(true);
-    setFocusTarget({ lat: ufInfo.lat, lng: ufInfo.lng, zoom: ufInfo.zoom, ts: Date.now() });
+    requireApprovedAccess(
+      `Para consultar o panorama territorial de ${ufInfo.nome} (${ufInfo.uf}), entre ou crie sua conta.`,
+      () => {
+        setSelectedUf(ufInfo);
+        setSelectedCispId(null);
+        setSelectedCommunityName(null);
+        setSelectedData({
+          tipo: 'ESTADO_UF',
+          id: ufInfo.uf,
+          nome: ufInfo.nome,
+          ufInfo
+        });
+        setIsDossierOpen(true);
+        setFocusTarget({ lat: ufInfo.lat, lng: ufInfo.lng, zoom: ufInfo.zoom, ts: Date.now() });
+        logLocationAccess({
+          targetType: 'ESTADO_UF',
+          targetName: `${ufInfo.nome} (${ufInfo.uf})`,
+          uf: ufInfo.uf,
+          municipio: ufInfo.capital
+        });
+      }
+    );
   };
 
+  const selectedDelegaciaMgEsId =
+    selectedData?.tipo === 'DELEGACIA_MG_ES' ? String(selectedData.id) : null;
+
   const handleSelectDelegaciaMgEs = (del: DelegaciaTerritorialMgEs) => {
-    setSelectedCispId(null);
-    setSelectedCommunityName(null);
-    setSelectedUf(null);
-    setSelectedData({
-      tipo: 'DELEGACIA_MG_ES',
-      id: del.id,
-      nome: del.nome,
-      municipio: del.municipio,
-      bairros: del.bairros,
-      telefone: del.telefone,
-      endereco: del.endereco,
-      comando: `${del.regional} • ${del.departamentoOuRisp}`,
-      delegaciaMgEs: del
-    });
-    setIsDossierOpen(true);
-    setFocusTarget({ lat: del.latitude, lng: del.longitude, zoom: 13.5, ts: Date.now() });
+    if (selectedDelegaciaMgEsId === del.id) {
+      setSelectedCispId(null);
+      setSelectedCommunityName(null);
+      setSelectedUf(null);
+      setSelectedData(null);
+      setIsDossierOpen(false);
+      handleResetView();
+      return;
+    }
+
+    requireApprovedAccess(
+      `Para consultar o dossiê da unidade ${del.nomeCurto} (${del.uf}), entre ou crie sua conta.`,
+      () => {
+        setSelectedCispId(null);
+        setSelectedCommunityName(null);
+        setSelectedUf(null);
+        setSelectedData({
+          tipo: 'DELEGACIA_MG_ES',
+          id: del.id,
+          nome: del.nome,
+          municipio: del.municipio,
+          bairros: del.bairros,
+          telefone: del.telefone,
+          endereco: del.endereco,
+          comando: `${del.regional} • ${del.departamentoOuRisp}`,
+          delegaciaMgEs: del
+        });
+        setIsDossierOpen(true);
+        setFocusTarget({ lat: del.latitude, lng: del.longitude, zoom: 13.5, ts: Date.now() });
+        logLocationAccess({
+          targetType: 'DELEGACIA_MG_ES',
+          targetName: del.nome,
+          uf: del.uf,
+          municipio: del.municipio
+        });
+      }
+    );
   };
 
   // Select a free OSM geocoded address, zoom straight to it, and cross-check CISP + Faction polygon
   const handleSelectAddress = (addr: AddressSearchResult) => {
-    const ts = Date.now();
-    setSelectedAddress({ ...addr, ts });
-    setFocusTarget({ lat: addr.lat, lng: addr.lng, zoom: 16.5, ts });
+    requireApprovedAccess(
+      `Para verificar a delegacia responsável e áreas de risco para "${addr.shortTitle}", entre ou crie sua conta.`,
+      () => {
+        const ts = Date.now();
+        setSelectedAddress({ ...addr, ts });
+        setFocusTarget({ lat: addr.lat, lng: addr.lng, zoom: 16.5, ts });
 
-    const facMatch = findFactionAtCoords(addr.lng, addr.lat);
-    const cispNum = findCispForCoords(addr.lng, addr.lat);
-    const rec = cispNum && registry ? registry.cisps[cispNum] : undefined;
+        const facMatch = findFactionAtCoords(addr.lng, addr.lat);
+        const cispNum = findCispForCoords(addr.lng, addr.lat);
+        const rec = cispNum && registry ? registry.cisps[cispNum] : undefined;
 
-    if (facMatch) {
-      setSelectedCommunityName(facMatch.nome);
-      if (cispNum) setSelectedCispId(cispNum);
-      setSelectedData({
-        tipo: 'FACCAO_COMUNIDADE',
-        id: `addr-${ts}`,
-        nome: `${addr.shortTitle} (${facMatch.nome})`,
-        faccao: facMatch.label,
-        faccaoCode: facMatch.code,
-        descricao: `Endereço pesquisado (${addr.displayName}) localizado dentro da área "${facMatch.nome}" (${facMatch.label}), na circunscrição da ${
-          rec?.nome_oficial || (cispNum ? `${cispNum}ª DP` : 'Rio de Janeiro')
-        }.`,
-        fonte: 'OpenStreetMap Nominatim + Dados de Riscos (ago/2026)',
-        data_registro: 'Agosto/2026',
-        grau_confiabilidade: 'Geocodificação OSM + Polígono Direto',
-        cisp: rec?.cisp || cispNum,
-        aisp: rec?.aisp,
-        risp: rec?.risp,
-        batalhao: rec?.batalhao,
-        comando: rec?.comando_regional,
-        municipio: rec?.municipio || 'Rio de Janeiro',
-        bairros: rec?.bairros || [],
-        telefone: rec?.telefone,
-        endereco: addr.displayName,
-        marcolegal: rec?.marcolegal,
-        areakm2: rec?.areakm2,
-        indicadores: rec?.indicadores,
-        dinamica_territorial: rec?.dinamica_territorial
-      });
-      setIsDossierOpen(true);
-    } else if (rec) {
-      setSelectedCommunityName(null);
-      setSelectedCispId(rec.cisp);
-      setSelectedData({
-        tipo: 'CISP',
-        id: rec.cisp,
-        cisp: rec.cisp,
-        nome: rec.nome_oficial,
-        aisp: rec.aisp,
-        risp: rec.risp,
-        batalhao: rec.batalhao,
-        comando: rec.comando_regional,
-        municipio: rec.municipio,
-        bairros: rec.bairros,
-        telefone: rec.telefone,
-        endereco: addr.displayName,
-        marcolegal: rec.marcolegal,
-        areakm2: rec.areakm2,
-        indicadores: rec.indicadores,
-        dinamica_territorial: rec.dinamica_territorial
-      });
-      setIsDossierOpen(true);
-    }
+        if (facMatch) {
+          setSelectedCommunityName(facMatch.nome);
+          if (cispNum) setSelectedCispId(cispNum);
+          setSelectedData({
+            tipo: 'FACCAO_COMUNIDADE',
+            id: `addr-${ts}`,
+            nome: `${addr.shortTitle} (${facMatch.nome})`,
+            faccao: facMatch.label,
+            faccaoCode: facMatch.code,
+            descricao: `Endereço pesquisado (${addr.displayName}) localizado dentro da área "${facMatch.nome}" (${facMatch.label}), na circunscrição da ${
+              rec?.nome_oficial || (cispNum ? `${cispNum}ª DP` : 'Rio de Janeiro')
+            }.`,
+            fonte: 'OpenStreetMap Nominatim + Dados de Riscos (ago/2026)',
+            data_registro: 'Agosto/2026',
+            grau_confiabilidade: 'Geocodificação OSM + Polígono Direto',
+            cisp: rec?.cisp || cispNum,
+            aisp: rec?.aisp,
+            risp: rec?.risp,
+            batalhao: rec?.batalhao,
+            comando: rec?.comando_regional,
+            municipio: rec?.municipio || 'Rio de Janeiro',
+            bairros: rec?.bairros || [],
+            telefone: rec?.telefone,
+            endereco: addr.displayName,
+            marcolegal: rec?.marcolegal,
+            areakm2: rec?.areakm2,
+            indicadores: rec?.indicadores,
+            dinamica_territorial: rec?.dinamica_territorial
+          });
+          setIsDossierOpen(true);
+        } else if (rec) {
+          setSelectedCommunityName(null);
+          setSelectedCispId(rec.cisp);
+          setSelectedData({
+            tipo: 'CISP',
+            id: rec.cisp,
+            cisp: rec.cisp,
+            nome: rec.nome_oficial,
+            aisp: rec.aisp,
+            risp: rec.risp,
+            batalhao: rec.batalhao,
+            comando: rec.comando_regional,
+            municipio: rec.municipio,
+            bairros: rec.bairros,
+            telefone: rec.telefone,
+            endereco: addr.displayName,
+            marcolegal: rec.marcolegal,
+            areakm2: rec.areakm2,
+            indicadores: rec.indicadores,
+            dinamica_territorial: rec.dinamica_territorial
+          });
+          setIsDossierOpen(true);
+        }
+
+        logLocationAccess({
+          targetType: 'ENDERECO',
+          targetName: addr.shortTitle,
+          uf: estadoScope === 'TODOS' ? 'BR' : estadoScope,
+          municipio: rec?.municipio || addr.subtitle || '',
+          cisp: rec?.cisp || cispNum || 0
+        });
+      }
+    );
   };
 
   // Reset Map View for current scope
@@ -364,22 +518,42 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-[100dvh] w-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-[100dvh] w-screen bg-[#F5F5F5] text-slate-900 overflow-hidden font-sans">
       {/* Universal Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={tab => {
-          if (tab === 'import') {
-            setShowImporter(true);
-          } else {
+          if (tab === 'map' || tab === 'about') {
             setActiveTab(tab);
+            return;
           }
+          if (tab === 'admin') {
+            if (isAdmin) setActiveTab('admin');
+            return;
+          }
+          if (tab === 'company_admin') {
+            if (isCompanyAdmin || isAdmin) setActiveTab('company_admin');
+            return;
+          }
+          if (tab === 'import') {
+            requireApprovedAccess(
+              'Para importar ou exportar dados territoriais, entre ou crie sua conta.',
+              () => setShowImporter(true)
+            );
+            return;
+          }
+          requireApprovedAccess(
+            'Para acessar este painel de inteligência territorial, entre ou crie sua conta.',
+            () => setActiveTab(tab)
+          );
         }}
         estadoScope={estadoScope}
         setEstadoScope={sc => {
           setEstadoScope(sc);
           setActiveTab('map');
         }}
+        onOpenLicense={() => setShowLicenseModal(true)}
+        onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
       />
 
       {/* Main Workspace */}
@@ -407,12 +581,21 @@ function App() {
               onSelectCISP={handleSelectCISP}
               selectedCispId={selectedCispId}
               onSelectDelegaciaMgEs={handleSelectDelegaciaMgEs}
+              selectedDelegaciaMgEsId={selectedDelegaciaMgEsId}
               onResetView={handleResetView}
               choroplethMetric={choroplethMetric}
               setChoroplethMetric={setChoroplethMetric}
               layerOpacity={layerOpacity}
               setLayerOpacity={setLayerOpacity}
               activeSection={sidebarSection}
+              companyDomain={effectiveCompanyDomain}
+              totalCompanyIncidents={companyIncidents.length}
+              totalCompanyRoubos={companyIncidents.filter(i => i.incidentType === 'roubo_carga' || i.incidentType === 'roubo' || i.incidentType === 'furto').length}
+              onOpenIncidentModal={() => {
+                setIncidentInitialCoords(undefined);
+                setSelectedCorporateIncident(null);
+                setIsIncidentModalOpen(true);
+              }}
               onActiveSectionChange={next => {
                 setSidebarSection(next);
                 if (next) {
@@ -431,6 +614,20 @@ function App() {
                 basemap={basemap}
                 selectedCispId={selectedCispId}
                 selectedCommunityName={selectedCommunityName}
+                selectedDelegaciaMgEsId={selectedDelegaciaMgEsId}
+                canViewDetails={hasFullAccess}
+                companyIncidents={companyIncidents}
+                companyDomain={effectiveCompanyDomain}
+                onSelectCorporateIncident={inc => {
+                  setSelectedCorporateIncident(inc);
+                  setIncidentInitialCoords(undefined);
+                  setIsIncidentModalOpen(true);
+                }}
+                onRequestRegisterIncident={coords => {
+                  setIncidentInitialCoords(coords);
+                  setSelectedCorporateIncident(null);
+                  setIsIncidentModalOpen(true);
+                }}
                 onSelectFeature={feat => {
                   if (!feat) {
                     setSelectedCispId(null);
@@ -438,6 +635,19 @@ function App() {
                     setSelectedUf(null);
                     setSelectedData(null);
                     setIsDossierOpen(false);
+                    return;
+                  }
+
+                  // Clique em ocorrência corporativa -> abre modal com histórico completo
+                  if (feat.tipo === 'CORPORATE_INCIDENT') {
+                    if (feat.corporateIncident) {
+                      setSelectedCorporateIncident(feat.corporateIncident);
+                    } else {
+                      const found = companyIncidents.find(i => String(i.id) === String(feat.id));
+                      setSelectedCorporateIncident(found || null);
+                    }
+                    setIncidentInitialCoords(undefined);
+                    setIsIncidentModalOpen(true);
                     return;
                   }
 
@@ -480,42 +690,72 @@ function App() {
                     return;
                   }
 
-                  if (feat.tipo === 'DELEGACIA_MG_ES') {
-                    setSelectedCispId(null);
-                    setSelectedCommunityName(null);
-                    setSelectedUf(null);
-                    setSelectedData(feat);
-                    setIsDossierOpen(true);
-                    return;
-                  }
+                  const targetLabel =
+                    feat.tipo === 'CISP' || feat.tipo === 'DELEGACIA'
+                      ? `${feat.cisp ? `${feat.cisp}ª DP` : feat.nome}`
+                      : feat.nome;
 
-                  if (feat.tipo === 'FACCAO_COMUNIDADE') {
-                    setSelectedCommunityName(feat.nome);
-                  } else {
-                    setSelectedCommunityName(null);
-                  }
-                  if (feat.tipo === 'ESTADO_UF' && feat.ufInfo) {
-                    setSelectedUf(feat.ufInfo);
-                  } else {
-                    setSelectedUf(null);
-                  }
-                  if (cispId && registry && registry.cisps[cispId]) {
-                    const rec = registry.cisps[cispId];
-                    setSelectedData({
-                      ...feat,
-                      nome: feat.tipo === 'FACCAO_COMUNIDADE' ? feat.nome : rec.nome_oficial || feat.nome,
-                      bairros: rec.bairros && rec.bairros.length > 0 ? rec.bairros : feat.bairros,
-                      telefone: rec.telefone || feat.telefone,
-                      endereco: rec.endereco || feat.endereco,
-                      indicadores: rec.indicadores || feat.indicadores,
-                      dinamica_territorial: rec.dinamica_territorial || feat.dinamica_territorial
-                    });
-                    setSelectedCispId(cispId);
-                  } else {
-                    setSelectedData(feat);
-                    if (feat.cisp) setSelectedCispId(feat.cisp);
-                  }
-                  setIsDossierOpen(true);
+                  requireApprovedAccess(
+                    `Para consultar os detalhes de "${targetLabel}", entre ou crie sua conta.`,
+                    () => {
+                      if (feat.tipo === 'DELEGACIA_MG_ES') {
+                        setSelectedCispId(null);
+                        setSelectedCommunityName(null);
+                        setSelectedUf(null);
+                        setSelectedData(feat);
+                        setIsDossierOpen(true);
+                        logLocationAccess({
+                          targetType: 'DELEGACIA_MG_ES',
+                          targetName: feat.nome,
+                          uf: feat.delegaciaMgEs?.uf || estadoScope,
+                          municipio: feat.municipio || ''
+                        });
+                        return;
+                      }
+
+                      if (feat.tipo === 'FACCAO_COMUNIDADE') {
+                        setSelectedCommunityName(feat.nome);
+                      } else {
+                        setSelectedCommunityName(null);
+                      }
+                      if (feat.tipo === 'ESTADO_UF' && feat.ufInfo) {
+                        setSelectedUf(feat.ufInfo);
+                      } else {
+                        setSelectedUf(null);
+                      }
+                      if (cispId && registry && registry.cisps[cispId]) {
+                        const rec = registry.cisps[cispId];
+                        setSelectedData({
+                          ...feat,
+                          nome: feat.tipo === 'FACCAO_COMUNIDADE' ? feat.nome : rec.nome_oficial || feat.nome,
+                          bairros: rec.bairros && rec.bairros.length > 0 ? rec.bairros : feat.bairros,
+                          telefone: rec.telefone || feat.telefone,
+                          endereco: rec.endereco || feat.endereco,
+                          indicadores: rec.indicadores || feat.indicadores,
+                          dinamica_territorial: rec.dinamica_territorial || feat.dinamica_territorial
+                        });
+                        setSelectedCispId(cispId);
+                        logLocationAccess({
+                          targetType: feat.tipo,
+                          targetName: feat.tipo === 'FACCAO_COMUNIDADE' ? feat.nome : rec.nome_oficial || feat.nome,
+                          uf: feat.ufInfo?.uf || 'RJ',
+                          municipio: rec.municipio || feat.municipio || '',
+                          cisp: cispId
+                        });
+                      } else {
+                        setSelectedData(feat);
+                        if (feat.cisp) setSelectedCispId(feat.cisp);
+                        logLocationAccess({
+                          targetType: feat.tipo,
+                          targetName: feat.nome,
+                          uf: feat.ufInfo?.uf || (estadoScope === 'TODOS' ? 'BR' : estadoScope),
+                          municipio: feat.municipio || '',
+                          cisp: feat.cisp || 0
+                        });
+                      }
+                      setIsDossierOpen(true);
+                    }
+                  );
                 }}
                 mapRefOut={mapRef}
                 choroplethMetric={choroplethMetric}
@@ -543,9 +783,9 @@ function App() {
               {/* Floating Bottom Command Bar: Timeline ISP + Quadro das Facções */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto z-20 flex items-center justify-center gap-2 pointer-events-none">
                 {/* 1. Timeline ISP Bar */}
-                <div className="pointer-events-auto bg-slate-900/95 border border-slate-700/80 rounded-2xl px-2.5 py-1.5 md:px-3.5 shadow-2xl backdrop-blur-md flex items-center gap-1.5 md:gap-2 text-xs max-w-full overflow-x-auto no-scrollbar">
-                  <div className="flex items-center gap-1.5 text-slate-300 font-semibold pr-1.5 md:pr-2 border-r border-slate-800 shrink-0">
-                    <Clock className="w-3.5 h-3.5 text-blue-400" />
+                <div className="pointer-events-auto bg-white/95 border border-slate-200 rounded-2xl px-2.5 py-1.5 md:px-3.5 shadow-lg backdrop-blur-md flex items-center gap-1.5 md:gap-2 text-xs max-w-full overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-1.5 text-[#2D3277] font-bold pr-1.5 md:pr-2 border-r border-slate-200 shrink-0">
+                    <Clock className="w-3.5 h-3.5 text-[#3483FA]" />
                     <span className="hidden sm:inline">Ano ISP:</span>
                   </div>
 
@@ -554,8 +794,8 @@ function App() {
                     title={isPlayingTimeline ? 'Pausar Linha do Tempo' : 'Reproduzir Evolução Temporal'}
                     className={`p-1.5 rounded-lg border transition-all cursor-pointer shrink-0 ${
                       isPlayingTimeline
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 animate-pulse'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                        ? 'bg-[#FFE600] text-[#2D3277] border-[#E6CF00] animate-pulse'
+                        : 'bg-slate-100 hover:bg-slate-200 text-[#2D3277] border-slate-200'
                     }`}
                   >
                     {isPlayingTimeline ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -571,8 +811,8 @@ function App() {
                         }}
                         className={`px-2 py-1 md:py-0.5 rounded-lg font-mono font-bold text-xs transition-all cursor-pointer shrink-0 ${
                           selectedYear === y
-                            ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 ring-1 ring-blue-400'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                            ? 'bg-[#3483FA] text-white shadow-sm'
+                            : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
                         }`}
                       >
                         <span className="sm:hidden">&apos;{String(y).slice(2)}</span>
@@ -586,13 +826,13 @@ function App() {
                 <div className="relative pointer-events-auto">
                   <button
                     onClick={() => setIsFactionPanelOpen(!isFactionPanelOpen)}
-                    className={`hidden md:flex px-3 py-1.5 rounded-2xl border text-xs font-semibold items-center gap-2 shadow-2xl backdrop-blur-md transition-all cursor-pointer whitespace-nowrap ${
+                    className={`hidden md:flex px-3 py-1.5 rounded-2xl border text-xs font-semibold items-center gap-2 shadow-lg backdrop-blur-md transition-all cursor-pointer whitespace-nowrap ${
                       isFactionPanelOpen
-                        ? 'bg-red-600/30 border-red-500/70 text-white ring-2 ring-red-500/30'
-                        : 'bg-slate-900/95 hover:bg-slate-800 border-slate-700/80 text-slate-200 hover:text-white'
+                        ? 'bg-red-600 border-red-700 text-white shadow-sm'
+                        : 'bg-white/95 hover:bg-slate-50 border-slate-200 text-slate-800 hover:text-[#2D3277]'
                     }`}
                   >
-                    <Flame className="w-3.5 h-3.5 text-red-400" />
+                    <Flame className={`w-3.5 h-3.5 ${isFactionPanelOpen ? 'text-white' : 'text-red-600'}`} />
                     <span>Facções (1.695)</span>
                   </button>
 
@@ -600,16 +840,16 @@ function App() {
                     <>
                       <div
                         onClick={() => setIsFactionPanelOpen(false)}
-                        className="fixed inset-0 bg-black/55 backdrop-blur-[2px] z-30 md:hidden"
+                        className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-30 md:hidden"
                       />
-                      <div className="fixed inset-x-0 bottom-14 z-40 rounded-t-3xl border-t border-slate-700 bg-slate-900/98 p-4 shadow-2xl backdrop-blur-md space-y-2.5 text-xs md:absolute md:inset-x-auto md:bottom-full md:right-0 md:mb-2 md:w-80 md:rounded-2xl md:border md:p-3.5">
-                        <div className="w-10 h-1 rounded-full bg-slate-600 mx-auto mb-1 md:hidden" />
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-bold text-slate-100 flex items-center gap-1.5">
-                            <Flame className="w-3.5 h-3.5 text-red-400" />
+                      <div className="fixed inset-x-0 bottom-14 z-40 rounded-t-3xl border-t border-slate-200 bg-white p-4 shadow-2xl space-y-2.5 text-xs md:absolute md:inset-x-auto md:bottom-full md:right-0 md:mb-2 md:w-80 md:rounded-2xl md:border md:border-slate-200 md:p-3.5">
+                        <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto mb-1 md:hidden" />
+                        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                          <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <Flame className="w-3.5 h-3.5 text-red-600" />
                             <span>Dados de Riscos (ago/2026)</span>
                           </span>
-                          <span className="text-[10px] font-mono text-slate-400">1.695 polígonos</span>
+                          <span className="text-[10px] font-mono text-slate-500">1.695 polígonos</span>
                         </div>
 
                         <div className="space-y-1.5 max-h-[45dvh] overflow-y-auto">
@@ -619,7 +859,7 @@ function App() {
                             return (
                               <label
                                 key={code}
-                                className={`flex items-center justify-between p-2 md:p-1.5 rounded-lg bg-slate-950/60 border border-slate-800 cursor-pointer transition-opacity ${
+                                className={`flex items-center justify-between p-2 md:p-1.5 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer transition-opacity ${
                                   isOn ? 'opacity-100' : 'opacity-45'
                                 }`}
                               >
@@ -633,12 +873,12 @@ function App() {
                                         [code]: e.target.checked
                                       }))
                                     }
-                                    className="rounded bg-slate-900 border-slate-700 focus:ring-0"
+                                    className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
                                   />
                                   <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: meta.color }} />
-                                  <span className="font-medium text-slate-200 truncate">{meta.label}</span>
+                                  <span className="font-medium text-slate-800 truncate">{meta.label}</span>
                                 </div>
-                                <span className="font-mono text-[10px] text-slate-400 tabular-nums shrink-0">
+                                <span className="font-mono text-[10px] text-slate-600 tabular-nums shrink-0">
                                   {FACCAO_COUNTS[code]}
                                 </span>
                               </label>
@@ -646,11 +886,11 @@ function App() {
                           })}
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-[10px] text-slate-500">
                           <span>Fonte: Dados de Riscos · GENI-UFF</span>
                           <button
                             onClick={() => setIsFactionPanelOpen(false)}
-                            className="text-blue-400 hover:text-blue-300 font-semibold cursor-pointer py-1 px-2"
+                            className="text-[#3483FA] hover:text-[#2968C8] font-semibold cursor-pointer py-1 px-2"
                           >
                             Fechar ▼
                           </button>
@@ -665,9 +905,9 @@ function App() {
               {!isDossierOpen && selectedData && (
                 <button
                   onClick={() => setIsDossierOpen(true)}
-                  className="absolute bottom-14 right-3 md:bottom-auto md:top-4 md:right-14 z-20 max-w-[calc(100vw-1.5rem)] px-3.5 py-2 rounded-xl bg-slate-900/95 hover:bg-blue-600 text-slate-200 hover:text-white border border-slate-700 shadow-2xl flex items-center gap-2 text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
+                  className="absolute bottom-14 right-3 md:bottom-auto md:top-4 md:right-14 z-20 max-w-[calc(100vw-1.5rem)] px-3.5 py-2 rounded-xl bg-white/95 hover:bg-[#FFE600] text-[#2D3277] border border-slate-200 hover:border-[#E6CF00] shadow-lg flex items-center gap-2 text-xs font-bold backdrop-blur-md transition-all cursor-pointer"
                 >
-                  <Shield className="w-4 h-4 text-blue-400 shrink-0" />
+                  <Shield className="w-4 h-4 text-[#3483FA] shrink-0" />
                   <span className="truncate">Ver Dossiê: {selectedData.nome}</span>
                 </button>
               )}
@@ -687,7 +927,7 @@ function App() {
         )}
 
         {activeTab === 'sig_mges' && (
-          <div className="flex-1 overflow-y-auto bg-slate-950">
+          <div className="flex-1 overflow-y-auto bg-[#F5F5F5]">
             <SigBaseMgEsPanel
               divisaoRows={divisaoRows}
               setDivisaoRows={setDivisaoRows}
@@ -722,7 +962,36 @@ function App() {
           />
         )}
 
-        {activeTab === 'about' && <AboutMethodologyView />}
+        {activeTab === 'about' && <AboutMethodologyView onOpenLicense={() => setShowLicenseModal(true)} />}
+
+        {activeTab === 'admin' && isAdmin && (
+          <AdminDashboardView
+            onOpenCompanyPanel={domain => {
+              setCompanyAdminDomainOverride(domain);
+              setActiveTab('company_admin');
+            }}
+            onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+          />
+        )}
+
+        {activeTab === 'company_admin' && (isCompanyAdmin || isAdmin) && (
+          <CompanyAdminView
+            registry={registry}
+            overrideDomain={companyAdminDomainOverride}
+            onSelectOverrideDomain={setCompanyAdminDomainOverride}
+            onGoToAdminCompanies={() => setActiveTab('admin')}
+            onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+            onOpenIncidentModal={inc => {
+              setSelectedCorporateIncident(inc || null);
+              setIncidentInitialCoords(undefined);
+              setIsIncidentModalOpen(true);
+            }}
+            onLocateOnMap={(lat, lng) => {
+              setActiveTab('map');
+              setFocusTarget({ lat, lng, zoom: 16, ts: Date.now() });
+            }}
+          />
+        )}
       </main>
 
       {/* Mobile "Mais" Navigation Bottom Sheet */}
@@ -730,17 +999,17 @@ function App() {
         <>
           <div
             onClick={() => setIsMobileMoreOpen(false)}
-            className="fixed inset-0 bg-black/55 backdrop-blur-[2px] z-30 md:hidden"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-30 md:hidden"
           />
-          <div className="fixed inset-x-0 bottom-14 z-40 bg-slate-900/98 border-t border-slate-700 rounded-t-3xl p-4 shadow-2xl backdrop-blur-md md:hidden space-y-3">
-            <div className="w-10 h-1 rounded-full bg-slate-600 mx-auto" />
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+          <div className="fixed inset-x-0 bottom-14 z-40 bg-white border-t border-slate-200 rounded-t-3xl p-4 shadow-2xl md:hidden space-y-3">
+            <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto" />
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#2D3277]">
                 Módulos & Ferramentas
               </span>
               <button
                 onClick={() => setIsMobileMoreOpen(false)}
-                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -748,42 +1017,51 @@ function App() {
             <div className="grid grid-cols-2 gap-2.5 text-xs">
               <button
                 onClick={() => {
-                  setActiveTab('stats');
                   setIsMobileMoreOpen(false);
+                  requireApprovedAccess(
+                    'Para acessar as Estatísticas ISP-RJ, entre ou crie sua conta.',
+                    () => setActiveTab('stats')
+                  );
                 }}
                 className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
                   activeTab === 'stats'
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-300'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-200'
+                    ? 'bg-[#3483FA]/10 border-[#3483FA] text-[#2968C8]'
+                    : 'bg-slate-50 border-slate-200 text-slate-800'
                 }`}
               >
-                <BarChart3 className="w-4 h-4 text-blue-400 shrink-0" />
+                <BarChart3 className="w-4 h-4 text-[#3483FA] shrink-0" />
                 <span>Estatísticas ISP</span>
               </button>
 
               <button
                 onClick={() => {
-                  setActiveTab('audit');
                   setIsMobileMoreOpen(false);
+                  requireApprovedAccess(
+                    'Para acessar a Auditoria Territorial, entre ou crie sua conta.',
+                    () => setActiveTab('audit')
+                  );
                 }}
                 className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
                   activeTab === 'audit'
-                    ? 'bg-amber-600/20 border-amber-500 text-amber-300'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-200'
+                    ? 'bg-amber-50 border-amber-500 text-amber-800'
+                    : 'bg-slate-50 border-slate-200 text-slate-800'
                 }`}
               >
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>Auditoria</span>
               </button>
 
               <button
                 onClick={() => {
-                  setShowImporter(true);
                   setIsMobileMoreOpen(false);
+                  requireApprovedAccess(
+                    'Para importar ou exportar dados territoriais, entre ou crie sua conta.',
+                    () => setShowImporter(true)
+                  );
                 }}
-                className="p-3 rounded-xl border bg-slate-950/60 border-slate-800 text-slate-200 flex items-center gap-2.5 font-semibold cursor-pointer"
+                className="p-3 rounded-xl border bg-slate-50 border-slate-200 text-slate-800 flex items-center gap-2.5 font-semibold cursor-pointer"
               >
-                <Database className="w-4 h-4 text-emerald-400 shrink-0" />
+                <Database className="w-4 h-4 text-[#00A650] shrink-0" />
                 <span>Importar Dados</span>
               </button>
 
@@ -794,12 +1072,68 @@ function App() {
                 }}
                 className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
                   activeTab === 'about'
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-300'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-200'
+                    ? 'bg-[#2D3277]/10 border-[#2D3277] text-[#2D3277]'
+                    : 'bg-slate-50 border-slate-200 text-slate-800'
                 }`}
               >
-                <Info className="w-4 h-4 text-sky-400 shrink-0" />
+                <Info className="w-4 h-4 text-[#3483FA] shrink-0" />
                 <span>Metodologia</span>
+              </button>
+
+              {(isCompanyAdmin || isAdmin) && (
+                <button
+                  onClick={() => {
+                    setActiveTab('company_admin');
+                    setIsMobileMoreOpen(false);
+                  }}
+                  className={`col-span-2 p-3 rounded-xl border flex items-center justify-center gap-2 font-bold cursor-pointer ${
+                    activeTab === 'company_admin'
+                      ? 'bg-[#FFE600] border-[#E6CF00] text-[#2D3277]'
+                      : 'bg-white border-[#2D3277]/30 text-[#2D3277]'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4 text-[#3483FA] shrink-0" />
+                  <span>Painel Empresa (Usuários & Ocorrências)</span>
+                </button>
+              )}
+
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    setActiveTab('admin');
+                    setIsMobileMoreOpen(false);
+                  }}
+                  className={`col-span-2 p-3 rounded-xl border flex items-center justify-center gap-2 font-bold cursor-pointer ${
+                    activeTab === 'admin'
+                      ? 'bg-[#FFE600] border-[#E6CF00] text-[#2D3277]'
+                      : 'bg-[#2D3277] border-[#2D3277] text-[#FFE600]'
+                  }`}
+                >
+                  <Crown className="w-4 h-4 shrink-0" />
+                  <span>Painel Administrativo (ADM)</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setShowCompanyRegisterModal(true);
+                  setIsMobileMoreOpen(false);
+                }}
+                className="col-span-2 p-3 rounded-xl border bg-[#00A650]/10 border-[#00A650]/30 text-[#008744] flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-[#00A650]/20 transition-colors shadow-xs"
+              >
+                <Building2 className="w-4 h-4 text-[#00A650] shrink-0" />
+                <span>Cadastrar Empresa (@empresa.com)</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowLicenseModal(true);
+                  setIsMobileMoreOpen(false);
+                }}
+                className="col-span-2 p-3 rounded-xl border bg-slate-50 border-slate-200 text-[#2D3277] flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-slate-100 transition-colors"
+              >
+                <Award className="w-4 h-4 text-[#3483FA] shrink-0" />
+                <span>Licença & Titularidade (Agência Ícone Digital by Vinicius Cirne)</span>
               </button>
             </div>
           </div>
@@ -807,7 +1141,7 @@ function App() {
       )}
 
       {/* Mobile Thumb-Zone Bottom Tab Bar (< 768px) */}
-      <nav className="md:hidden h-14 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 grid grid-cols-5 items-center z-40 shrink-0">
+      <nav className="md:hidden h-14 bg-white/95 backdrop-blur-md border-t border-slate-200 grid grid-cols-5 items-center z-40 shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <button
           onClick={() => {
             setActiveTab('map');
@@ -817,12 +1151,12 @@ function App() {
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
             activeTab === 'map' && !sidebarSection && !isFactionPanelOpen && !isMobileMoreOpen
-              ? 'text-blue-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'text-[#3483FA]'
+              : 'text-slate-500 hover:text-[#2D3277]'
           }`}
         >
           <Layers className="w-5 h-5" />
-          <span className="text-[10px] font-medium tracking-tight">Mapa</span>
+          <span className="text-[10px] font-semibold tracking-tight">Mapa</span>
         </button>
 
         <button
@@ -834,12 +1168,12 @@ function App() {
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
             activeTab === 'map' && sidebarSection !== null
-              ? 'text-blue-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'text-[#2D3277]'
+              : 'text-slate-500 hover:text-[#2D3277]'
           }`}
         >
           <Shield className="w-5 h-5" />
-          <span className="text-[10px] font-medium tracking-tight">Camadas</span>
+          <span className="text-[10px] font-semibold tracking-tight">Camadas</span>
         </button>
 
         <button
@@ -851,29 +1185,32 @@ function App() {
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
             activeTab === 'map' && isFactionPanelOpen
-              ? 'text-red-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'text-red-600'
+              : 'text-slate-500 hover:text-[#2D3277]'
           }`}
         >
           <Flame className="w-5 h-5" />
-          <span className="text-[10px] font-medium tracking-tight">Facções</span>
+          <span className="text-[10px] font-semibold tracking-tight">Facções</span>
         </button>
 
         <button
           onClick={() => {
-            setActiveTab('sig_mges');
             setSidebarSection(null);
             setIsFactionPanelOpen(false);
             setIsMobileMoreOpen(false);
+            requireApprovedAccess(
+              'Para acessar a Base SIG MG·ES, entre ou crie sua conta.',
+              () => setActiveTab('sig_mges')
+            );
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
             activeTab === 'sig_mges'
-              ? 'text-emerald-400'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'text-[#00A650]'
+              : 'text-slate-500 hover:text-[#2D3277]'
           }`}
         >
           <Building2 className="w-5 h-5" />
-          <span className="text-[10px] font-medium tracking-tight">SIG MG·ES</span>
+          <span className="text-[10px] font-semibold tracking-tight">SIG MG·ES</span>
         </button>
 
         <button
@@ -883,18 +1220,100 @@ function App() {
             setIsMobileMoreOpen(prev => !prev);
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
-            isMobileMoreOpen || activeTab === 'stats' || activeTab === 'audit' || activeTab === 'about'
-              ? 'text-blue-400'
-              : 'text-slate-400 hover:text-slate-200'
+            isMobileMoreOpen ||
+            activeTab === 'stats' ||
+            activeTab === 'audit' ||
+            activeTab === 'about' ||
+            activeTab === 'admin' ||
+            activeTab === 'company_admin'
+              ? 'text-[#3483FA]'
+              : 'text-slate-500 hover:text-[#2D3277]'
           }`}
         >
           <Menu className="w-5 h-5" />
-          <span className="text-[10px] font-medium tracking-tight">Menu</span>
+          <span className="text-[10px] font-semibold tracking-tight">Menu</span>
         </button>
       </nav>
 
+      {/* Global Footer — Agência Ícone Digital by Vinicius Cirne & Licença Vinculada */}
+      <footer className="bg-white border-t border-slate-200 px-3 md:px-4 py-1.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-2 text-[10px] md:text-[11px] text-slate-600 shrink-0 z-30 print:hidden shadow-xs select-none">
+        <div className="flex items-center gap-2 truncate">
+          <span className="hidden md:inline font-semibold text-[#2D3277]">
+            Monitoramento Territorial
+          </span>
+          <span className="hidden md:inline text-slate-300">•</span>
+          <span className="truncate">
+            © 2026 <strong className="text-[#2D3277] font-bold">Agência Ícone Digital</strong> by <strong className="text-[#3483FA] font-bold">Vinicius Cirne</strong>
+          </span>
+          <span className="hidden lg:inline text-slate-300">•</span>
+          <span className="hidden lg:inline text-slate-500">Todos os direitos reservados</span>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 md:gap-3 shrink-0 ml-auto">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#00A650]/10 border border-[#00A650]/30 text-[#008744] text-[10px] font-bold">
+            <ShieldCheck className="w-3 h-3" />
+            <span className="hidden sm:inline">Licença Vinculada</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowLicenseModal(true)}
+            className="inline-flex items-center gap-1 text-[#2D3277] hover:text-[#3483FA] hover:underline font-semibold transition-colors cursor-pointer text-[10px] md:text-[11px]"
+            title="Visualizar Certificado e Termos da Licença Oficial"
+          >
+            <Award className="w-3.5 h-3.5 text-[#3483FA]" />
+            <span>Ver Licença</span>
+          </button>
+
+          <a
+            href="https://wa.me/5521974976130"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Conversar via WhatsApp"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#00A650]/10 hover:bg-[#00A650]/20 text-[#008744] border border-[#00A650]/25 font-bold transition-colors shrink-0"
+          >
+            <MessageCircle className="w-3 h-3" />
+            <span>WhatsApp</span>
+          </a>
+
+          <span className="hidden sm:inline text-slate-300">|</span>
+          <span className="font-mono text-[10px] text-slate-400 hidden sm:inline">v2.5.0</span>
+        </div>
+      </footer>
+
       {showImporter && <DataImporterModal registry={registry} onClose={() => setShowImporter(false)} />}
       {showPrintModal && <PrintableDossierModal data={selectedData} onClose={() => setShowPrintModal(false)} />}
+      {showLicenseModal && <LicenseModal isOpen={showLicenseModal} onClose={() => setShowLicenseModal(false)} />}
+      <CompanyRegisterModal
+        isOpen={showCompanyRegisterModal}
+        onClose={() => setShowCompanyRegisterModal(false)}
+        onCompanyCreated={domain => {
+          setCompanyAdminDomainOverride(domain);
+          setActiveTab('company_admin');
+        }}
+      />
+      {isIncidentModalOpen && (
+        <CorporateIncidentModal
+          isOpen={isIncidentModalOpen}
+          onClose={() => {
+            setIsIncidentModalOpen(false);
+            setSelectedCorporateIncident(null);
+            setIncidentInitialCoords(undefined);
+          }}
+          companyDomain={effectiveCompanyDomain}
+          existingIncident={selectedCorporateIncident}
+          initialCoords={incidentInitialCoords}
+          registry={registry}
+          onSaved={() => {
+            // Snapshot automatically updates companyIncidents
+          }}
+        />
+      )}
+      <AuthGateModal
+        onOpenAdmin={() => setActiveTab('admin')}
+        onOpenCompanyAdmin={() => setActiveTab('company_admin')}
+        onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+      />
     </div>
   );
 }

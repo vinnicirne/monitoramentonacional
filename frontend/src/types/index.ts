@@ -24,6 +24,8 @@ export type LayerVisibility = {
   batalhoes: boolean;
   focos: boolean;
   mgEs: boolean;
+  corporateHeatmap?: boolean;
+  corporateIncidents?: boolean;
 };
 
 export interface ISPIndicatorsYear {
@@ -115,7 +117,7 @@ export interface TerritorialRegistry {
 }
 
 export interface SelectedFeatureData {
-  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'FACCAO_COMUNIDADE' | 'DELEGACIA' | 'BATALHAO' | 'ESTADO_UF' | 'MGES_NODE' | 'DELEGACIA_MG_ES';
+  tipo: 'CISP' | 'AISP' | 'RISP' | 'FOCO_ESPECIAL' | 'FACCAO_COMUNIDADE' | 'DELEGACIA' | 'BATALHAO' | 'ESTADO_UF' | 'MGES_NODE' | 'DELEGACIA_MG_ES' | 'CORPORATE_INCIDENT';
   id: string | number;
   nome: string;
   cisp?: number;
@@ -140,6 +142,8 @@ export interface SelectedFeatureData {
   grau_confiabilidade?: string;
   alerta_juridico?: string;
   coordinates?: [number, number];
+  // For Corporate Incident
+  corporateIncident?: any;
   // For 27 UFs & MG/ES SIG
   ufInfo?: UfMetadataInfo;
   mgEsInfo?: {

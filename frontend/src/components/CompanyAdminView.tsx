@@ -1,0 +1,2640 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Building2,
+  UserPlus,
+  KeyRound,
+  BadgeCheck,
+  Ban,
+  Search,
+  Copy,
+  Check,
+  Users,
+  ShieldCheck,
+  Clock,
+  Trash2,
+  AlertCircle,
+  CheckCircle2,
+  RefreshCw,
+  PackageX,
+  FileText,
+  MapPin,
+  Pencil,
+  ShieldAlert,
+  Landmark,
+  Plus,
+  Briefcase,
+  DollarSign,
+  Sparkles,
+  Save,
+  Globe,
+  History,
+  Flame
+} from 'lucide-react';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where
+} from 'firebase/firestore';
+import { db, handleFirestoreError } from '../firebase';
+import {
+  CompanyRole,
+  CorporateCompany,
+  CorporatePackageIncident,
+  CorporateUserLicense,
+  OperationType,
+  PackageCustodyStatus,
+  PackageIncidentType,
+  PlanConfig,
+  UserProfile
+} from '../types/admin';
+import { TerritorialRegistry } from '../types';
+import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
+import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../contexts/AuthContext';
+
+type CompanyPanelSubTab = 'users' | 'incidents' | 'company_info';
+type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'resolved';
+
+interface CompanyAdminViewProps {
+  registry?: TerritorialRegistry | null;
+  overrideDomain?: string;
+  onSelectOverrideDomain?: (domain: string) => void;
+  onGoToAdminCompanies?: () => void;
+  onOpenCompanyRegister?: () => void;
+  onOpenIncidentModal?: (incident?: CorporatePackageIncident | null) => void;
+  onLocateOnMap?: (lat: number, lng: number) => void;
+}
+
+interface UnifiedCompanyMember {
+  key: string;
+  email: string;
+  displayName: string;
+  license?: CorporateUserLicense;
+  user?: UserProfile;
+  licenseKey: string;
+  licenseStatus: 'active' | 'suspended' | 'none';
+  companyRole: CompanyRole;
+  accessCount: number;
+  isConnected: boolean;
+}
+
+interface DelegaciaOption {
+  id: string;
+  uf: 'RJ' | 'MG' | 'ES';
+  name: string;
+  municipio: string;
+  label: string;
+}
+
+const INCIDENT_TYPE_LABELS: Record<PackageIncidentType, { label: string; badgeClass: string }> = {
+  extravio: { label: 'Extravio', badgeClass: 'bg-amber-100 text-amber-800 border-amber-200' },
+  fraude: { label: 'Fraude', badgeClass: 'bg-rose-100 text-rose-800 border-rose-200' },
+  roubo_carga: { label: 'Roubo de Carga', badgeClass: 'bg-red-100 text-red-900 border-red-300 font-bold' },
+  roubo: { label: 'Roubo / Assalto', badgeClass: 'bg-red-200 text-red-950 border-red-400 font-extrabold' },
+  furto: { label: 'Furto', badgeClass: 'bg-orange-100 text-orange-900 border-orange-300' },
+  apreensao: { label: 'Apreensão Policial', badgeClass: 'bg-[#2D3277]/10 text-[#2D3277] border-[#2D3277]/20' },
+  outros: { label: 'Outros', badgeClass: 'bg-slate-100 text-slate-700 border-slate-200' }
+};
+
+const CUSTODY_STATUS_LABELS: Record<PackageCustodyStatus, { label: string; shortLabel: string; badgeClass: string }> = {
+  em_ocorrencia_delegacia: {
+    label: 'Na delegacia — em ocorrência policial',
+    shortLabel: 'Em Ocorrência na DP',
+    badgeClass: 'bg-rose-100 text-rose-800'
+  },
+  aguardando_pericia: {
+    label: 'Na delegacia — aguardando perícia',
+    shortLabel: 'Aguardando Perícia',
+    badgeClass: 'bg-amber-100 text-amber-800'
+  },
+  liberado_retirada: {
+    label: 'Liberado pela delegacia para retirada',
+    shortLabel: 'Liberado p/ Retirada',
+    badgeClass: 'bg-[#3483FA]/15 text-[#2968C8]'
+  },
+  devolvido_empresa: {
+    label: 'Devolvido / recuperado pela empresa',
+    shortLabel: 'Devolvido à Empresa',
+    badgeClass: 'bg-[#00A650]/15 text-[#008744]'
+  },
+  extraviado_nao_localizado: {
+    label: 'Extraviado / não localizado',
+    shortLabel: 'Não Localizado',
+    badgeClass: 'bg-slate-200 text-slate-700'
+  }
+};
+
+export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
+  registry,
+  overrideDomain,
+  onSelectOverrideDomain,
+  onGoToAdminCompanies,
+  onOpenCompanyRegister,
+  onOpenIncidentModal,
+  onLocateOnMap
+}) => {
+  const { userProfile: currentAdmin, isAdmin } = useAuth();
+  const [subTab, setSubTab] = useState<CompanyPanelSubTab>('users');
+
+  // Available companies (for System Admin switcher)
+  const [allCompanies, setAllCompanies] = useState<CorporateCompany[]>([]);
+  const ownCompanyDomain = (currentAdmin?.companyDomain || currentAdmin?.domain || '').toLowerCase();
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const unsub = onSnapshot(
+      collection(db, 'corporate_companies'),
+      snap => {
+        setAllCompanies(snap.docs.map(d => d.data() as CorporateCompany));
+      },
+      err => handleFirestoreError(err, OperationType.LIST, 'corporate_companies')
+    );
+    return () => unsub();
+  }, [isAdmin]);
+
+  const activeDomain = useMemo(() => {
+    if (isAdmin) {
+      if (overrideDomain && allCompanies.some(c => c.domain === overrideDomain)) {
+        return overrideDomain;
+      }
+      if (overrideDomain) return overrideDomain;
+      if (allCompanies.length > 0) {
+        const activeFirst = allCompanies.find(c => c.active) || allCompanies[0];
+        return activeFirst.domain;
+      }
+      return '';
+    }
+    return ownCompanyDomain;
+  }, [isAdmin, overrideDomain, allCompanies, ownCompanyDomain]);
+
+  const [company, setCompany] = useState<CorporateCompany | null>(null);
+  const [licenses, setLicenses] = useState<CorporateUserLicense[]>([]);
+  const [companyUsers, setCompanyUsers] = useState<UserProfile[]>([]);
+  const [incidents, setIncidents] = useState<CorporatePackageIncident[]>([]);
+
+  // User/License Form state
+  const [empName, setEmpName] = useState('');
+  const [empEmailUser, setEmpEmailUser] = useState('');
+  const [empRole, setEmpRole] = useState<CompanyRole>('member');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [copiedInvite, setCopiedInvite] = useState(false);
+
+  // Incident Form state
+  const [editingIncidentId, setEditingIncidentId] = useState<string | null>(null);
+  const [trackingCode, setTrackingCode] = useState('');
+  const [incidentType, setIncidentType] = useState<PackageIncidentType>('extravio');
+  const [boNumber, setBoNumber] = useState('');
+  const [delegaciaUfFilter, setDelegaciaUfFilter] = useState<'TODAS' | 'RJ' | 'MG' | 'ES'>('TODAS');
+  const [delegaciaSearch, setDelegaciaSearch] = useState('');
+  const [selectedDelegaciaId, setSelectedDelegaciaId] = useState('');
+  const [packageAtStation, setPackageAtStation] = useState(true);
+  const [custodyStatus, setCustodyStatus] = useState<PackageCustodyStatus>('em_ocorrencia_delegacia');
+  const [estimatedValue, setEstimatedValue] = useState('');
+  const [incidentNotes, setIncidentNotes] = useState('');
+  const [incidentSearch, setIncidentSearch] = useState('');
+  const [incidentFilter, setIncidentFilter] = useState<IncidentFilterMode>('all');
+  const [incidentError, setIncidentError] = useState<string | null>(null);
+  const [incidentSuccess, setIncidentSuccess] = useState<string | null>(null);
+  const [isSavingIncident, setIsSavingIncident] = useState(false);
+
+  // Company Registration & Management States (Sub-tab: 'company_info')
+  const [availablePlans, setAvailablePlans] = useState<PlanConfig[]>([]);
+  const [newCompDomain, setNewCompDomain] = useState('');
+  const [newCompName, setNewCompName] = useState('');
+  const [newCompPlanId, setNewCompPlanId] = useState('corp_licenca');
+  const [newCompPrice, setNewCompPrice] = useState('49.00');
+  const [newCompSeats, setNewCompSeats] = useState('10');
+  const [newCompAutoApprove, setNewCompAutoApprove] = useState(true);
+  const [isSavingNewComp, setIsSavingNewComp] = useState(false);
+  const [newCompSuccess, setNewCompSuccess] = useState<string | null>(null);
+  const [newCompError, setNewCompError] = useState<string | null>(null);
+
+  // Edit Active Company States
+  const [editCompName, setEditCompName] = useState('');
+  const [editCompPlanId, setEditCompPlanId] = useState('corp_licenca');
+  const [editCompPrice, setEditCompPrice] = useState('49.00');
+  const [editCompSeats, setEditCompSeats] = useState('10');
+  const [editCompAutoApprove, setEditCompAutoApprove] = useState(true);
+  const [editCompActive, setEditCompActive] = useState(true);
+  const [isSavingEditComp, setIsSavingEditComp] = useState(false);
+  const [editCompSuccess, setEditCompSuccess] = useState<string | null>(null);
+  const [editCompError, setEditCompError] = useState<string | null>(null);
+
+  // Sync edit form with active company
+  useEffect(() => {
+    if (company) {
+      setEditCompName(company.companyName || '');
+      setEditCompPlanId(company.planId || 'corp_licenca');
+      setEditCompPrice(String(company.pricePerLicense ?? 49));
+      setEditCompSeats(String(company.licensedSeats ?? 10));
+      setEditCompAutoApprove(company.autoApprove ?? true);
+      setEditCompActive(company.active ?? true);
+    }
+  }, [company]);
+
+  // Load available plans from Firestore
+  useEffect(() => {
+    getDocs(collection(db, 'plans'))
+      .then(snap => {
+        const list = snap.docs.map(d => d.data() as PlanConfig).filter(p => p.active);
+        if (list.length > 0) {
+          setAvailablePlans(list);
+          const defaultPlan = list.find(p => p.billingModel === 'per_user') || list[0];
+          setNewCompPlanId(defaultPlan.id);
+          setNewCompPrice(String(defaultPlan.pricePerLicense ?? defaultPlan.priceMonthly ?? 49));
+        }
+      })
+      .catch(err => {
+        console.warn('Could not load plans for company management:', err);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!activeDomain) {
+      setCompany(null);
+      setLicenses([]);
+      setCompanyUsers([]);
+      setIncidents([]);
+      return;
+    }
+
+    const unsubs: Array<() => void> = [];
+
+    unsubs.push(
+      onSnapshot(
+        doc(db, 'corporate_companies', activeDomain),
+        snap => {
+          setCompany(snap.exists() ? (snap.data() as CorporateCompany) : null);
+        },
+        err => handleFirestoreError(err, OperationType.GET, `corporate_companies/${activeDomain}`)
+      )
+    );
+
+    unsubs.push(
+      onSnapshot(
+        collection(db, 'corporate_companies', activeDomain, 'licenses'),
+        snap => {
+          setLicenses(snap.docs.map(d => d.data() as CorporateUserLicense));
+        },
+        err =>
+          handleFirestoreError(
+            err,
+            OperationType.LIST,
+            `corporate_companies/${activeDomain}/licenses`
+          )
+      )
+    );
+
+    unsubs.push(
+      onSnapshot(
+        query(collection(db, 'users'), where('domain', '==', activeDomain)),
+        snap => {
+          setCompanyUsers(snap.docs.map(d => d.data() as UserProfile));
+        },
+        err => handleFirestoreError(err, OperationType.LIST, 'users')
+      )
+    );
+
+    unsubs.push(
+      onSnapshot(
+        query(
+          collection(db, 'corporate_companies', activeDomain, 'incidents'),
+          orderBy('createdAt', 'desc')
+        ),
+        snap => {
+          setIncidents(snap.docs.map(d => d.data() as CorporatePackageIncident));
+        },
+        err =>
+          handleFirestoreError(
+            err,
+            OperationType.LIST,
+            `corporate_companies/${activeDomain}/incidents`
+          )
+      )
+    );
+
+    return () => {
+      unsubs.forEach(u => u());
+    };
+  }, [activeDomain]);
+
+  // Unified Delegacias Catalog (RJ CISPs + MG/ES Delegacias)
+  const allDelegacias = useMemo<DelegaciaOption[]>(() => {
+    const list: DelegaciaOption[] = [];
+
+    if (registry?.cisps) {
+      Object.values(registry.cisps)
+        .sort((a, b) => a.cisp - b.cisp)
+        .forEach(c => {
+          list.push({
+            id: `RJ_CISP_${c.cisp}`,
+            uf: 'RJ',
+            name: c.nome_oficial,
+            municipio: c.municipio,
+            label: `[RJ] ${c.nome_oficial} — ${c.municipio}`
+          });
+        });
+    }
+
+    DELEGACIAS_MG_ES_DATA.slice()
+      .sort((a, b) => a.uf.localeCompare(b.uf) || a.municipio.localeCompare(b.municipio) || a.nomeCurto.localeCompare(b.nomeCurto))
+      .forEach(del => {
+        list.push({
+          id: del.id,
+          uf: del.uf,
+          name: `${del.nomeCurto} — ${del.nome}`,
+          municipio: del.municipio,
+          label: `[${del.uf}] ${del.nomeCurto} (${del.municipio}) — ${del.nome}`
+        });
+      });
+
+    return list;
+  }, [registry]);
+
+  const filteredDelegacias = useMemo(() => {
+    const q = delegaciaSearch.trim().toLowerCase();
+    return allDelegacias.filter(d => {
+      if (delegaciaUfFilter !== 'TODAS' && d.uf !== delegaciaUfFilter) return false;
+      if (!q) return true;
+      return (
+        d.name.toLowerCase().includes(q) ||
+        d.municipio.toLowerCase().includes(q) ||
+        d.uf.toLowerCase().includes(q)
+      );
+    });
+  }, [allDelegacias, delegaciaUfFilter, delegaciaSearch]);
+
+  useEffect(() => {
+    if (!selectedDelegaciaId && filteredDelegacias.length > 0) {
+      setSelectedDelegaciaId(filteredDelegacias[0].id);
+    }
+  }, [filteredDelegacias, selectedDelegaciaId]);
+
+  // Unified Members List
+  const members = useMemo<UnifiedCompanyMember[]>(() => {
+    const map = new Map<string, UnifiedCompanyMember>();
+
+    licenses.forEach(lic => {
+      const emailLower = lic.email.toLowerCase();
+      map.set(emailLower, {
+        key: emailLower,
+        email: lic.email,
+        displayName: lic.displayName,
+        license: lic,
+        licenseKey: lic.licenseKey,
+        licenseStatus: lic.status,
+        companyRole: lic.companyRole || 'member',
+        accessCount: 0,
+        isConnected: Boolean(lic.assignedUid)
+      });
+    });
+
+    companyUsers.forEach(u => {
+      const emailLower = u.email.toLowerCase();
+      const existing = map.get(emailLower);
+      if (existing) {
+        map.set(emailLower, {
+          ...existing,
+          displayName: u.displayName || existing.displayName,
+          user: u,
+          licenseKey: existing.licenseKey || u.licenseKey || '',
+          licenseStatus:
+            existing.license?.status ||
+            (u.licenseStatus === 'active'
+              ? 'active'
+              : u.licenseStatus === 'suspended'
+              ? 'suspended'
+              : 'none'),
+          companyRole: u.companyRole || existing.companyRole || 'member',
+          accessCount: u.accessCount || 0,
+          isConnected: true
+        });
+      } else {
+        map.set(emailLower, {
+          key: emailLower,
+          email: u.email,
+          displayName: u.displayName,
+          user: u,
+          licenseKey: u.licenseKey || '',
+          licenseStatus:
+            u.licenseStatus === 'active'
+              ? 'active'
+              : u.licenseStatus === 'suspended'
+              ? 'suspended'
+              : 'none',
+          companyRole: u.companyRole || 'member',
+          accessCount: u.accessCount || 0,
+          isConnected: true
+        });
+      }
+    });
+
+    const q = searchTerm.trim().toLowerCase();
+    return Array.from(map.values())
+      .filter(m => {
+        if (!q) return true;
+        return (
+          m.displayName.toLowerCase().includes(q) ||
+          m.email.toLowerCase().includes(q) ||
+          m.licenseKey.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => {
+        if (a.companyRole === 'company_admin' && b.companyRole !== 'company_admin') return -1;
+        if (b.companyRole === 'company_admin' && a.companyRole !== 'company_admin') return 1;
+        if (a.licenseStatus === 'active' && b.licenseStatus !== 'active') return -1;
+        if (b.licenseStatus === 'active' && a.licenseStatus !== 'active') return 1;
+        return a.displayName.localeCompare(b.displayName);
+      });
+  }, [licenses, companyUsers, searchTerm]);
+
+  const activeCount = useMemo(
+    () => members.filter(m => m.licenseStatus === 'active').length,
+    [members]
+  );
+
+  const seatLimit = company?.licensedSeats || 0;
+  const pricePerLicense = company?.pricePerLicense || 0;
+  const monthlyEstimate = activeCount * pricePerLicense;
+  const seatsFull = seatLimit > 0 && activeCount >= seatLimit;
+
+  // Filtered Incidents
+  const filteredIncidents = useMemo(() => {
+    const q = incidentSearch.trim().toLowerCase();
+    return incidents.filter(inc => {
+      if (incidentFilter === 'at_station' && !inc.packageAtStation) return false;
+      if (incidentFilter === 'roubos' && inc.incidentType !== 'roubo_carga' && inc.incidentType !== 'roubo' && inc.incidentType !== 'furto') return false;
+      if (incidentFilter === 'fraude' && inc.incidentType !== 'fraude') return false;
+      if (incidentFilter === 'extravio' && inc.incidentType !== 'extravio') return false;
+      if (incidentFilter === 'roubo_carga' && inc.incidentType !== 'roubo_carga') return false;
+      if (
+        incidentFilter === 'resolved' &&
+        inc.custodyStatus !== 'liberado_retirada' &&
+        inc.custodyStatus !== 'devolvido_empresa'
+      ) {
+        return false;
+      }
+      if (!q) return true;
+      return (
+        inc.trackingCode.toLowerCase().includes(q) ||
+        inc.boNumber.toLowerCase().includes(q) ||
+        inc.delegaciaName.toLowerCase().includes(q) ||
+        inc.delegaciaMunicipio.toLowerCase().includes(q) ||
+        inc.notes.toLowerCase().includes(q)
+      );
+    });
+  }, [incidents, incidentSearch, incidentFilter]);
+
+  const incidentStats = useMemo(() => {
+    const total = incidents.length;
+    const atStation = incidents.filter(i => i.packageAtStation).length;
+    const totalRoubos = incidents.filter(
+      i => i.incidentType === 'roubo_carga' || i.incidentType === 'roubo' || i.incidentType === 'furto'
+    ).length;
+    const resolved = incidents.filter(
+      i => i.custodyStatus === 'liberado_retirada' || i.custodyStatus === 'devolvido_empresa'
+    ).length;
+    const totalValue = incidents.reduce((sum, i) => sum + (i.estimatedValue || 0), 0);
+    return { total, atStation, totalRoubos, resolved, totalValue };
+  }, [incidents]);
+
+  const handleAddAndLinkUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentAdmin || !activeDomain) return;
+    setFormError(null);
+    setFormSuccess(null);
+
+    const cleanName = empName.trim().slice(0, 120);
+    if (!cleanName) {
+      setFormError('Informe o nome completo do colaborador.');
+      return;
+    }
+
+    const rawInput = empEmailUser.trim().toLowerCase();
+    const localPart = rawInput.includes('@') ? rawInput.split('@')[0] : rawInput;
+    const cleanLocal = localPart.replace(/[^a-z0-9._+-]/g, '');
+    if (!cleanLocal) {
+      setFormError('Informe o prefixo do e-mail corporativo antes do @.');
+      return;
+    }
+
+    if (rawInput.includes('@') && rawInput.split('@')[1] !== activeDomain) {
+      setFormError(`Use um e-mail do domínio corporativo @${activeDomain}.`);
+      return;
+    }
+
+    const fullEmail = `${cleanLocal}@${activeDomain}`;
+    if (fullEmail.length > 120) {
+      setFormError('O endereço de e-mail é muito longo (máx. 120 caracteres).');
+      return;
+    }
+
+    const alreadyActive = members.find(
+      m => m.email.toLowerCase() === fullEmail && m.licenseStatus === 'active'
+    );
+    if (seatsFull && !alreadyActive) {
+      setFormError(
+        `Limite de ${seatLimit} licença(s) contratada(s) atingido. Suspenda outra licença ou solicite ampliação ao administrador do sistema.`
+      );
+      return;
+    }
+
+    const licId = emailToLicenseId(fullEmail);
+    const matchedUser = companyUsers.find(u => u.email.toLowerCase() === fullEmail);
+    const existingLicense = licenses.find(l => l.id === licId);
+    const licenseKey =
+      existingLicense?.licenseKey ||
+      matchedUser?.licenseKey ||
+      generateCorporateLicenseKey(activeDomain, `${cleanLocal}${Date.now().toString(36).slice(-3)}`);
+    const planId = company?.planId || 'corp_licenca';
+
+    setIsSaving(true);
+    try {
+      if (existingLicense) {
+        await updateDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          displayName: cleanName,
+          planId,
+          licenseKey,
+          status: 'active',
+          companyRole: empRole,
+          assignedUid: matchedUser?.uid || existingLicense.assignedUid || '',
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await setDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          id: licId,
+          email: fullEmail,
+          displayName: cleanName,
+          companyDomain: activeDomain,
+          planId,
+          licenseKey,
+          status: 'active',
+          companyRole: empRole,
+          assignedUid: matchedUser?.uid || '',
+          invitedByUid: currentAdmin.uid,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      if (matchedUser && matchedUser.uid !== currentAdmin.uid && matchedUser.role !== 'admin') {
+        await updateDoc(doc(db, 'users', matchedUser.uid), {
+          status: 'approved',
+          autoApprovedBy: 'corporate_license',
+          planId,
+          companyDomain: activeDomain,
+          licenseStatus: 'active',
+          licenseKey,
+          companyRole: empRole,
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      setEmpName('');
+      setEmpEmailUser('');
+      setEmpRole('member');
+      setFormSuccess(
+        `Usuário ${fullEmail} adicionado com a licença ${licenseKey}. ${
+          matchedUser
+            ? 'Acesso liberado imediatamente!'
+            : 'Ao acessar o sistema com este e-mail, a licença será ativada automaticamente.'
+        }`
+      );
+    } catch (err: any) {
+      setFormError(err?.message || 'Não foi possível vincular a licença.');
+      handleFirestoreError(
+        err,
+        OperationType.WRITE,
+        `corporate_companies/${activeDomain}/licenses/${licId}`
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleToggleMemberLicense = async (member: UnifiedCompanyMember) => {
+    if (!currentAdmin || !activeDomain) return;
+    if (member.user?.uid === currentAdmin.uid) return;
+    setFormError(null);
+    setFormSuccess(null);
+
+    const nextActive = member.licenseStatus !== 'active';
+    if (nextActive && seatsFull) {
+      setFormError(
+        `Limite de ${seatLimit} licença(s) contratada(s) atingido. Suspenda outra licença antes de reativar.`
+      );
+      return;
+    }
+
+    const licId = member.license?.id || emailToLicenseId(member.email);
+    const planId = company?.planId || 'corp_licenca';
+    const nextKey =
+      member.licenseKey ||
+      generateCorporateLicenseKey(activeDomain, member.user?.uid || member.email);
+
+    try {
+      if (member.license) {
+        await updateDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          status: nextActive ? 'active' : 'suspended',
+          licenseKey: nextKey,
+          assignedUid: member.user?.uid || member.license.assignedUid || '',
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await setDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          id: licId,
+          email: member.email.toLowerCase(),
+          displayName: member.displayName,
+          companyDomain: activeDomain,
+          planId,
+          licenseKey: nextKey,
+          status: nextActive ? 'active' : 'suspended',
+          companyRole: member.companyRole || 'member',
+          assignedUid: member.user?.uid || '',
+          invitedByUid: currentAdmin.uid,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      if (member.user && member.user.uid !== currentAdmin.uid && member.user.role !== 'admin') {
+        await updateDoc(doc(db, 'users', member.user.uid), {
+          status: nextActive ? 'approved' : 'blocked',
+          autoApprovedBy: 'corporate_license',
+          planId,
+          companyDomain: activeDomain,
+          licenseStatus: nextActive ? 'active' : 'suspended',
+          licenseKey: nextKey,
+          updatedAt: serverTimestamp()
+        });
+      }
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        `corporate_companies/${activeDomain}/licenses/${licId}`
+      );
+    }
+  };
+
+  const handleToggleCompanyRole = async (member: UnifiedCompanyMember) => {
+    if (!currentAdmin || !activeDomain) return;
+    if (member.user?.uid === currentAdmin.uid) return;
+
+    const nextRole: CompanyRole =
+      member.companyRole === 'company_admin' ? 'member' : 'company_admin';
+    const licId = member.license?.id || emailToLicenseId(member.email);
+    const planId = company?.planId || 'corp_licenca';
+    const nextKey =
+      member.licenseKey ||
+      generateCorporateLicenseKey(activeDomain, member.user?.uid || member.email);
+
+    try {
+      if (member.license) {
+        await updateDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          companyRole: nextRole,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await setDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          id: licId,
+          email: member.email.toLowerCase(),
+          displayName: member.displayName,
+          companyDomain: activeDomain,
+          planId,
+          licenseKey: nextKey,
+          status: member.licenseStatus === 'suspended' ? 'suspended' : 'active',
+          companyRole: nextRole,
+          assignedUid: member.user?.uid || '',
+          invitedByUid: currentAdmin.uid,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      if (member.user && member.user.uid !== currentAdmin.uid && member.user.role !== 'admin') {
+        await updateDoc(doc(db, 'users', member.user.uid), {
+          companyRole: nextRole,
+          updatedAt: serverTimestamp()
+        });
+      }
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        `corporate_companies/${activeDomain}/licenses/${licId}`
+      );
+    }
+  };
+
+  const handleRemoveLicense = async (member: UnifiedCompanyMember) => {
+    if (!activeDomain || !member.license) return;
+    if (member.user?.uid === currentAdmin?.uid) return;
+
+    try {
+      await deleteDoc(
+        doc(db, 'corporate_companies', activeDomain, 'licenses', member.license.id)
+      );
+      if (member.user && member.user.uid !== currentAdmin?.uid && member.user.role !== 'admin') {
+        await updateDoc(doc(db, 'users', member.user.uid), {
+          licenseStatus: 'suspended',
+          status: 'blocked',
+          updatedAt: serverTimestamp()
+        });
+      }
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.DELETE,
+        `corporate_companies/${activeDomain}/licenses/${member.license.id}`
+      );
+    }
+  };
+
+  const resetIncidentForm = () => {
+    setEditingIncidentId(null);
+    setTrackingCode('');
+    setIncidentType('extravio');
+    setBoNumber('');
+    setPackageAtStation(true);
+    setCustodyStatus('em_ocorrencia_delegacia');
+    setEstimatedValue('');
+    setIncidentNotes('');
+    setIncidentError(null);
+  };
+
+  const handleEditIncident = (inc: CorporatePackageIncident) => {
+    setEditingIncidentId(inc.id);
+    setTrackingCode(inc.trackingCode);
+    setIncidentType(inc.incidentType);
+    setBoNumber(inc.boNumber);
+    if (inc.delegaciaUf === 'RJ' || inc.delegaciaUf === 'MG' || inc.delegaciaUf === 'ES') {
+      setDelegaciaUfFilter(inc.delegaciaUf);
+    } else {
+      setDelegaciaUfFilter('TODAS');
+    }
+    setDelegaciaSearch('');
+    setSelectedDelegaciaId(inc.delegaciaId);
+    setPackageAtStation(inc.packageAtStation);
+    setCustodyStatus(inc.custodyStatus);
+    setEstimatedValue(inc.estimatedValue > 0 ? String(inc.estimatedValue) : '');
+    setIncidentNotes(inc.notes);
+    setIncidentError(null);
+    setIncidentSuccess(null);
+  };
+
+  const handleSaveIncident = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentAdmin || !activeDomain) return;
+    setIncidentError(null);
+    setIncidentSuccess(null);
+
+    const cleanCode = trackingCode.trim().slice(0, 80);
+    if (!cleanCode) {
+      setIncidentError('Informe o código do pacote / rastreio.');
+      return;
+    }
+
+    const chosenDelegacia = allDelegacias.find(d => d.id === selectedDelegaciaId);
+    if (!chosenDelegacia) {
+      setIncidentError('Selecione a delegacia responsável pela ocorrência.');
+      return;
+    }
+
+    const cleanBo = boNumber.trim().slice(0, 64);
+    const numValue = Math.max(0, Number(estimatedValue.replace(',', '.')) || 0);
+    const cleanNotes = incidentNotes.trim().slice(0, 500);
+    const incId =
+      editingIncidentId ||
+      `inc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+
+    let autoLat: number | undefined;
+    let autoLng: number | undefined;
+    if (chosenDelegacia.id.startsWith('RJ_CISP_') && registry?.cisps) {
+      const cispNum = parseInt(chosenDelegacia.id.replace('RJ_CISP_', ''), 10);
+      const found = Object.values(registry.cisps).find(c => c.cisp === cispNum);
+      if (found && found.centroide && found.centroide.length >= 2) {
+        autoLng = found.centroide[0];
+        autoLat = found.centroide[1];
+      }
+    } else {
+      const found = DELEGACIAS_MG_ES_DATA.find(d => d.id === chosenDelegacia.id);
+      if (found && found.latitude && found.longitude) {
+        autoLat = found.latitude;
+        autoLng = found.longitude;
+      }
+    }
+
+    setIsSavingIncident(true);
+    try {
+      if (editingIncidentId) {
+        await updateDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId), {
+          trackingCode: cleanCode,
+          incidentType,
+          boNumber: cleanBo,
+          delegaciaId: chosenDelegacia.id.slice(0, 64),
+          delegaciaName: chosenDelegacia.name.slice(0, 160),
+          delegaciaUf: chosenDelegacia.uf.slice(0, 8),
+          delegaciaMunicipio: chosenDelegacia.municipio.slice(0, 100),
+          ...(autoLat !== undefined && autoLng !== undefined ? { lat: autoLat, lng: autoLng } : {}),
+          packageAtStation,
+          custodyStatus,
+          estimatedValue: numValue,
+          notes: cleanNotes,
+          updatedAt: serverTimestamp()
+        });
+        setIncidentSuccess(`Ocorrência do pacote ${cleanCode} atualizada com sucesso.`);
+      } else {
+        const initialHistory = [
+          {
+            id: `hist_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            authorName: (currentAdmin.displayName || currentAdmin.email).slice(0, 120),
+            authorUid: currentAdmin.uid,
+            status: custodyStatus,
+            description: `Ocorrência de ${INCIDENT_TYPE_LABELS[incidentType]?.label || incidentType} registrada.`
+          }
+        ];
+
+        await setDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId), {
+          id: incId,
+          companyDomain: activeDomain,
+          trackingCode: cleanCode,
+          incidentType,
+          boNumber: cleanBo,
+          delegaciaId: chosenDelegacia.id.slice(0, 64),
+          delegaciaName: chosenDelegacia.name.slice(0, 160),
+          delegaciaUf: chosenDelegacia.uf.slice(0, 8),
+          delegaciaMunicipio: chosenDelegacia.municipio.slice(0, 100),
+          ...(autoLat !== undefined && autoLng !== undefined ? { lat: autoLat, lng: autoLng } : {}),
+          packageAtStation,
+          custodyStatus,
+          estimatedValue: numValue,
+          notes: cleanNotes,
+          history: initialHistory,
+          createdByUid: currentAdmin.uid,
+          createdByName: (currentAdmin.displayName || currentAdmin.email).slice(0, 120),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        setIncidentSuccess(
+          `Pacote ${cleanCode} registrado na ${chosenDelegacia.name} (${
+            packageAtStation ? 'em ocorrência na delegacia' : 'fora da delegacia'
+          }).`
+        );
+      }
+      resetIncidentForm();
+    } catch (err: any) {
+      setIncidentError(err?.message || 'Não foi possível salvar a ocorrência.');
+      handleFirestoreError(
+        err,
+        editingIncidentId ? OperationType.UPDATE : OperationType.CREATE,
+        `corporate_companies/${activeDomain}/incidents/${incId}`
+      );
+    } finally {
+      setIsSavingIncident(false);
+    }
+  };
+
+  const handleQuickCustodyChange = async (
+    inc: CorporatePackageIncident,
+    nextStatus: PackageCustodyStatus
+  ) => {
+    if (!activeDomain) return;
+    const autoAtStation =
+      nextStatus === 'em_ocorrencia_delegacia' ||
+      nextStatus === 'aguardando_pericia' ||
+      nextStatus === 'liberado_retirada';
+    try {
+      await updateDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', inc.id), {
+        custodyStatus: nextStatus,
+        packageAtStation: autoAtStation,
+        updatedAt: serverTimestamp()
+      });
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        `corporate_companies/${activeDomain}/incidents/${inc.id}`
+      );
+    }
+  };
+
+  const handleTogglePackageAtStation = async (inc: CorporatePackageIncident) => {
+    if (!activeDomain) return;
+    try {
+      await updateDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', inc.id), {
+        packageAtStation: !inc.packageAtStation,
+        updatedAt: serverTimestamp()
+      });
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        `corporate_companies/${activeDomain}/incidents/${inc.id}`
+      );
+    }
+  };
+
+  const handleDeleteIncident = async (incId: string) => {
+    if (!activeDomain) return;
+    try {
+      await deleteDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId));
+      if (editingIncidentId === incId) resetIncidentForm();
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.DELETE,
+        `corporate_companies/${activeDomain}/incidents/${incId}`
+      );
+    }
+  };
+
+  const handleCopyAccessLink = () => {
+    navigator.clipboard.writeText(window.location.origin);
+    setCopiedInvite(true);
+    setTimeout(() => setCopiedInvite(false), 2000);
+  };
+
+  const formatTimestamp = (ts: any) => {
+    if (!ts) return 'agora';
+    try {
+      const d = typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    } catch {
+      return '—';
+    }
+  };
+
+  const handleCreateNewCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewCompError(null);
+    setNewCompSuccess(null);
+
+    let cleanDomain = newCompDomain
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/^www\./, '')
+      .replace(/^@+/, '')
+      .replace(/\/+$/, '')
+      .split('/')[0];
+
+    if (cleanDomain.includes('@')) {
+      cleanDomain = cleanDomain.split('@')[1];
+    }
+
+    if (!cleanDomain || cleanDomain.length < 3 || !cleanDomain.includes('.')) {
+      setNewCompError('Informe um domínio corporativo válido (ex: empresa.com ou transportadora.com.br).');
+      return;
+    }
+
+    const domainRegex = /^[a-z0-9.-]+$/;
+    if (!domainRegex.test(cleanDomain)) {
+      setNewCompError('Domínio inválido. Use apenas letras minúsculas, números, ponto e hífen.');
+      return;
+    }
+
+    const cleanName = newCompName.trim().slice(0, 120);
+    if (!cleanName) {
+      setNewCompError('Informe a Razão Social ou Nome Fantasia da empresa.');
+      return;
+    }
+
+    const numPrice = Math.max(0, Number(newCompPrice.replace(',', '.')) || 0);
+    const numSeats = Math.max(0, Math.floor(Number(newCompSeats) || 0));
+
+    setIsSavingNewComp(true);
+    try {
+      await setDoc(doc(db, 'corporate_companies', cleanDomain), {
+        domain: cleanDomain,
+        companyName: cleanName,
+        planId: newCompPlanId || 'corp_licenca',
+        pricePerLicense: numPrice,
+        licensedSeats: numSeats,
+        autoApprove: newCompAutoApprove,
+        active: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+
+      setNewCompSuccess(`Empresa "${cleanName}" (@${cleanDomain}) cadastrada e ativada com sucesso!`);
+      setNewCompDomain('');
+      setNewCompName('');
+      setNewCompSeats('10');
+      setNewCompPrice('49.00');
+
+      if (onSelectOverrideDomain) {
+        onSelectOverrideDomain(cleanDomain);
+      }
+      setSubTab('company_info');
+    } catch (err: any) {
+      setNewCompError(err?.message || 'Falha ao cadastrar a empresa corporativa.');
+      handleFirestoreError(err, OperationType.CREATE, `corporate_companies/${cleanDomain}`);
+    } finally {
+      setIsSavingNewComp(false);
+    }
+  };
+
+  const handleUpdateActiveCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeDomain || !company) return;
+    setEditCompError(null);
+    setEditCompSuccess(null);
+
+    const cleanName = editCompName.trim().slice(0, 120);
+    if (!cleanName) {
+      setEditCompError('Informe a Razão Social ou Nome Fantasia da empresa.');
+      return;
+    }
+
+    const numPrice = Math.max(0, Number(editCompPrice.replace(',', '.')) || 0);
+    const numSeats = Math.max(0, Math.floor(Number(editCompSeats) || 0));
+
+    setIsSavingEditComp(true);
+    try {
+      await updateDoc(doc(db, 'corporate_companies', activeDomain), {
+        companyName: cleanName,
+        planId: editCompPlanId || company.planId || 'corp_licenca',
+        pricePerLicense: numPrice,
+        licensedSeats: numSeats,
+        autoApprove: editCompAutoApprove,
+        active: editCompActive,
+        updatedAt: serverTimestamp()
+      });
+
+      setEditCompSuccess(`Dados da empresa "${cleanName}" (@${activeDomain}) atualizados com sucesso!`);
+    } catch (err: any) {
+      setEditCompError(err?.message || 'Falha ao salvar as alterações da empresa.');
+      handleFirestoreError(err, OperationType.UPDATE, `corporate_companies/${activeDomain}`);
+    } finally {
+      setIsSavingEditComp(false);
+    }
+  };
+
+  // Empty state if no company is registered yet or active
+  if ((isAdmin && allCompanies.length === 0 && !activeDomain) || (!activeDomain && !company)) {
+    return (
+      <div className="flex-1 h-full bg-[#F5F5F5] overflow-y-auto p-4 md:p-8 flex items-center justify-center">
+        <div className="max-w-xl w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm space-y-5">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#2D3277] text-[#FFE600] flex items-center justify-center shrink-0 shadow-sm">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-base md:text-lg font-extrabold text-[#2D3277]">
+                Cadastrar Empresa no Painel Corporativo
+              </h2>
+              <p className="text-xs text-slate-500">
+                Cadastre sua empresa corporativa para habilitar o controle de usuários, licenças e ocorrências em delegacias.
+              </p>
+            </div>
+          </div>
+
+          {newCompError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+              <span>{newCompError}</span>
+            </div>
+          )}
+
+          {newCompSuccess && (
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+              <span>{newCompSuccess}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleCreateNewCompany} className="space-y-3.5 text-xs">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">
+                Razão Social ou Nome Fantasia *
+              </label>
+              <input
+                type="text"
+                value={newCompName}
+                onChange={e => setNewCompName(e.target.value)}
+                placeholder="Ex: Mercado Livre Brasil Logística Ltda"
+                required
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">
+                Domínio Corporativo *
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2 font-mono font-bold text-slate-400">@</span>
+                <input
+                  type="text"
+                  value={newCompDomain}
+                  onChange={e => setNewCompDomain(e.target.value)}
+                  placeholder="empresa.com ou suaempresa.com.br"
+                  required
+                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                />
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Colaboradores com e-mail deste domínio serão vinculados automaticamente.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Assentos / Licenças</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={newCompSeats}
+                  onChange={e => setNewCompSeats(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Preço / Licença (R$)</label>
+                <input
+                  type="text"
+                  value={newCompPrice}
+                  onChange={e => setNewCompPrice(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={newCompAutoApprove}
+                onChange={e => setNewCompAutoApprove(e.target.checked)}
+                className="rounded border-slate-300 text-[#00A650] focus:ring-0"
+              />
+              <span className="text-slate-700 font-semibold">
+                Aprovar automaticamente colaboradores com o domínio cadastrado
+              </span>
+            </label>
+
+            <button
+              type="submit"
+              disabled={isSavingNewComp}
+              className="w-full py-2.5 rounded-xl bg-[#00A650] hover:bg-[#008744] text-white font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {isSavingNewComp ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Cadastrando Empresa...</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>Cadastrar Empresa e Ativar Painel</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-[10px] text-slate-400">
+            <span>Agência Ícone Digital by Vinicius Cirne</span>
+            <span>Licença AID-VC-GIS-2026-BR-RJ</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 h-full bg-[#F5F5F5] overflow-y-auto p-3.5 md:p-6 space-y-5">
+      {/* Header Banner + Company Switcher (for System Admin) + Sub-Tabs */}
+      <div className="p-4 md:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2.5 rounded-xl bg-[#2D3277] text-[#FFE600] shadow-xs shrink-0">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-lg font-extrabold text-[#2D3277]">
+                  {company?.companyName || `Empresa @${activeDomain}`}
+                </h2>
+                <span className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-xs">
+                  @{activeDomain}
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#2D3277]/10 text-[#2D3277] text-[10px] font-bold uppercase">
+                  ADM Corporativo
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Gerencie usuários e licenças da empresa, configure parâmetros cadastrais e controle ocorrências em delegacias.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {isAdmin && allCompanies.length > 0 && (
+              <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs">
+                <span className="font-bold text-slate-500 text-[10px] uppercase">Empresa:</span>
+                <select
+                  value={activeDomain}
+                  onChange={e => onSelectOverrideDomain?.(e.target.value)}
+                  className="bg-transparent font-bold text-[#2D3277] focus:outline-none cursor-pointer"
+                >
+                  {allCompanies.map(c => (
+                    <option key={c.domain} value={c.domain}>
+                      {c.companyName} (@{c.domain})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setSubTab('company_info');
+                if (onOpenCompanyRegister) {
+                  onOpenCompanyRegister();
+                }
+              }}
+              className="px-3.5 py-2 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors border border-[#1E2258]"
+              title="Criar Conta Corporativa para Nova Empresa"
+            >
+              <Plus className="w-4 h-4 text-[#FFE600]" />
+              <span>Criar Conta Corporativa</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCopyAccessLink}
+              className="px-3.5 py-2 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+            >
+              {copiedInvite ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              <span>{copiedInvite ? 'Link Copiado!' : 'Copiar Link da Equipe'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Corporate Admin Sub-tabs */}
+        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200">
+          <button
+            type="button"
+            onClick={() => setSubTab('users')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              subTab === 'users'
+                ? 'bg-[#2D3277] text-[#FFE600] shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Usuários & Licenças ({members.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSubTab('incidents')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              subTab === 'incidents'
+                ? 'bg-[#2D3277] text-[#FFE600] shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <PackageX className="w-4 h-4" />
+            <span>Extravios, Fraudes & Ocorrências em DPs</span>
+            {incidentStats.atStation > 0 && (
+              <span
+                className={`px-1.5 py-0.5 rounded-md font-mono text-[10px] ${
+                  subTab === 'incidents'
+                    ? 'bg-[#FFE600] text-[#2D3277]'
+                    : 'bg-rose-600 text-white'
+                }`}
+              >
+                {incidentStats.atStation} na DP
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSubTab('company_info')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+              subTab === 'company_info'
+                ? 'bg-[#2D3277] text-[#FFE600] shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <Building2 className="w-4 h-4" />
+            <span>Cadastro & Gestão da Empresa</span>
+          </button>
+        </div>
+      </div>
+
+      {/* =================================================================== */}
+      {/* SUBTAB 1: USUÁRIOS & LICENÇAS                                       */}
+      {/* =================================================================== */}
+      {subTab === 'users' && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 uppercase">
+                  Licenças Ativas
+                </span>
+                <KeyRound className="w-4 h-4 text-[#3483FA]" />
+              </div>
+              <div className="text-2xl font-extrabold text-[#2D3277] font-mono mt-1">
+                {activeCount}
+                <span className="text-sm font-semibold text-slate-400 ml-1">
+                  / {seatLimit > 0 ? seatLimit : '∞'}
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                {seatLimit > 0
+                  ? seatsFull
+                    ? 'Todos os assentos contratados estão em uso'
+                    : `${seatLimit - activeCount} assento(s) disponível(is)`
+                  : 'Assentos sob demanda'}
+              </div>
+            </div>
+
+            <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 uppercase">
+                  Usuários Cadastrados
+                </span>
+                <Users className="w-4 h-4 text-[#008744]" />
+              </div>
+              <div className="text-2xl font-extrabold text-[#2D3277] font-mono mt-1">
+                {members.length}
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                {members.filter(m => m.isConnected).length} já acessaram ·{' '}
+                {members.filter(m => !m.isConnected).length} aguardando 1º login
+              </div>
+            </div>
+
+            <div className="p-4 bg-[#2D3277] text-white rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#FFE600] uppercase">
+                  Plano Corporativo
+                </span>
+                <ShieldCheck className="w-4 h-4 text-[#FFE600]" />
+              </div>
+              <div className="text-2xl font-extrabold font-mono mt-1">
+                R$ {monthlyEstimate.toFixed(2).replace('.', ',')}
+                <span className="text-xs font-sans font-normal text-white/75 ml-1">/mês</span>
+              </div>
+              <div className="text-[11px] text-white/80 mt-1">
+                R$ {pricePerLicense.toFixed(2).replace('.', ',')} por licença ativa
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            {/* Left: Add Corporate User & Bind License */}
+            <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5 h-fit">
+              <h3 className="text-sm font-extrabold text-[#2D3277] flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-[#3483FA]" />
+                <span>Adicionar Usuário e Vincular Licença</span>
+              </h3>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Informe o nome e o e-mail corporativo do colaborador. A licença será gerada na hora e vinculada automaticamente ao acesso dele.
+              </p>
+
+              {formError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
+              {formSuccess && (
+                <div className="p-3 rounded-xl bg-[#00A650]/10 border border-[#00A650]/30 text-[#008744] text-xs flex items-start gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{formSuccess}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleAddAndLinkUser} className="space-y-3 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Nome do Usuário</label>
+                  <input
+                    type="text"
+                    required
+                    value={empName}
+                    onChange={e => setEmpName(e.target.value)}
+                    placeholder="Ex: Maria Oliveira"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    E-mail Corporativo
+                  </label>
+                  <div className="flex items-stretch">
+                    <input
+                      type="text"
+                      required
+                      value={empEmailUser}
+                      onChange={e => setEmpEmailUser(e.target.value)}
+                      placeholder="maria.oliveira"
+                      className="flex-1 min-w-0 px-3 py-2 rounded-l-xl bg-slate-50 border border-r-0 border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                    <span className="px-2.5 py-2 rounded-r-xl bg-slate-100 border border-slate-300 font-mono font-bold text-[#2D3277] text-[11px] flex items-center shrink-0">
+                      @{activeDomain}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Perfil na Empresa</label>
+                  <select
+                    value={empRole}
+                    onChange={e => setEmpRole(e.target.value as CompanyRole)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA]"
+                  >
+                    <option value="member">Colaborador (Acesso ao Mapa e Dossiês)</option>
+                    <option value="company_admin">ADM da Empresa (Gerencia Usuários e Ocorrências)</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSaving || (company !== null && !company.active)}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#00A650] hover:bg-[#008744] disabled:opacity-60 text-white font-bold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                >
+                  {isSaving ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <KeyRound className="w-4 h-4" />
+                  )}
+                  <span>{isSaving ? 'Vinculando...' : 'Adicionar Usuário & Vincular Licença'}</span>
+                </button>
+              </form>
+            </div>
+
+            {/* Right: Simple Users & Licenses Roster */}
+            <div className="lg:col-span-8 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h3 className="text-sm font-extrabold text-[#2D3277]">
+                  Controle de Usuários & Licenças ({members.length})
+                </h3>
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    placeholder="Buscar por nome, e-mail ou licença..."
+                    className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3483FA]"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 text-[10px] uppercase tracking-wider">
+                    <tr>
+                      <th className="p-3">Colaborador</th>
+                      <th className="p-3">Chave da Licença</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3">Consultas</th>
+                      <th className="p-3 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {members.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-slate-500">
+                          Nenhum usuário cadastrado para @{activeDomain} ainda. Adicione o primeiro colaborador ao lado.
+                        </td>
+                      </tr>
+                    ) : (
+                      members.map(m => {
+                        const isSelf = m.user?.uid === currentAdmin?.uid;
+                        return (
+                          <tr key={m.key} className="hover:bg-slate-50">
+                            <td className="p-3">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-bold text-slate-900">{m.displayName}</span>
+                                {m.companyRole === 'company_admin' && (
+                                  <span className="px-1.5 py-0.5 rounded bg-[#2D3277] text-[#FFE600] text-[9px] font-bold">
+                                    ADM EMPRESA
+                                  </span>
+                                )}
+                                {isSelf && (
+                                  <span className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 text-[9px] font-bold">
+                                    Você
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-[11px] font-mono text-slate-500">{m.email}</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                {m.isConnected ? 'Conta ativa no sistema' : 'Aguardando 1º login'}
+                              </div>
+                            </td>
+
+                            <td className="p-3">
+                              {m.licenseKey ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#2D3277]/10 text-[#2D3277] font-mono font-bold text-[11px]">
+                                  <KeyRound className="w-3 h-3" />
+                                  {m.licenseKey}
+                                </span>
+                              ) : (
+                                <span className="text-slate-400 text-[11px]">Não vinculada</span>
+                              )}
+                            </td>
+
+                            <td className="p-3">
+                              {m.licenseStatus === 'active' ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#00A650]/15 text-[#008744] font-bold text-[10px]">
+                                  <BadgeCheck className="w-3 h-3" /> Ativa
+                                </span>
+                              ) : m.licenseStatus === 'suspended' ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[10px]">
+                                  <Ban className="w-3 h-3" /> Suspensa
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">
+                                  <Clock className="w-3 h-3" /> Sem Licença
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="p-3 font-mono font-bold text-slate-800">
+                              {m.accessCount}
+                            </td>
+
+                            <td className="p-3">
+                              {!isSelf && (
+                                <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                                  <button
+                                    onClick={() => handleToggleMemberLicense(m)}
+                                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] cursor-pointer ${
+                                      m.licenseStatus === 'active'
+                                        ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200'
+                                        : 'bg-[#00A650] hover:bg-[#008744] text-white'
+                                    }`}
+                                  >
+                                    {m.licenseStatus === 'active'
+                                      ? 'Suspender'
+                                      : m.licenseKey
+                                      ? 'Reativar'
+                                      : 'Vincular Licença'}
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleToggleCompanyRole(m)}
+                                    className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#FFE600] text-[#2D3277] font-semibold text-[11px] cursor-pointer"
+                                  >
+                                    {m.companyRole === 'company_admin' ? 'Remover ADM' : 'Tornar ADM'}
+                                  </button>
+
+                                  {m.license && (
+                                    <button
+                                      onClick={() => handleRemoveLicense(m)}
+                                      title="Remover vínculo de licença"
+                                      className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* =================================================================== */}
+      {/* SUBTAB 2: PACOTES EXTRAVIADOS / FRAUDES & OCORRÊNCIAS EM DELEGACIAS */}
+      {/* =================================================================== */}
+      {subTab === 'incidents' && (
+        <>
+          {/* Action & Privacy Banner */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#2D3277] to-[#1E2258] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#FFE600]" />
+                <span className="font-extrabold text-sm text-[#FFE600]">
+                  Ocorrências & Mapa de Calor Confidencial
+                </span>
+              </div>
+              <p className="text-xs text-white/80 max-w-2xl">
+                Ocorrências cadastradas geram histórico cronológico e alimentam dinamicamente a mancha térmica exclusiva de <strong>@{activeDomain}</strong>. Apenas membros autorizados da sua empresa têm acesso a esses dados.
+              </p>
+            </div>
+            {onOpenIncidentModal && (
+              <button
+                type="button"
+                onClick={() => onOpenIncidentModal(null)}
+                className="px-4 py-2.5 rounded-xl bg-[#FFE600] hover:bg-[#FFE600]/90 text-[#2D3277] font-extrabold text-xs flex items-center gap-2 shadow cursor-pointer transition-transform hover:scale-105 shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Registrar Nova Ocorrência</span>
+              </button>
+            )}
+          </div>
+
+          {/* KPI Summary Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+            <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 uppercase">
+                  Total de Ocorrências
+                </span>
+                <FileText className="w-4 h-4 text-[#3483FA]" />
+              </div>
+              <div className="text-2xl font-extrabold text-[#2D3277] font-mono mt-1">
+                {incidentStats.total}
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Registros gerais da empresa
+              </div>
+            </div>
+
+            <div className="p-4 bg-white border border-red-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-red-700 uppercase">
+                  Roubos & Furtos
+                </span>
+                <Flame className="w-4 h-4 text-red-600" />
+              </div>
+              <div className="text-2xl font-extrabold text-red-700 font-mono mt-1">
+                {incidentStats.totalRoubos}
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Mancha no Mapa de Calor
+              </div>
+            </div>
+
+            <div className="p-4 bg-white border border-rose-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-rose-700 uppercase">
+                  Pacotes na Delegacia
+                </span>
+                <Landmark className="w-4 h-4 text-rose-600" />
+              </div>
+              <div className="text-2xl font-extrabold text-rose-700 font-mono mt-1">
+                {incidentStats.atStation}
+              </div>
+              <div className="text-[11px] text-slate-600 mt-1">
+                Em ocorrência ou custódia na DP
+              </div>
+            </div>
+
+            <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 uppercase">
+                  Liberados / Devolvidos
+                </span>
+                <CheckCircle2 className="w-4 h-4 text-[#008744]" />
+              </div>
+              <div className="text-2xl font-extrabold text-[#008744] font-mono mt-1">
+                {incidentStats.resolved}
+              </div>
+              <div className="text-[11px] text-slate-500 mt-1">
+                Pacotes recuperados ou liberados
+              </div>
+            </div>
+
+            <div className="p-4 bg-[#2D3277] text-white rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#FFE600] uppercase">
+                  Valor Envolvido
+                </span>
+                <ShieldAlert className="w-4 h-4 text-[#FFE600]" />
+              </div>
+              <div className="text-2xl font-extrabold font-mono mt-1">
+                R$ {incidentStats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+              <div className="text-[11px] text-white/80 mt-1">
+                Soma dos pacotes em ocorrência
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            {/* Left: Register / Edit Lost or Fraud Package Incident */}
+            <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3.5 h-fit">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#2D3277] flex items-center gap-2">
+                  <PackageX className="w-4 h-4 text-rose-600" />
+                  <span>
+                    {editingIncidentId
+                      ? 'Editar Ocorrência do Pacote'
+                      : 'Cadastrar Pacote Extraviado / Fraude'}
+                  </span>
+                </h3>
+                {editingIncidentId && (
+                  <button
+                    type="button"
+                    onClick={resetIncidentForm}
+                    className="text-[11px] font-semibold text-slate-500 hover:text-slate-800 cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+
+              {incidentError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+                  <span>{incidentError}</span>
+                </div>
+              )}
+
+              {incidentSuccess && (
+                <div className="p-3 rounded-xl bg-[#00A650]/10 border border-[#00A650]/30 text-[#008744] text-xs flex items-start gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{incidentSuccess}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveIncident} className="space-y-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Código do Pacote / Rastreio
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={80}
+                      value={trackingCode}
+                      onChange={e => setTrackingCode(e.target.value)}
+                      placeholder="Ex: MELI-BR94820129"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Tipo de Ocorrência
+                    </label>
+                    <select
+                      value={incidentType}
+                      onChange={e => setIncidentType(e.target.value as PackageIncidentType)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA]"
+                    >
+                      <option value="extravio">Extravio</option>
+                      <option value="fraude">Fraude</option>
+                      <option value="roubo_carga">Roubo de Carga</option>
+                      <option value="apreensao">Apreensão Policial</option>
+                      <option value="outros">Outros</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Nº do B.O. / Registro Policial
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={64}
+                      value={boNumber}
+                      onChange={e => setBoNumber(e.target.value)}
+                      placeholder="Ex: 019-04512/2026"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Valor Estimado (R$)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={estimatedValue}
+                      onChange={e => setEstimatedValue(e.target.value)}
+                      placeholder="0,00"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Police Station Picker */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <label className="font-bold text-[#2D3277] flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#3483FA]" />
+                      <span>Selecionar Delegacia (RJ / MG / ES)</span>
+                    </label>
+                    <div className="flex items-center gap-1">
+                      {(['TODAS', 'RJ', 'MG', 'ES'] as const).map(uf => (
+                        <button
+                          key={uf}
+                          type="button"
+                          onClick={() => setDelegaciaUfFilter(uf)}
+                          className={`px-2 py-0.5 rounded font-mono font-bold text-[10px] cursor-pointer ${
+                            delegaciaUfFilter === uf
+                              ? 'bg-[#2D3277] text-[#FFE600]'
+                              : 'bg-white border border-slate-300 text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          {uf}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <input
+                    type="text"
+                    value={delegaciaSearch}
+                    onChange={e => setDelegaciaSearch(e.target.value)}
+                    placeholder="Buscar DP, delegacia ou município..."
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-[#3483FA]"
+                  />
+
+                  <select
+                    required
+                    value={selectedDelegaciaId}
+                    onChange={e => setSelectedDelegaciaId(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-[#3483FA]"
+                  >
+                    {filteredDelegacias.length === 0 ? (
+                      <option value="">Nenhuma delegacia encontrada para este filtro</option>
+                    ) : (
+                      filteredDelegacias.map(del => (
+                        <option key={del.id} value={del.id}>
+                          {del.label}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  <div className="text-[10px] text-slate-500">
+                    {filteredDelegacias.length} delegacia(s) disponível(is) na base territorial
+                  </div>
+                </div>
+
+                {/* Package Custody Toggle & Status */}
+                <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2.5">
+                  <label className="flex items-start gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={packageAtStation}
+                      onChange={e => setPackageAtStation(e.target.checked)}
+                      className="mt-0.5 rounded border-slate-300 text-rose-600"
+                    />
+                    <div>
+                      <div className="font-bold text-slate-900">
+                        O pacote está atualmente na delegacia em ocorrência policial
+                      </div>
+                      <div className="text-[10px] text-slate-600">
+                        Marque se o volume físico encontra-se apreendido, retido ou sob custódia da DP selecionada.
+                      </div>
+                    </div>
+                  </label>
+
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Situação / Custódia Atual
+                    </label>
+                    <select
+                      value={custodyStatus}
+                      onChange={e => {
+                        const next = e.target.value as PackageCustodyStatus;
+                        setCustodyStatus(next);
+                        if (next === 'em_ocorrencia_delegacia' || next === 'aguardando_pericia') {
+                          setPackageAtStation(true);
+                        } else if (next === 'devolvido_empresa' || next === 'extraviado_nao_localizado') {
+                          setPackageAtStation(false);
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA]"
+                    >
+                      <option value="em_ocorrencia_delegacia">
+                        Na delegacia — em ocorrência policial
+                      </option>
+                      <option value="aguardando_pericia">
+                        Na delegacia — aguardando perícia
+                      </option>
+                      <option value="liberado_retirada">
+                        Liberado pela delegacia para retirada
+                      </option>
+                      <option value="devolvido_empresa">
+                        Devolvido / recuperado pela empresa
+                      </option>
+                      <option value="extraviado_nao_localizado">
+                        Extraviado / não localizado
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">
+                    Observações / Detalhes da Ocorrência
+                  </label>
+                  <textarea
+                    rows={3}
+                    maxLength={500}
+                    value={incidentNotes}
+                    onChange={e => setIncidentNotes(e.target.value)}
+                    placeholder="Ex: Motorista registrou B.O. presencial, pacote retido no setor de cargas da DP aguardando ofício de retirada..."
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSavingIncident || (company !== null && !company.active)}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] disabled:opacity-60 text-[#FFE600] font-bold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                >
+                  {isSavingIncident ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                  <span>
+                    {isSavingIncident
+                      ? 'Salvando...'
+                      : editingIncidentId
+                      ? 'Salvar Alterações da Ocorrência'
+                      : 'Registrar Ocorrência na Delegacia'}
+                  </span>
+                </button>
+              </form>
+            </div>
+
+            {/* Right: Incidents & Police Custody Roster */}
+            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col">
+              <div className="p-4 bg-slate-50 border-b border-slate-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h3 className="text-sm font-extrabold text-[#2D3277]">
+                    Ocorrências Policiais & Pacotes ({filteredIncidents.length})
+                  </h3>
+                  <div className="relative w-full sm:w-64">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      value={incidentSearch}
+                      onChange={e => setIncidentSearch(e.target.value)}
+                      placeholder="Buscar código, B.O. ou delegacia..."
+                      className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3483FA]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                  {(
+                    [
+                      { id: 'all', label: `Todos (${incidents.length})` },
+                      { id: 'roubos', label: `Roubos & Furtos (${incidentStats.totalRoubos})` },
+                      { id: 'at_station', label: `Na Delegacia (${incidentStats.atStation})` },
+                      { id: 'fraude', label: 'Fraudes' },
+                      { id: 'extravio', label: 'Extravios' },
+                      { id: 'resolved', label: 'Liberados / Devolvidos' }
+                    ] as const
+                  ).map(tab => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setIncidentFilter(tab.id)}
+                      className={`px-2.5 py-1 rounded-lg font-semibold cursor-pointer ${
+                        incidentFilter === tab.id
+                          ? 'bg-[#2D3277] text-white'
+                          : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="divide-y divide-slate-200">
+                {filteredIncidents.length === 0 ? (
+                  <div className="p-10 text-center text-xs text-slate-500 space-y-2">
+                    <PackageX className="w-8 h-8 text-slate-300 mx-auto" />
+                    <p>
+                      Nenhuma ocorrência encontrada para @{activeDomain}. Cadastre ao lado pacotes extraviados ou com fraude vinculados à delegacia.
+                    </p>
+                  </div>
+                ) : (
+                  filteredIncidents.map(inc => {
+                    const typeMeta = INCIDENT_TYPE_LABELS[inc.incidentType] || INCIDENT_TYPE_LABELS.outros;
+                    const custodyMeta =
+                      CUSTODY_STATUS_LABELS[inc.custodyStatus] ||
+                      CUSTODY_STATUS_LABELS.em_ocorrencia_delegacia;
+
+                    return (
+                      <div key={inc.id} className="p-4 hover:bg-slate-50 space-y-2.5 text-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono font-extrabold text-sm text-[#2D3277]">
+                                {inc.trackingCode}
+                              </span>
+                              <span
+                                className={`px-2 py-0.5 rounded border text-[10px] font-bold ${typeMeta.badgeClass}`}
+                              >
+                                {typeMeta.label}
+                              </span>
+                              {inc.boNumber && (
+                                <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[10px] font-bold text-slate-700">
+                                  B.O. {inc.boNumber}
+                                </span>
+                              )}
+                              {inc.estimatedValue > 0 && (
+                                <span className="font-mono font-bold text-[11px] text-slate-800">
+                                  R$ {inc.estimatedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-slate-700 flex-wrap">
+                              <span className="px-1.5 py-0.5 rounded bg-[#2D3277] text-[#FFE600] font-mono font-bold text-[10px]">
+                                {inc.delegaciaUf}
+                              </span>
+                              <span className="font-bold">{inc.delegaciaName}</span>
+                              {inc.delegaciaMunicipio && (
+                                <span className="text-slate-500">· {inc.delegaciaMunicipio}</span>
+                              )}
+                            </div>
+
+                            {inc.address && (
+                              <div className="flex items-center gap-1 text-[11px] text-slate-600 truncate max-w-md">
+                                <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                <span className="truncate">{inc.address}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0 flex-wrap sm:flex-nowrap">
+                            {inc.lat && inc.lng && onLocateOnMap && (
+                              <button
+                                type="button"
+                                onClick={() => onLocateOnMap(inc.lat!, inc.lng!)}
+                                title="Localizar no Mapa de Calor"
+                                className="px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
+                              >
+                                <Flame className="w-3.5 h-3.5 text-red-600" />
+                                <span>Ver no Mapa</span>
+                              </button>
+                            )}
+
+                            {onOpenIncidentModal && (
+                              <button
+                                type="button"
+                                onClick={() => onOpenIncidentModal(inc)}
+                                title="Ver Histórico Completo e Atualizar Ocorrência"
+                                className="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
+                              >
+                                <History className="w-3.5 h-3.5 text-blue-600" />
+                                <span>Histórico ({inc.history?.length || 0})</span>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePackageAtStation(inc)}
+                              title="Alternar se o pacote físico está na delegacia"
+                              className={`px-2.5 py-1 rounded-lg font-bold text-[10px] cursor-pointer border ${
+                                inc.packageAtStation
+                                  ? 'bg-rose-600 text-white border-rose-700'
+                                  : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'
+                              }`}
+                            >
+                              {inc.packageAtStation ? 'PACOTE NA DELEGACIA' : 'Fora da DP'}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => onOpenIncidentModal ? onOpenIncidentModal(inc) : handleEditIncident(inc)}
+                              title="Editar ocorrência"
+                              className="p-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 cursor-pointer"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteIncident(inc.id)}
+                              title="Excluir registro"
+                              className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {inc.notes && (
+                          <p className="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5">
+                            {inc.notes}
+                          </p>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${custodyMeta.badgeClass}`}>
+                              {custodyMeta.shortLabel}
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              Por {inc.createdByName} em {formatTimestamp(inc.createdAt)}
+                            </span>
+                          </div>
+
+                          <select
+                            value={inc.custodyStatus}
+                            onChange={e =>
+                              handleQuickCustodyChange(inc, e.target.value as PackageCustodyStatus)
+                            }
+                            aria-label="Atualizar custódia"
+                            className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-300 text-[11px] font-semibold text-slate-800 focus:outline-none focus:border-[#3483FA] cursor-pointer"
+                          >
+                            <option value="em_ocorrencia_delegacia">Em ocorrência na DP</option>
+                            <option value="aguardando_pericia">Aguardando perícia</option>
+                            <option value="liberado_retirada">Liberado p/ retirada</option>
+                            <option value="devolvido_empresa">Devolvido à empresa</option>
+                            <option value="extraviado_nao_localizado">Não localizado</option>
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* =================================================================== */}
+      {/* SUBTAB 3: CADASTRO & GESTÃO DA EMPRESA                              */}
+      {/* =================================================================== */}
+      {subTab === 'company_info' && (
+        <div className="space-y-6">
+          {/* Top Banner / Corporate License Badge */}
+          <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-r from-[#2D3277] to-[#1E2355] text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
+                <Building2 className="w-6 h-6 text-[#FFE600]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base font-extrabold text-white">
+                    {company?.companyName || `Empresa @${activeDomain}`}
+                  </h3>
+                  <span className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-xs">
+                    @{activeDomain}
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                      company?.active
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                    }`}
+                  >
+                    {company?.active ? 'Empresa Ativa' : 'Empresa Inativa'}
+                  </span>
+                </div>
+                <p className="text-xs text-white/80 mt-1">
+                  Licença e Certificação: <strong className="text-white">Agência Ícone Digital by Vinicius Cirne</strong> · Registro Oficial: <code className="font-mono text-[#FFE600]">AID-VC-GIS-2026-BR-RJ</code>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href="https://wa.me/5521974976130?text=Ol%C3%A1%2C%20gostaria%20de%20suporte%20sobre%20as%20licen%C3%A7as%20corporativas%20do%20Painel%20de%20Monitoramento%20Territorial"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+              >
+                <span>Suporte WhatsApp</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Form 1: Cadastrar Nova Empresa Corporativa */}
+            <div className="lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-[#00A650]/10 text-[#00A650]">
+                    <Plus className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#2D3277]">
+                      Cadastrar Nova Empresa
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Adicione uma nova organização corporativa e defina assentos.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
+                  Novo Cadastro
+                </span>
+              </div>
+
+              {newCompError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+                  <span>{newCompError}</span>
+                </div>
+              )}
+
+              {newCompSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+                  <span>{newCompSuccess}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleCreateNewCompany} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Razão Social ou Nome Fantasia *
+                  </label>
+                  <input
+                    type="text"
+                    value={newCompName}
+                    onChange={e => setNewCompName(e.target.value)}
+                    placeholder="Ex: Transportadora Rio Express Ltda"
+                    required
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Domínio Corporativo *
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 font-mono font-bold text-slate-400">@</span>
+                    <input
+                      type="text"
+                      value={newCompDomain}
+                      onChange={e => setNewCompDomain(e.target.value)}
+                      placeholder="empresa.com ou filial.com.br"
+                      required
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">
+                    Colaboradores com e-mail deste domínio receberão as licenças da empresa.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Plano Corporativo
+                  </label>
+                  <select
+                    value={newCompPlanId}
+                    onChange={e => {
+                      setNewCompPlanId(e.target.value);
+                      const sel = availablePlans.find(p => p.id === e.target.value);
+                      if (sel) {
+                        setNewCompPrice(String(sel.pricePerLicense ?? sel.priceMonthly ?? 49));
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800 bg-white"
+                  >
+                    {availablePlans.length > 0 ? (
+                      availablePlans.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.billingModel === 'per_user' ? 'Por Usuário' : 'Fixo'} · R$ {p.pricePerLicense ?? p.priceMonthly})
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="corp_licenca">Corporativo Padrão (Por Licença)</option>
+                        <option value="corp_enterprise">Corporativo Enterprise Custom</option>
+                        <option value="corp_basic">Corporativo Básico</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Assentos (Licenças)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={newCompSeats}
+                      onChange={e => setNewCompSeats(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Preço / Licença (R$)
+                    </label>
+                    <input
+                      type="text"
+                      value={newCompPrice}
+                      onChange={e => setNewCompPrice(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                    />
+                  </div>
+                </div>
+
+                <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newCompAutoApprove}
+                    onChange={e => setNewCompAutoApprove(e.target.checked)}
+                    className="rounded border-slate-300 text-[#00A650] focus:ring-0"
+                  />
+                  <span className="text-slate-700 font-semibold">
+                    Aprovar colaboradores automaticamente no 1º login
+                  </span>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={isSavingNewComp}
+                  className="w-full py-2.5 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 border border-[#1E2258]"
+                >
+                  {isSavingNewComp ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin text-[#FFE600]" />
+                      <span>Salvando Cadastro...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 text-[#FFE600]" />
+                      <span>Criar Conta Corporativa</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* Form 2: Dados e Configurações da Empresa Ativa */}
+            <div className="lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-[#3483FA]/10 text-[#3483FA]">
+                    <Pencil className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#2D3277]">
+                      Configurações da Empresa Ativa
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Atualize a razão social, limite de licenças e parâmetros contratuais.
+                    </p>
+                  </div>
+                </div>
+                <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-slate-100 text-[#2D3277]">
+                  @{activeDomain || 'empresa'}
+                </span>
+              </div>
+
+              {editCompError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
+                  <span>{editCompError}</span>
+                </div>
+              )}
+
+              {editCompSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+                  <span>{editCompSuccess}</span>
+                </div>
+              )}
+
+              {company ? (
+                <form onSubmit={handleUpdateActiveCompany} className="space-y-3.5 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Razão Social / Nome da Empresa *
+                    </label>
+                    <input
+                      type="text"
+                      value={editCompName}
+                      onChange={e => setEditCompName(e.target.value)}
+                      required
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Domínio Corporativo (Chave Única)
+                    </label>
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 font-mono text-slate-700 text-xs">
+                      <span>@{activeDomain}</span>
+                      <span className="text-[10px] text-slate-400 font-sans ml-auto">(Identificador corporativo)</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Plano Corporativo
+                    </label>
+                    <select
+                      value={editCompPlanId}
+                      onChange={e => setEditCompPlanId(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800 bg-white"
+                    >
+                      {availablePlans.length > 0 ? (
+                        availablePlans.map(p => (
+                          <option key={p.id} value={p.id}>
+                            {p.name} ({p.billingModel === 'per_user' ? 'Por Licença' : 'Fixo'})
+                          </option>
+                        ))
+                      ) : (
+                        <>
+                          <option value="corp_licenca">Corporativo Padrão (Por Licença)</option>
+                          <option value="corp_enterprise">Corporativo Enterprise Custom</option>
+                          <option value="corp_basic">Corporativo Básico</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">
+                        Assentos Contratados
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={editCompSeats}
+                        onChange={e => setEditCompSeats(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                      />
+                      <span className="text-[10px] text-slate-400">0 = sem limite estrito</span>
+                    </div>
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">
+                        Preço por Licença (R$)
+                      </label>
+                      <input
+                        type="text"
+                        value={editCompPrice}
+                        onChange={e => setEditCompPrice(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                      />
+                      <span className="text-[10px] text-slate-400">Cobrança mensal por usuário</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editCompAutoApprove}
+                        onChange={e => setEditCompAutoApprove(e.target.checked)}
+                        className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
+                      />
+                      <span className="text-slate-700 font-semibold">
+                        Aprovação Automática
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editCompActive}
+                        onChange={e => setEditCompActive(e.target.checked)}
+                        className="rounded border-slate-300 text-emerald-600 focus:ring-0"
+                      />
+                      <span className="text-slate-700 font-semibold">
+                        Empresa Ativa no Sistema
+                      </span>
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSavingEditComp}
+                    className="w-full py-2.5 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isSavingEditComp ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Atualizando Empresa...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        <span>Salvar Alterações da Empresa</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <div className="p-8 text-center text-xs text-slate-500 space-y-2">
+                  <Building2 className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p>Selecione uma empresa ou utilize o formulário ao lado para cadastrar uma nova.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Table / List of Registered Companies */}
+          {allCompanies.length > 0 && (
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-[#2D3277]/10 text-[#2D3277]">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#2D3277]">
+                      Empresas Corporativas Cadastradas ({allCompanies.length})
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Organizações com domínio homologado no Painel de Monitoramento Territorial.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                {allCompanies.map(comp => {
+                  const isCurrent = comp.domain === activeDomain;
+                  return (
+                    <div
+                      key={comp.domain}
+                      className={`p-4 rounded-xl border transition-all space-y-2.5 text-xs ${
+                        isCurrent
+                          ? 'bg-[#2D3277]/5 border-[#2D3277] ring-1 ring-[#2D3277]'
+                          : 'bg-white border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h5 className="font-bold text-slate-900 line-clamp-1">
+                            {comp.companyName}
+                          </h5>
+                          <span className="font-mono text-[#3483FA] font-bold text-[11px]">
+                            @{comp.domain}
+                          </span>
+                        </div>
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            comp.active
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {comp.active ? 'Ativa' : 'Inativa'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-600">
+                        <span>Assentos: <strong className="font-mono">{comp.licensedSeats || '∞'}</strong></span>
+                        <span>R$ {comp.pricePerLicense?.toFixed(2).replace('.', ',') || '0,00'}/lic</span>
+                      </div>
+
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (onSelectOverrideDomain) {
+                              onSelectOverrideDomain(comp.domain);
+                            }
+                          }}
+                          className={`w-full py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                            isCurrent
+                              ? 'bg-[#2D3277] text-[#FFE600]'
+                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          {isCurrent ? 'Empresa Selecionada' : 'Gerenciar Esta Empresa'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
