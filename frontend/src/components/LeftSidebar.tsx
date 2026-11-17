@@ -12,7 +12,8 @@ import {
   Sliders,
   MapPin,
   Lock,
-  Plus
+  Plus,
+  Menu
 } from 'lucide-react';
 import { BasemapType, ChoroplethMetric, LayerVisibility, TerritorialRegistry } from '../types';
 import { EstadoScope } from '../types/sigBase';
@@ -60,6 +61,7 @@ interface LeftSidebarProps {
   totalCompanyIncidents?: number;
   totalCompanyRoubos?: number;
   onOpenIncidentModal?: () => void;
+  onOpenNavigation?: () => void;
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -93,7 +95,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   companyDomain = '',
   totalCompanyIncidents = 0,
   totalCompanyRoubos = 0,
-  onOpenIncidentModal
+  onOpenIncidentModal,
+  onOpenNavigation
 }) => {
   const [internalSection, setInternalSection] = useState<SidebarSection | null>(null);
   const activeSection = controlledSection !== undefined ? controlledSection : internalSection;
@@ -162,6 +165,17 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
       {/* 1. Desktop Slim Vertical Rail (hidden on mobile to maximize map viewport) */}
       <nav className="hidden md:flex w-14 bg-white border-r border-slate-200 flex-col items-center py-3 gap-3 justify-between shadow-sm">
         <div className="flex flex-col items-center gap-2">
+          {/* Menu Lateral Geral (Módulos & Submenus) */}
+          {onOpenNavigation && (
+            <button
+              onClick={onOpenNavigation}
+              title="Abrir Menu de Módulos (SIG MG e ES, Estatística, Auditoria, Importar, Metodologia)"
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer bg-[#2D3277] text-[#FFE600] hover:bg-[#1E2258] shadow-sm mb-1 ring-1 ring-[#1E2258]"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
+
           {/* Camadas & Mapa */}
           <button
             onClick={() => handleSectionClick('layers')}

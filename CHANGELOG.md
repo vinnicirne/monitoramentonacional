@@ -6,6 +6,36 @@
 
 ---
 
+## [17/11/2026] — Reorganização da Navegação: Menu Lateral Estruturado em Menus e Submenus por Assuntos Relacionados
+
+### 12. Menu Lateral Temático com Categorização Estrita (Sem Misturar Assuntos)
+- **Estruturação Temática de Menus e Submenus**:
+  - Atendimento à solicitação de isolamento e agrupamento por afinidade das opções **SIG Mg e Es**, **Estatística**, **Auditoria**, **Importar** e **Metodologia**, eliminando a poluição visual do cabeçalho superior e organizando a navegação em quatro núcleos temáticos distintos:
+    1. **Cartografia & Território**:
+       - *Submenu: Mapa Geral Interativo* — OpenLayers, 1.695 áreas de risco, manchas criminais e CISPs/DPs.
+       - *Submenu: Base SIG MG e ES* — Divisão territorial integrada e catálogo de 209 unidades policiais de Minas Gerais e Espírito Santo.
+    2. **Inteligência & Análise Criminal**:
+       - *Submenu: Estatísticas & Rankings ISP-RJ* — Séries temporais (2020–2025), letalidade violenta, roubos de carga e rankings oficiais.
+       - *Submenu: Auditoria Territorial* — Diagnóstico de inconsistências cadastrais, sobreposições de limites de DPs e validação territorial.
+    3. **Governança & Gestão de Dados**:
+       - *Submenu: Importar Planilhas & GeoJSON* — Upload de planilhas CSV/XLSX, tabelas SIG e geometrias georreferenciadas.
+       - *Submenu: Metodologia Científica & Fontes* — Normas técnicas, fontes oficiais (ISP, PMERJ, PCERJ, IBGE) e critérios de cálculo.
+    4. **Segurança Corporativa & Gestão**:
+       - *Submenu: Criar Conta Corporativa* — Acesso institucional para transportadoras, logística e segurança patrimonial.
+       - *Submenu: Painel da Empresa* — Histórico confidencial de ocorrências, mapa de calor dinâmico exclusivo e gestão de licenças.
+       - *Submenu: Painel Administrativo Geral (ADM)* — Controle de licenças globais, aprovação de contas e auditoria de acessos.
+- **Novo Componente `NavigationDrawer.tsx`**:
+  - Drawer lateral deslizante e retrátil com backdrop blur, atalho de teclado `Esc`, seletor rápido de foco territorial (Todos / RJ / MG / ES / MG+ES), grupos colapsáveis e indicadores visuais de módulo ativo.
+  - Bloco de rodapé integrado exibindo credenciais da sessão ativa (status de aprovação e botão de saída) e certificação de Titularidade e Licença (`AID-VC-GIS-2026-BR-RJ`).
+- **Limpeza do Cabeçalho Superior (`Header.tsx`)**:
+  - Removida a barra horizontal de botões dispersos.
+  - Implementado o botão principal de abertura do menu lateral **"☰ Menu & Módulos"** com badge da aba ativa e atalho contextual de 1 clique para **"Voltar ao Mapa"** quando em outras visualizações.
+- **Acesso Integrado no Trilho do Mapa e Mobile**:
+  - Adicionado botão de atalho direto no topo da barra lateral esquerda do mapa (`LeftSidebar.tsx`).
+  - Integrado o botão "Menu" da barra inferior mobile diretamente ao novo Drawer unificado.
+
+---
+
 ## [17/11/2026] — Correção de Reconciliação DOM (insertBefore) & Suporte a Domínios Autorizados no Firebase
 
 ### 11. Correção de Erro de Execução no DOM & Tratamento de Domínio no Firebase Auth

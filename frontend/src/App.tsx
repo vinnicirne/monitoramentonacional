@@ -21,6 +21,7 @@ import { PrintableDossierModal } from './components/PrintableDossierModal';
 import { SigBaseMgEsPanel } from './components/SigBaseMgEsPanel';
 import { LicenseModal } from './components/LicenseModal';
 import { CompanyRegisterModal } from './components/CompanyRegisterModal';
+import { NavigationDrawer } from './components/NavigationDrawer';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { CompanyAdminView } from './components/CompanyAdminView';
 import { CorporateIncidentModal } from './components/CorporateIncidentModal';
@@ -114,7 +115,7 @@ function App() {
   const [isPlayingTimeline, setIsPlayingTimeline] = useState<boolean>(false);
   const [isFactionPanelOpen, setIsFactionPanelOpen] = useState<boolean>(false);
   const [sidebarSection, setSidebarSection] = useState<SidebarSection | null>(null);
-  const [isMobileMoreOpen, setIsMobileMoreOpen] = useState<boolean>(false);
+  const [isNavigationOpen, setIsNavigationOpen] = useState<boolean>(false);
 
   // Map layers and basemap
   const [basemap, setBasemap] = useState<BasemapType>('osm');
@@ -155,7 +156,7 @@ function App() {
     if (isDossierOpen && typeof window !== 'undefined' && window.innerWidth < 768) {
       setSidebarSection(null);
       setIsFactionPanelOpen(false);
-      setIsMobileMoreOpen(false);
+      setIsNavigationOpen(false);
     }
   }, [isDossierOpen]);
 
@@ -554,6 +555,7 @@ function App() {
         }}
         onOpenLicense={() => setShowLicenseModal(true)}
         onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+        onOpenNavigation={() => setIsNavigationOpen(true)}
       />
 
       {/* Main Workspace */}
@@ -596,11 +598,12 @@ function App() {
                 setSelectedCorporateIncident(null);
                 setIsIncidentModalOpen(true);
               }}
+              onOpenNavigation={() => setIsNavigationOpen(true)}
               onActiveSectionChange={next => {
                 setSidebarSection(next);
                 if (next) {
                   setIsFactionPanelOpen(false);
-                  setIsMobileMoreOpen(false);
+                  setIsNavigationOpen(false);
                 }
               }}
             />
@@ -994,152 +997,6 @@ function App() {
         )}
       </main>
 
-      {/* Mobile "Mais" Navigation Bottom Sheet */}
-      {isMobileMoreOpen && (
-        <>
-          <div
-            onClick={() => setIsMobileMoreOpen(false)}
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-30 md:hidden"
-          />
-          <div className="fixed inset-x-0 bottom-14 z-40 bg-white border-t border-slate-200 rounded-t-3xl p-4 shadow-2xl md:hidden space-y-3">
-            <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto" />
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#2D3277]">
-                Módulos & Ferramentas
-              </span>
-              <button
-                onClick={() => setIsMobileMoreOpen(false)}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5 text-xs">
-              <button
-                onClick={() => {
-                  setIsMobileMoreOpen(false);
-                  requireApprovedAccess(
-                    'Para acessar as Estatísticas ISP-RJ, entre ou crie sua conta.',
-                    () => setActiveTab('stats')
-                  );
-                }}
-                className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
-                  activeTab === 'stats'
-                    ? 'bg-[#3483FA]/10 border-[#3483FA] text-[#2968C8]'
-                    : 'bg-slate-50 border-slate-200 text-slate-800'
-                }`}
-              >
-                <BarChart3 className="w-4 h-4 text-[#3483FA] shrink-0" />
-                <span>Estatísticas ISP</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMoreOpen(false);
-                  requireApprovedAccess(
-                    'Para acessar a Auditoria Territorial, entre ou crie sua conta.',
-                    () => setActiveTab('audit')
-                  );
-                }}
-                className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
-                  activeTab === 'audit'
-                    ? 'bg-amber-50 border-amber-500 text-amber-800'
-                    : 'bg-slate-50 border-slate-200 text-slate-800'
-                }`}
-              >
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>Auditoria</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMoreOpen(false);
-                  requireApprovedAccess(
-                    'Para importar ou exportar dados territoriais, entre ou crie sua conta.',
-                    () => setShowImporter(true)
-                  );
-                }}
-                className="p-3 rounded-xl border bg-slate-50 border-slate-200 text-slate-800 flex items-center gap-2.5 font-semibold cursor-pointer"
-              >
-                <Database className="w-4 h-4 text-[#00A650] shrink-0" />
-                <span>Importar Dados</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveTab('about');
-                  setIsMobileMoreOpen(false);
-                }}
-                className={`p-3 rounded-xl border flex items-center gap-2.5 font-semibold cursor-pointer ${
-                  activeTab === 'about'
-                    ? 'bg-[#2D3277]/10 border-[#2D3277] text-[#2D3277]'
-                    : 'bg-slate-50 border-slate-200 text-slate-800'
-                }`}
-              >
-                <Info className="w-4 h-4 text-[#3483FA] shrink-0" />
-                <span>Metodologia</span>
-              </button>
-
-              {(isCompanyAdmin || isAdmin) && (
-                <button
-                  onClick={() => {
-                    setActiveTab('company_admin');
-                    setIsMobileMoreOpen(false);
-                  }}
-                  className={`col-span-2 p-3 rounded-xl border flex items-center justify-center gap-2 font-bold cursor-pointer ${
-                    activeTab === 'company_admin'
-                      ? 'bg-[#FFE600] border-[#E6CF00] text-[#2D3277]'
-                      : 'bg-white border-[#2D3277]/30 text-[#2D3277]'
-                  }`}
-                >
-                  <Building2 className="w-4 h-4 text-[#3483FA] shrink-0" />
-                  <span>Painel Empresa (Usuários & Ocorrências)</span>
-                </button>
-              )}
-
-              {isAdmin && (
-                <button
-                  onClick={() => {
-                    setActiveTab('admin');
-                    setIsMobileMoreOpen(false);
-                  }}
-                  className={`col-span-2 p-3 rounded-xl border flex items-center justify-center gap-2 font-bold cursor-pointer ${
-                    activeTab === 'admin'
-                      ? 'bg-[#FFE600] border-[#E6CF00] text-[#2D3277]'
-                      : 'bg-[#2D3277] border-[#2D3277] text-[#FFE600]'
-                  }`}
-                >
-                  <Crown className="w-4 h-4 shrink-0" />
-                  <span>Painel Administrativo (ADM)</span>
-                </button>
-              )}
-
-              <button
-                onClick={() => {
-                  setShowCompanyRegisterModal(true);
-                  setIsMobileMoreOpen(false);
-                }}
-                className="col-span-2 p-3 rounded-xl border bg-[#00A650]/10 border-[#00A650]/30 text-[#008744] flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-[#00A650]/20 transition-colors shadow-xs"
-              >
-                <Building2 className="w-4 h-4 text-[#00A650] shrink-0" />
-                <span>Cadastrar Empresa (@empresa.com)</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowLicenseModal(true);
-                  setIsMobileMoreOpen(false);
-                }}
-                className="col-span-2 p-3 rounded-xl border bg-slate-50 border-slate-200 text-[#2D3277] flex items-center justify-center gap-2 font-bold cursor-pointer hover:bg-slate-100 transition-colors"
-              >
-                <Award className="w-4 h-4 text-[#3483FA] shrink-0" />
-                <span>Licença & Titularidade (Agência Ícone Digital by Vinicius Cirne)</span>
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* Mobile Thumb-Zone Bottom Tab Bar (< 768px) */}
       <nav className="md:hidden h-14 bg-white/95 backdrop-blur-md border-t border-slate-200 grid grid-cols-5 items-center z-40 shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <button
@@ -1147,10 +1004,10 @@ function App() {
             setActiveTab('map');
             setSidebarSection(null);
             setIsFactionPanelOpen(false);
-            setIsMobileMoreOpen(false);
+            setIsNavigationOpen(false);
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
-            activeTab === 'map' && !sidebarSection && !isFactionPanelOpen && !isMobileMoreOpen
+            activeTab === 'map' && !sidebarSection && !isFactionPanelOpen && !isNavigationOpen
               ? 'text-[#3483FA]'
               : 'text-slate-500 hover:text-[#2D3277]'
           }`}
@@ -1163,7 +1020,7 @@ function App() {
           onClick={() => {
             setActiveTab('map');
             setIsFactionPanelOpen(false);
-            setIsMobileMoreOpen(false);
+            setIsNavigationOpen(false);
             setSidebarSection(prev => (prev ? null : 'layers'));
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
@@ -1180,7 +1037,7 @@ function App() {
           onClick={() => {
             setActiveTab('map');
             setSidebarSection(null);
-            setIsMobileMoreOpen(false);
+            setIsNavigationOpen(false);
             setIsFactionPanelOpen(prev => !prev);
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
@@ -1197,7 +1054,7 @@ function App() {
           onClick={() => {
             setSidebarSection(null);
             setIsFactionPanelOpen(false);
-            setIsMobileMoreOpen(false);
+            setIsNavigationOpen(false);
             requireApprovedAccess(
               'Para acessar a Base SIG MG·ES, entre ou crie sua conta.',
               () => setActiveTab('sig_mges')
@@ -1217,10 +1074,10 @@ function App() {
           onClick={() => {
             setSidebarSection(null);
             setIsFactionPanelOpen(false);
-            setIsMobileMoreOpen(prev => !prev);
+            setIsNavigationOpen(prev => !prev);
           }}
           className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
-            isMobileMoreOpen ||
+            isNavigationOpen ||
             activeTab === 'stats' ||
             activeTab === 'audit' ||
             activeTab === 'about' ||
@@ -1313,6 +1170,59 @@ function App() {
         onOpenAdmin={() => setActiveTab('admin')}
         onOpenCompanyAdmin={() => setActiveTab('company_admin')}
         onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+      />
+
+      {/* Menu Lateral Estruturado por Assuntos Relacionados */}
+      <NavigationDrawer
+        isOpen={isNavigationOpen}
+        onClose={() => setIsNavigationOpen(false)}
+        activeTab={activeTab}
+        onSelectTab={tab => {
+          setIsNavigationOpen(false);
+          if (tab === 'map' || tab === 'about') {
+            setActiveTab(tab);
+            return;
+          }
+          if (tab === 'admin') {
+            if (isAdmin) setActiveTab('admin');
+            return;
+          }
+          if (tab === 'company_admin') {
+            if (isCompanyAdmin || isAdmin) setActiveTab('company_admin');
+            return;
+          }
+          if (tab === 'import') {
+            requireApprovedAccess(
+              'Para importar ou exportar dados territoriais, entre ou crie sua conta.',
+              () => setShowImporter(true)
+            );
+            return;
+          }
+          requireApprovedAccess(
+            'Para acessar este painel de inteligência territorial, entre ou crie sua conta.',
+            () => setActiveTab(tab)
+          );
+        }}
+        estadoScope={estadoScope}
+        setEstadoScope={sc => {
+          setEstadoScope(sc);
+          setActiveTab('map');
+        }}
+        onOpenImport={() => {
+          setIsNavigationOpen(false);
+          requireApprovedAccess(
+            'Para importar ou exportar dados territoriais, entre ou crie sua conta.',
+            () => setShowImporter(true)
+          );
+        }}
+        onOpenCompanyRegister={() => {
+          setIsNavigationOpen(false);
+          setShowCompanyRegisterModal(true);
+        }}
+        onOpenLicense={() => {
+          setIsNavigationOpen(false);
+          setShowLicenseModal(true);
+        }}
       />
     </div>
   );

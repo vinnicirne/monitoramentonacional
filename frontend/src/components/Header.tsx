@@ -1,16 +1,13 @@
 import React from 'react';
 import {
   Shield,
-  BarChart3,
-  AlertTriangle,
-  Database,
-  Info,
   Layers,
   Building2,
   LogIn,
   Crown,
   UserCheck,
-  Clock
+  Clock,
+  Menu
 } from 'lucide-react';
 import { EstadoScope } from '../types/sigBase';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,6 +21,7 @@ interface HeaderProps {
   setEstadoScope: (scope: EstadoScope) => void;
   onOpenLicense?: () => void;
   onOpenCompanyRegister?: () => void;
+  onOpenNavigation?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -32,9 +30,31 @@ export const Header: React.FC<HeaderProps> = ({
   estadoScope,
   setEstadoScope,
   onOpenLicense,
-  onOpenCompanyRegister
+  onOpenCompanyRegister,
+  onOpenNavigation
 }) => {
   const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal } = useAuth();
+
+  const getActiveTabBadge = (tab: MainActiveTab): string => {
+    switch (tab) {
+      case 'map':
+        return 'Mapa';
+      case 'sig_mges':
+        return 'SIG MG·ES';
+      case 'stats':
+        return 'Estatísticas';
+      case 'audit':
+        return 'Auditoria';
+      case 'about':
+        return 'Metodologia';
+      case 'company_admin':
+        return 'Empresa';
+      case 'admin':
+        return 'ADM Geral';
+      default:
+        return 'Módulos';
+    }
+  };
 
   return (
     <header className="h-[52px] md:h-16 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
@@ -97,85 +117,35 @@ export const Header: React.FC<HeaderProps> = ({
         ))}
       </div>
 
-      {/* 3. Desktop Navigation + Account & Admin Controls */}
-      <div className="flex items-center gap-1.5 shrink-0">
-        <nav className="hidden md:flex items-center gap-1 shrink-0">
+      {/* 3. Centralized Lateral Navigation Button + Direct Quick Actions */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Botão Principal do Menu Lateral (Módulos & Submenus Estruturados) */}
+        <button
+          onClick={onOpenNavigation}
+          title="Abrir Menu Lateral (SIG MG e ES, Estatística, Auditoria, Importar, Metodologia)"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] border border-[#1E2258] font-extrabold text-xs shadow-sm transition-all cursor-pointer shrink-0"
+        >
+          <Menu className="w-4 h-4 text-[#FFE600] shrink-0" />
+          <span className="font-extrabold tracking-tight">Menu</span>
+          <span className="hidden sm:inline font-extrabold tracking-tight">& Módulos</span>
+          <span className="hidden lg:inline-flex items-center text-[10px] font-semibold px-1.5 py-0.2 rounded-md bg-white/15 text-white font-mono">
+            {getActiveTabBadge(activeTab)}
+          </span>
+        </button>
+
+        {/* Botão Rápido de Retorno ao Mapa (visível quando em outras abas) */}
+        {activeTab !== 'map' && (
           <button
             onClick={() => setActiveTab('map')}
-            title="Mapa & Dossiê"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'map'
-                ? 'bg-[#2D3277] text-white shadow-sm'
-                : 'text-[#2D3277] hover:bg-black/10'
-            }`}
+            title="Voltar ao Mapa Geral Interativo"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white"
           >
-            <Layers className="w-3.5 h-3.5 shrink-0" />
-            <span>Mapa</span>
+            <Layers className="w-3.5 h-3.5 shrink-0 text-[#3483FA]" />
+            <span>Voltar ao Mapa</span>
           </button>
+        )}
 
-          <button
-            onClick={() => setActiveTab('sig_mges')}
-            title="Base SIG MG & ES"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'sig_mges'
-                ? 'bg-[#00A650] text-white shadow-sm'
-                : 'text-[#2D3277] hover:bg-black/10'
-            }`}
-          >
-            <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'sig_mges' ? 'text-white' : 'text-[#008744]'}`} />
-            <span className="hidden lg:inline">SIG MG·ES</span>
-            <span className="lg:hidden">SIG</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('stats')}
-            title="Estatísticas ISP-RJ"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'stats'
-                ? 'bg-[#3483FA] text-white shadow-sm'
-                : 'text-[#2D3277] hover:bg-black/10'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden lg:inline">Estatísticas</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('audit')}
-            title="Auditoria Territorial"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'audit'
-                ? 'bg-amber-700 text-white shadow-sm'
-                : 'text-[#2D3277] hover:bg-black/10'
-            }`}
-          >
-            <AlertTriangle className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'audit' ? 'text-white' : 'text-amber-800'}`} />
-            <span className="hidden lg:inline">Auditoria</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('import')}
-            title="Importar Planilhas & GeoJSON"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors text-[#2D3277] hover:bg-black/10 cursor-pointer whitespace-nowrap"
-          >
-            <Database className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden xl:inline">Importar</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('about')}
-            title="Metodologia & Fontes"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              activeTab === 'about'
-                ? 'bg-[#2D3277] text-white shadow-sm'
-                : 'text-[#2D3277] hover:bg-black/10'
-            }`}
-          >
-            <Info className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden xl:inline">Metodologia</span>
-          </button>
-        </nav>
-
+        {/* Botão de Criar Conta Corporativa com as cores do sistema */}
         {onOpenCompanyRegister && (
           <button
             onClick={onOpenCompanyRegister}
@@ -188,27 +158,29 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
+        {/* Acesso Rápido ao Painel da Empresa */}
         {(isCompanyAdmin || isAdmin) && (
           <button
             onClick={() => setActiveTab('company_admin')}
             title="Abrir Painel da Empresa (Usuários, Licenças & Ocorrências)"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
+            className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
               activeTab === 'company_admin'
                 ? 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]'
                 : 'bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white'
             }`}
           >
             <Building2 className="w-3.5 h-3.5 shrink-0 text-[#3483FA]" />
-            <span className="hidden sm:inline">Painel Empresa</span>
-            <span className="sm:hidden">Empresa</span>
+            <span className="hidden lg:inline">Painel Empresa</span>
+            <span className="lg:hidden">Empresa</span>
           </button>
         )}
 
+        {/* Acesso Rápido ao ADM Geral */}
         {isAdmin && (
           <button
             onClick={() => setActiveTab('admin')}
             title="Abrir Painel Administrativo (ADM)"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
+            className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-extrabold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
               activeTab === 'admin'
                 ? 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]'
                 : 'bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white'
