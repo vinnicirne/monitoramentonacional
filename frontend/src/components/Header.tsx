@@ -6,8 +6,7 @@ import {
   LogIn,
   Crown,
   UserCheck,
-  Clock,
-  Menu
+  Clock
 } from 'lucide-react';
 import { EstadoScope } from '../types/sigBase';
 import { useAuth } from '../contexts/AuthContext';
@@ -34,27 +33,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNavigation
 }) => {
   const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal } = useAuth();
-
-  const getActiveTabBadge = (tab: MainActiveTab): string => {
-    switch (tab) {
-      case 'map':
-        return 'Mapa';
-      case 'sig_mges':
-        return 'SIG MG·ES';
-      case 'stats':
-        return 'Estatísticas';
-      case 'audit':
-        return 'Auditoria';
-      case 'about':
-        return 'Metodologia';
-      case 'company_admin':
-        return 'Empresa';
-      case 'admin':
-        return 'ADM Geral';
-      default:
-        return 'Módulos';
-    }
-  };
 
   return (
     <header className="h-[52px] md:h-16 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
@@ -117,31 +95,18 @@ export const Header: React.FC<HeaderProps> = ({
         ))}
       </div>
 
-      {/* 3. Centralized Lateral Navigation Button + Direct Quick Actions */}
+      {/* 3. Direct Quick Actions & Account Controls */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        {/* Botão Principal do Menu Lateral (Módulos & Submenus Estruturados) */}
-        <button
-          onClick={onOpenNavigation}
-          title="Abrir Menu Lateral (SIG MG e ES, Estatística, Auditoria, Importar, Metodologia)"
-          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] border border-[#1E2258] font-extrabold text-xs shadow-sm transition-all cursor-pointer shrink-0"
-        >
-          <Menu className="w-4 h-4 text-[#FFE600] shrink-0" />
-          <span className="font-extrabold tracking-tight">Menu</span>
-          <span className="hidden sm:inline font-extrabold tracking-tight">& Módulos</span>
-          <span className="hidden lg:inline-flex items-center text-[10px] font-semibold px-1.5 py-0.2 rounded-md bg-white/15 text-white font-mono">
-            {getActiveTabBadge(activeTab)}
-          </span>
-        </button>
-
         {/* Botão Rápido de Retorno ao Mapa (visível quando em outras abas) */}
         {activeTab !== 'map' && (
           <button
             onClick={() => setActiveTab('map')}
             title="Voltar ao Mapa Geral Interativo"
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white"
           >
             <Layers className="w-3.5 h-3.5 shrink-0 text-[#3483FA]" />
-            <span>Voltar ao Mapa</span>
+            <span className="hidden sm:inline">Voltar ao Mapa</span>
+            <span className="sm:hidden">Mapa</span>
           </button>
         )}
 
