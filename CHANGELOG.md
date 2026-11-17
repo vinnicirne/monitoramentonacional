@@ -6,6 +6,22 @@
 
 ---
 
+## [17/11/2026] — Correção de Reconciliação DOM (insertBefore) & Suporte a Domínios Autorizados no Firebase
+
+### 11. Correção de Erro de Execução no DOM & Tratamento de Domínio no Firebase Auth
+- **Eliminação Definitiva do Erro `Failed to execute 'insertBefore' on 'node'`**:
+  - Identificada a causa raiz: a camada de Overlay do OpenLayers retirava fisicamente o elemento DOM do popup da árvore do React, fazendo o reconciliador virtual do React falhar ao atualizar estados e re-renderizar nós filhos.
+  - Implementado desacoplamento completo através de **React Portal (`createPortal`)** em `MapContainer.tsx` e `TerritorialMap.tsx`, garantindo renderização isolada que impede descompassos na árvore DOM.
+  - Adicionadas diretivas `notranslate` em `index.html` para impedir que o tradutor automático do navegador corrompa nós de texto do React.
+- **Tratamento Amigável e Solução para `auth/unauthorized-domain`**:
+  - Mapeado o erro de domínio do Firebase no `AuthContext.tsx` com orientações exatas sobre como autorizar os domínios (`localhost` e URLs da Vercel) no Console do Firebase (**Authentication > Settings > Authorized domains**).
+  - Adicionado botão de 1 clique no `AuthGateModal.tsx` para copiar o domínio atual (`window.location.hostname`) e colar diretamente no Firebase Console.
+  - Destaque para o acesso imediato através de **E-mail e Senha**, que não depende de domínios autorizados e funciona em qualquer ambiente local ou de produção.
+- **Suporte a Variáveis de Ambiente no Deploy da Vercel**:
+  - `firebase.ts` atualizado para ler `VITE_FIREBASE_*` prioritariamente, permitindo alternar projetos Firebase na Vercel com fallback seguro para a configuração local.
+
+---
+
 ## [17/11/2026] — Sistema de Ocorrências Corporativas, Histórico em Linha do Tempo e Mapa de Calor Confidencial
 
 ### 10. Registro de Ocorrências, Histórico Cronológico e Mapa de Calor Dinâmico Exclusivo por Empresa

@@ -295,6 +295,20 @@ export const AuthGateModal: React.FC<AuthGateModalProps> = ({
               </div>
               {!firebaseUser && mode !== 'forgot' && (
                 <div className="flex flex-wrap items-center gap-2 pl-6">
+                  {displayError.includes('Domínio não autorizado') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (typeof navigator !== 'undefined') {
+                          navigator.clipboard.writeText(window.location.hostname);
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-[#2D3277] text-[#FFE600] font-bold text-[11px] hover:bg-[#1E2258] cursor-pointer"
+                      title="Copiar domínio atual para colar no Firebase Console"
+                    >
+                      Copiar Domínio ({typeof window !== 'undefined' ? window.location.hostname : 'Copiar'})
+                    </button>
+                  )}
                   {mode === 'register' && (
                     <button
                       type="button"

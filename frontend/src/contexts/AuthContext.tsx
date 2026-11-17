@@ -94,6 +94,10 @@ function mapAuthErrorToPortuguese(err: any): string {
       return 'Muitas tentativas em sequência. Aguarde alguns minutos e tente novamente.';
     case 'auth/operation-not-allowed':
       return 'O provedor E-mail/Senha ainda não foi ativado no Console do Firebase (Authentication > Sign-in method > E-mail/senha). Use "Entrar com Google" ou ative o provedor no console.';
+    case 'auth/unauthorized-domain': {
+      const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'este domínio';
+      return `Domínio não autorizado para login Google (${currentHost}). O Firebase requer que o endereço "${currentHost}" seja cadastrado em: Firebase Console > Authentication > Configurações > Domínios autorizados. Use o formulário de E-mail e Senha acima para acessar imediatamente sem restrição de domínio!`;
+    }
     case 'auth/popup-blocked':
       return 'O popup de login foi bloqueado pelo navegador. Libere popups para este site ou acesse por e-mail/senha.';
     case 'auth/network-request-failed':
@@ -101,6 +105,10 @@ function mapAuthErrorToPortuguese(err: any): string {
     case 'auth/timeout':
       return 'Tempo limite excedido ao autenticar. Verifique sua conexão ou tente "Entrar com Google".';
     default:
+      if (err?.message?.includes('unauthorized-domain') || err?.message?.includes('not authorized for OAuth operations')) {
+        const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'este domínio';
+        return `Domínio não autorizado no Firebase (${currentHost}). Adicione "${currentHost}" no Firebase Console > Authentication > Settings > Authorized domains. Enquanto isso, use o login com E-mail e Senha acima!`;
+      }
       return err?.message || 'Erro ao autenticar. Tente novamente.';
   }
 }

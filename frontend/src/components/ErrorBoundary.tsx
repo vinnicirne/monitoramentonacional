@@ -36,6 +36,17 @@ export class ErrorBoundary extends React.Component<
         }
       } catch {
         // non-JSON message
+        if (
+          this.state.errorMessage.includes('insertBefore') ||
+          this.state.errorMessage.includes('not a child of this node') ||
+          this.state.errorMessage.includes('removeChild')
+        ) {
+          friendlyMsg =
+            'Inconsistência de renderização do mapa ou tradução automática do navegador. O elemento do mapa foi recuperado. Clique em "Recarregar Sistema" abaixo.';
+        } else if (this.state.errorMessage.includes('unauthorized-domain')) {
+          friendlyMsg =
+            'Domínio não autorizado no Firebase Console. Adicione o domínio atual em: Firebase Console > Authentication > Settings > Authorized domains.';
+        }
       }
 
       return (

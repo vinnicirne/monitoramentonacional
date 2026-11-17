@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -123,7 +124,12 @@ export const TerritorialMap: React.FC<TerritorialMapProps> = ({
   focusTarget
 }) => {
   const mapElementRef = useRef<HTMLDivElement>(null);
-  const tooltipElementRef = useRef<HTMLDivElement>(null);
+  const tooltipContainerRef = useRef<HTMLDivElement | null>(null);
+  if (!tooltipContainerRef.current && typeof document !== 'undefined') {
+    const el = document.createElement('div');
+    el.className = 'ol-popup-tooltip notranslate';
+    tooltipContainerRef.current = el;
+  }
   const mapInstanceRef = useRef<Map | null>(null);
 
   // Refs for latest callbacks inside OpenLayers event listeners
@@ -299,9 +305,9 @@ export const TerritorialMap: React.FC<TerritorialMapProps> = ({
       source: createBaseSource()
     });
 
-    if (tooltipElementRef.current) {
+    if (tooltipContainerRef.current) {
       overlayRef.current = new Overlay({
-        element: tooltipElementRef.current,
+        element: tooltipContainerRef.current,
         offset: [0, -14],
         positioning: 'bottom-center',
         stopEvent: false
@@ -1014,25 +1020,27 @@ export const TerritorialMap: React.FC<TerritorialMapProps> = ({
       {/* OpenLayers Map Canvas Container */}
       <div ref={mapElementRef} className="absolute inset-0 w-full h-full" style={{ minHeight: '500px' }} />
 
-      {/* OpenLayers HTML Tooltip Overlay DOM element */}
-      <div ref={tooltipElementRef} className="ol-popup-tooltip">
-        {tooltipContent && (
-          <div className="text-xs">
-            <div className="font-bold text-white flex items-center gap-1.5">
-              {tooltipContent.color && (
-                <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: tooltipContent.color }} />
-              )}
-              <span>{tooltipContent.title}</span>
-            </div>
-            <div className="text-[11px] text-sky-400 mt-0.5">{tooltipContent.subtitle}</div>
-            {tooltipContent.extra && (
-              <div className="text-[10px] text-slate-400 mt-0.5 max-w-[260px] truncate">
-                {tooltipContent.extra}
+      {/* OpenLayers HTML Tooltip Overlay DOM element rendered via React Portal */}
+      {tooltipContainerRef.current &&
+        createPortal(
+          tooltipContent ? (
+            <div className="text-xs">
+              <div className="font-bold text-white flex items-center gap-1.5">
+                {tooltipContent.color && (
+                  <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: tooltipContent.color }} />
+                )}
+                <span>{tooltipContent.title}</span>
               </div>
-            )}
-          </div>
+              <div className="text-[11px] text-sky-400 mt-0.5">{tooltipContent.subtitle}</div>
+              {tooltipContent.extra && (
+                <div className="text-[10px] text-slate-400 mt-0.5 max-w-[260px] truncate">
+                  {tooltipContent.extra}
+                </div>
+              )}
+            </div>
+          ) : null,
+          tooltipContainerRef.current
         )}
-      </div>
 
       {/* Floating Map Controls & Layer Selector */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 max-w-[280px]">
