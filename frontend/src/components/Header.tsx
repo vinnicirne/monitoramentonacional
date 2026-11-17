@@ -36,29 +36,22 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="h-[52px] md:h-16 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
-      {/* 1. Brand Identity — Agência Ícone Digital by Vinicius Cirne */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      {/* 1. Brand Identity — Monitoramento em cima e Territorial embaixo */}
+      <div
+        className="flex items-center gap-2 shrink-0 cursor-pointer select-none"
+        onClick={onOpenLicense}
+        title="Monitoramento Territorial (Agência Ícone Digital by Vinicius Cirne)"
+      >
         <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-[#2D3277] border border-[#1E2258] flex items-center justify-center text-[#FFE600] shadow-sm shrink-0">
           <Shield className="w-4 h-4 md:w-5 md:h-5" />
         </div>
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <h1 className="font-bold text-xs sm:text-sm lg:text-[15px] text-[#2D3277] tracking-tight whitespace-nowrap">
-              <span className="hidden md:inline">Monitoramento Territorial</span>
-              <span className="md:hidden">Territorial</span>
-            </h1>
-          </div>
-          <button
-            type="button"
-            onClick={onOpenLicense}
-            className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#2D3277]/80 hover:text-[#2D3277] font-semibold tracking-tight whitespace-nowrap text-left cursor-pointer transition-colors"
-            title="Visualizar Licença e Titularidade (Agência Ícone Digital by Vinicius Cirne)"
-          >
-            <span>Agência Ícone Digital</span>
-            <span className="text-[#2D3277]/40">•</span>
-            <span className="text-slate-600 font-normal hidden sm:inline">by</span>
-            <span className="text-[#2D3277] font-bold hover:underline">Vinicius Cirne</span>
-          </button>
+        <div className="flex flex-col justify-center leading-none">
+          <span className="font-bold text-[10px] sm:text-[11px] text-[#2D3277] uppercase tracking-wider">
+            Monitoramento
+          </span>
+          <span className="font-extrabold text-xs sm:text-sm text-[#2D3277] tracking-tight mt-0.5">
+            Territorial
+          </span>
         </div>
       </div>
 
