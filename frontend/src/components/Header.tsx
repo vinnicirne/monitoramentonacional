@@ -47,9 +47,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden md:inline">Monitoramento Territorial</span>
               <span className="md:hidden">Territorial</span>
             </h1>
-            <span className="hidden xl:inline-flex text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-[#2D3277]/10 text-[#2D3277] border border-[#2D3277]/20 font-mono">
-              RJ · MG · ES
-            </span>
           </div>
           <button
             type="button"

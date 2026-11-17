@@ -274,9 +274,6 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
                 <span className="font-extrabold text-sm text-[#2D3277] tracking-tight">
                   Painel Territorial
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-[#2D3277]/10 text-[#2D3277] border border-[#2D3277]/20 font-mono">
-                  RJ · MG · ES
-                </span>
               </div>
               <p className="text-[11px] text-[#2D3277]/80 font-medium">
                 Módulos do Sistema & Governança
