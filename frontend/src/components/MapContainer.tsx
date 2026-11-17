@@ -1563,14 +1563,16 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
     const feats: Feature[] = [];
     companyIncidents.forEach(inc => {
+      const lat = typeof inc.lat === 'number' ? inc.lat : parseFloat(String(inc.lat || '').replace(',', '.'));
+      const lng = typeof inc.lng === 'number' ? inc.lng : parseFloat(String(inc.lng || '').replace(',', '.'));
       if (
-        typeof inc.lat === 'number' &&
-        typeof inc.lng === 'number' &&
-        !Number.isNaN(inc.lat) &&
-        !Number.isNaN(inc.lng)
+        !Number.isNaN(lat) &&
+        !Number.isNaN(lng) &&
+        lat !== 0 &&
+        lng !== 0
       ) {
         const f = new Feature({
-          geometry: new Point(fromLonLat([inc.lng, inc.lat])),
+          geometry: new Point(fromLonLat([lng, lat])),
           incident: inc,
           incidentType: inc.incidentType,
           trackingCode: inc.trackingCode,

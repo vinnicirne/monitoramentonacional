@@ -6,6 +6,23 @@
 
 ---
 
+## [17/11/2026] — Correção Crítica de Ocorrências: Sincronização de Domínio, Renderização em Tempo Real e Ajustes Visuais
+
+### 13. Correção de Cadastro e Exibição de Ocorrências Corporativas (Painel e Mapa de Calor)
+- **Diagnóstico e Resolução do Problema ("cadastra, mas não aparece")**:
+  - **Sincronização Dinâmica de Domínio Corporativo (`effectiveCompanyDomain`)**: Identificado que administradores logados com provedores públicos de e-mail (ex: `@gmail.com`) tinham seu `domain` resolvido como `gmail.com`. Como as ocorrências corporativas pertencem à empresa cadastrada (ex: `@mercadolivre.com`), as consultas no mapa e no painel procuravam em subcoleções divergentes. Implementado seletor e sincronização automática entre o domínio ativo da empresa e o ouvinte do mapa e do modal.
+  - **Eliminação de Dependência de Composite Index (`orderBy`)**: As consultas em `App.tsx` e `CompanyAdminView.tsx` utilizavam `orderBy('createdAt', 'desc')`. No Cloud Firestore, se a consulta for executada antes da indexação completa ou durante compensação de latência de `serverTimestamp()`, a subscrição falhava silenciosamente e limpava a lista (`setCompanyIncidents([])`). A ordenação decrescente foi migrada para processamento seguro em memória (`toMillis()`).
+  - **Garantia de Coordenadas Geográficas e Fallback**: No formulário de cadastro do painel da empresa, caso o centróide da CISP ou delegacia não estivesse carregado no momento do salvamento, `lat` e `lng` eram omitidos do documento. Adicionado fallback geográfico automático baseado na UF (RJ, MG, ES) para que nenhuma ocorrência seja salva sem coordenadas válidas.
+  - **Leitura Defensiva de Coordenadas no OpenLayers (`MapContainer.tsx`)**: O loop de sincronização do OpenLayers checava estritamente `typeof inc.lat === 'number'`. Foi implementado parsing com `parseFloat(String(inc.lat).replace(',', '.'))` para aceitar coordenadas numéricas ou textuais, assegurando que os pinos e o mapa de calor renderizem imediatamente todas as ocorrências.
+  - **Prevenção de `TypeError` na Busca do Painel Corporativo**: Adicionada proteção com coalescência nula `(inc.notes || '').toLowerCase()` nos campos de busca e filtros, evitando que registros com observações ou B.O. em branco quebrem a lista.
+
+### 14. Refinamentos de Layout e Navegação Solicitados
+- **Menus Fechados por Padrão**: As quatro categorias do `NavigationDrawer.tsx` iniciam recolhidas por padrão, expandindo apenas mediante clique voluntário do operador.
+- **Cabeçalho Otimizado**: Removido o botão horizontal "Menu & Módulos", removido o badge "RJ · MG · ES" do lado da logo, e organizada a logo com "MONITORAMENTO" na linha superior e "Territorial" na linha inferior para máxima economia de espaço vertical.
+- **Assinatura da Agência no Rodapé**: Removida a referência da agência abaixo da logo no topo, centralizando a autoria legal ("Agência Ícone Digital by Vinicius Cirne") de forma limpa e institucional exclusivamente no rodapé.
+
+---
+
 ## [17/11/2026] — Reorganização da Navegação: Menu Lateral Estruturado em Menus e Submenus por Assuntos Relacionados
 
 ### 12. Menu Lateral Temático com Categorização Estrita (Sem Misturar Assuntos)

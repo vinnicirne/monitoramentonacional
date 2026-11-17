@@ -174,6 +174,12 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     return ownCompanyDomain;
   }, [isAdmin, overrideDomain, allCompanies, ownCompanyDomain]);
 
+  useEffect(() => {
+    if (activeDomain && activeDomain !== overrideDomain && onSelectOverrideDomain) {
+      onSelectOverrideDomain(activeDomain);
+    }
+  }, [activeDomain, overrideDomain, onSelectOverrideDomain]);
+
   const [company, setCompany] = useState<CorporateCompany | null>(null);
   const [licenses, setLicenses] = useState<CorporateUserLicense[]>([]);
   const [companyUsers, setCompanyUsers] = useState<UserProfile[]>([]);
@@ -307,12 +313,26 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
     unsubs.push(
       onSnapshot(
-        query(
-          collection(db, 'corporate_companies', activeDomain, 'incidents'),
-          orderBy('createdAt', 'desc')
-        ),
+        collection(db, 'corporate_companies', activeDomain, 'incidents'),
         snap => {
-          setIncidents(snap.docs.map(d => d.data() as CorporatePackageIncident));
+          const list = snap.docs.map(d => ({
+            ...d.data(),
+            id: d.id
+          } as CorporatePackageIncident));
+          list.sort((a, b) => {
+            const tA = (a.createdAt as any)?.toMillis
+              ? (a.createdAt as any).toMillis()
+              : a.createdAt
+              ? new Date(a.createdAt as any).getTime()
+              : 0;
+            const tB = (b.createdAt as any)?.toMillis
+              ? (b.createdAt as any).toMillis()
+              : b.createdAt
+              ? new Date(b.createdAt as any).getTime()
+              : 0;
+            return tB - tA;
+          });
+          setIncidents(list);
         },
         err =>
           handleFirestoreError(
@@ -486,11 +506,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       }
       if (!q) return true;
       return (
-        inc.trackingCode.toLowerCase().includes(q) ||
-        inc.boNumber.toLowerCase().includes(q) ||
-        inc.delegaciaName.toLowerCase().includes(q) ||
-        inc.delegaciaMunicipio.toLowerCase().includes(q) ||
-        inc.notes.toLowerCase().includes(q)
+        (inc.trackingCode || '').toLowerCase().includes(q) ||
+        (inc.boNumber || '').toLowerCase().includes(q) ||
+        (inc.delegaciaName || '').toLowerCase().includes(q) ||
+        (inc.delegaciaMunicipio || '').toLowerCase().includes(q) ||
+        (inc.notes || '').toLowerCase().includes(q)
       );
     });
   }, [incidents, incidentSearch, incidentFilter]);
@@ -835,6 +855,22 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       }
     }
 
+    if (autoLat === undefined || autoLng === undefined) {
+      if (chosenDelegacia.uf === 'RJ') {
+        autoLat = -22.9068;
+        autoLng = -43.1729;
+      } else if (chosenDelegacia.uf === 'MG') {
+        autoLat = -19.9167;
+        autoLng = -43.9345;
+      } else if (chosenDelegacia.uf === 'ES') {
+        autoLat = -20.3155;
+        autoLng = -40.3128;
+      } else {
+        autoLat = -22.9068;
+        autoLng = -43.1729;
+      }
+    }
+
     setIsSavingIncident(true);
     try {
       if (editingIncidentId) {
@@ -846,7 +882,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           delegaciaName: chosenDelegacia.name.slice(0, 160),
           delegaciaUf: chosenDelegacia.uf.slice(0, 8),
           delegaciaMunicipio: chosenDelegacia.municipio.slice(0, 100),
-          ...(autoLat !== undefined && autoLng !== undefined ? { lat: autoLat, lng: autoLng } : {}),
+          lat: autoLat,
+          lng: autoLng,
           packageAtStation,
           custodyStatus,
           estimatedValue: numValue,
@@ -876,7 +913,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           delegaciaName: chosenDelegacia.name.slice(0, 160),
           delegaciaUf: chosenDelegacia.uf.slice(0, 8),
           delegaciaMunicipio: chosenDelegacia.municipio.slice(0, 100),
-          ...(autoLat !== undefined && autoLng !== undefined ? { lat: autoLat, lng: autoLng } : {}),
+          lat: autoLat,
+          lng: autoLng,
           packageAtStation,
           custodyStatus,
           estimatedValue: numValue,
@@ -2083,10 +2121,10 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                           </div>
 
                           <div className="flex items-center gap-1.5 shrink-0 flex-wrap sm:flex-nowrap">
-                            {inc.lat && inc.lng && onLocateOnMap && (
+                            {inc.lat != null && inc.lng != null && onLocateOnMap && (
                               <button
                                 type="button"
-                                onClick={() => onLocateOnMap(inc.lat!, inc.lng!)}
+                                onClick={() => onLocateOnMap(Number(inc.lat), Number(inc.lng))}
                                 title="Localizar no Mapa de Calor"
                                 className="px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
                               >

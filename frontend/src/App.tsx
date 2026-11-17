@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Map from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import {
@@ -27,7 +27,7 @@ import { CompanyAdminView } from './components/CompanyAdminView';
 import { CorporateIncidentModal } from './components/CorporateIncidentModal';
 import { AuthGateModal } from './components/AuthGateModal';
 import { useAuth } from './contexts/AuthContext';
-import { CorporatePackageIncident } from './types/admin';
+import { CorporateCompany, CorporatePackageIncident } from './types/admin';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from './firebase';
 import {
@@ -83,13 +83,68 @@ function App() {
   const [isIncidentModalOpen, setIsIncidentModalOpen] = useState(false);
   const [selectedCorporateIncident, setSelectedCorporateIncident] = useState<CorporatePackageIncident | null>(null);
   const [incidentInitialCoords, setIncidentInitialCoords] = useState<{ lat: number; lng: number } | undefined>(undefined);
+  const [availableCompanies, setAvailableCompanies] = useState<CorporateCompany[]>([]);
 
-  const effectiveCompanyDomain = (
-    companyAdminDomainOverride ||
-    userProfile?.companyDomain ||
-    userProfile?.domain ||
-    ''
-  ).toLowerCase();
+  // Sincronizar lista de empresas corporativas cadastradas
+  useEffect(() => {
+    if (!hasFullAccess) return;
+    const unsub = onSnapshot(
+      collection(db, 'corporate_companies'),
+      snap => {
+        const list = snap.docs.map(d => d.data() as CorporateCompany);
+        setAvailableCompanies(list);
+      },
+      err => {
+        console.warn('Não foi possível carregar corporate_companies:', err);
+      }
+    );
+    return () => unsub();
+  }, [hasFullAccess]);
+
+  const PUBLIC_EMAIL_DOMAINS = useMemo(
+    () => [
+      'gmail.com',
+      'googlemail.com',
+      'hotmail.com',
+      'outlook.com',
+      'live.com',
+      'yahoo.com',
+      'yahoo.com.br',
+      'bol.com.br',
+      'uol.com.br',
+      'icloud.com',
+      'me.com',
+      'msn.com'
+    ],
+    []
+  );
+
+  const effectiveCompanyDomain = useMemo(() => {
+    // 1. Override explícito de domínio (selecionado no Painel Empresa ou criado)
+    if (companyAdminDomainOverride) {
+      return companyAdminDomainOverride.toLowerCase().trim();
+    }
+    // 2. Se o usuário tem companyDomain corporativo no perfil
+    const userCompDomain = (userProfile?.companyDomain || '').toLowerCase().trim();
+    if (userCompDomain && !PUBLIC_EMAIL_DOMAINS.includes(userCompDomain)) {
+      return userCompDomain;
+    }
+    // 3. Se for administrador e houver empresas cadastradas no sistema
+    if (isAdmin && availableCompanies.length > 0) {
+      const activeFirst = availableCompanies.find(c => c.active) || availableCompanies[0];
+      return activeFirst.domain.toLowerCase().trim();
+    }
+    // 4. Se o e-mail do usuário tem domínio corporativo próprio
+    const userEmailDomain = (userProfile?.domain || '').toLowerCase().trim();
+    if (userEmailDomain && !PUBLIC_EMAIL_DOMAINS.includes(userEmailDomain)) {
+      return userEmailDomain;
+    }
+    // 5. Fallback para empresas cadastradas disponíveis
+    if (availableCompanies.length > 0) {
+      return availableCompanies[0].domain.toLowerCase().trim();
+    }
+    return userCompDomain || userEmailDomain || '';
+  }, [companyAdminDomainOverride, userProfile?.companyDomain, userProfile?.domain, isAdmin, availableCompanies, PUBLIC_EMAIL_DOMAINS]);
 
   // Search and Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -199,15 +254,31 @@ function App() {
       return;
     }
 
-    const q = query(
-      collection(db, 'corporate_companies', effectiveCompanyDomain, 'incidents'),
-      orderBy('createdAt', 'desc')
-    );
+    const colRef = collection(db, 'corporate_companies', effectiveCompanyDomain, 'incidents');
 
     const unsub = onSnapshot(
-      q,
+      colRef,
       snapshot => {
-        const list = snapshot.docs.map(d => d.data() as CorporatePackageIncident);
+        const list = snapshot.docs.map(d => ({
+          ...d.data(),
+          id: d.id
+        } as CorporatePackageIncident));
+
+        // Ordenação segura em memória por data decrescente (não exige composite index no Firestore)
+        list.sort((a, b) => {
+          const tA = (a.createdAt as any)?.toMillis
+            ? (a.createdAt as any).toMillis()
+            : a.createdAt
+            ? new Date(a.createdAt as any).getTime()
+            : 0;
+          const tB = (b.createdAt as any)?.toMillis
+            ? (b.createdAt as any).toMillis()
+            : b.createdAt
+            ? new Date(b.createdAt as any).getTime()
+            : 0;
+          return tB - tA;
+        });
+
         setCompanyIncidents(list);
       },
       error => {
@@ -1158,11 +1229,13 @@ function App() {
             setIncidentInitialCoords(undefined);
           }}
           companyDomain={effectiveCompanyDomain}
+          availableCompanies={availableCompanies}
+          onSelectCompanyDomain={domain => setCompanyAdminDomainOverride(domain)}
           existingIncident={selectedCorporateIncident}
           initialCoords={incidentInitialCoords}
           registry={registry}
           onSaved={() => {
-            // Snapshot automatically updates companyIncidents
+            // Real-time snapshot automatically updates companyIncidents
           }}
         />
       )}

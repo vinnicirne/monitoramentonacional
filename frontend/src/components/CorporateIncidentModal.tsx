@@ -22,6 +22,7 @@ import {
 import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError } from '../firebase';
 import {
+  CorporateCompany,
   CorporatePackageIncident,
   IncidentHistoryEntry,
   OperationType,
@@ -37,6 +38,8 @@ interface CorporateIncidentModalProps {
   isOpen: boolean;
   onClose: () => void;
   companyDomain: string;
+  availableCompanies?: CorporateCompany[];
+  onSelectCompanyDomain?: (domain: string) => void;
   incidentToEdit?: CorporatePackageIncident | null;
   existingIncident?: CorporatePackageIncident | null;
   initialCoords?: { lat: number; lng: number } | null;
@@ -125,6 +128,8 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   isOpen,
   onClose,
   companyDomain,
+  availableCompanies = [],
+  onSelectCompanyDomain,
   incidentToEdit = null,
   existingIncident = null,
   initialCoords = null,
@@ -136,6 +141,18 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   const notifySaved = onIncidentSaved || onSaved;
   const { userProfile, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
+
+  const [targetDomain, setTargetDomain] = useState<string>(
+    companyDomain || (availableCompanies.length > 0 ? availableCompanies[0].domain : '')
+  );
+
+  useEffect(() => {
+    if (companyDomain) {
+      setTargetDomain(companyDomain);
+    } else if (availableCompanies.length > 0) {
+      setTargetDomain(availableCompanies[0].domain);
+    }
+  }, [companyDomain, availableCompanies]);
 
   // Form Fields
   const [trackingCode, setTrackingCode] = useState('');
@@ -320,8 +337,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   // Save Incident
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userProfile || !companyDomain) {
-      setErrorMessage('Acesso não autenticado ou empresa não identificada.');
+    const domainToUse = targetDomain || companyDomain;
+    if (!userProfile || !domainToUse) {
+      setErrorMessage('Acesso não autenticado ou empresa corporativa não identificada.');
       return;
     }
     setErrorMessage(null);
@@ -348,8 +366,16 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         finalLat = chosenDelegacia.lat;
         finalLng = chosenDelegacia.lng;
       } else {
-        finalLat = -22.9068;
-        finalLng = -43.1729;
+        if (chosenDelegacia.uf === 'MG') {
+          finalLat = -19.9167;
+          finalLng = -43.9345;
+        } else if (chosenDelegacia.uf === 'ES') {
+          finalLat = -20.3155;
+          finalLng = -40.3128;
+        } else {
+          finalLat = -22.9068;
+          finalLng = -43.1729;
+        }
       }
     }
 
@@ -382,7 +408,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     setIsSaving(true);
     try {
       if (activeIncident) {
-        await updateDoc(doc(db, 'corporate_companies', companyDomain, 'incidents', incId), {
+        await updateDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', incId), {
           trackingCode: cleanCode,
           incidentType,
           boNumber: cleanBo,
@@ -403,9 +429,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         });
         setSuccessMessage(`Ocorrência ${cleanCode} atualizada com sucesso! O mapa de calor foi recalculado.`);
       } else {
-        await setDoc(doc(db, 'corporate_companies', companyDomain, 'incidents', incId), {
+        await setDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', incId), {
           id: incId,
-          companyDomain: companyDomain,
+          companyDomain: domainToUse,
           trackingCode: cleanCode,
           incidentType,
           boNumber: cleanBo,
@@ -427,8 +453,10 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
-        setSuccessMessage(`Ocorrência ${cleanCode} registrada com sucesso e integrada ao Mapa de Calor de @${companyDomain}!`);
+        setSuccessMessage(`Ocorrência ${cleanCode} registrada com sucesso e integrada ao Mapa de Calor de @${domainToUse}!`);
       }
+
+      onSelectCompanyDomain?.(domainToUse);
 
       if (notifySaved) {
         notifySaved(incId);
@@ -442,7 +470,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       handleFirestoreError(
         err,
         activeIncident ? OperationType.UPDATE : OperationType.CREATE,
-        `corporate_companies/${companyDomain}/incidents/${incId}`
+        `corporate_companies/${domainToUse}/incidents/${incId}`
       );
     } finally {
       setIsSaving(false);
@@ -452,7 +480,8 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   // Add Event to History Timeline
   const handleAddHistoryEvent = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeIncident || !userProfile || !newHistoryTitle.trim()) return;
+    const domainToUse = targetDomain || companyDomain;
+    if (!activeIncident || !userProfile || !newHistoryTitle.trim() || !domainToUse) return;
 
     setIsAddingHistory(true);
     setErrorMessage(null);
@@ -471,7 +500,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     const nextHistory = [newEntry, ...historyEntries];
 
     try {
-      await updateDoc(doc(db, 'corporate_companies', companyDomain, 'incidents', activeIncident.id), {
+      await updateDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', activeIncident.id), {
         custodyStatus: newHistoryStatus,
         history: nextHistory,
         updatedAt: serverTimestamp()
@@ -487,7 +516,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       handleFirestoreError(
         err,
         OperationType.UPDATE,
-        `corporate_companies/${companyDomain}/incidents/${activeIncident.id}`
+        `corporate_companies/${domainToUse}/incidents/${activeIncident.id}`
       );
     } finally {
       setIsAddingHistory(false);
@@ -518,9 +547,27 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                 <h3 className="text-base font-extrabold text-white">
                   {activeIncident ? 'Editar Ocorrência Corporativa' : 'Registrar Ocorrência da Empresa'}
                 </h3>
-                <span className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-[11px]">
-                  @{companyDomain}
-                </span>
+                {availableCompanies && availableCompanies.length > 1 && isAdmin ? (
+                  <select
+                    value={targetDomain}
+                    onChange={e => {
+                      setTargetDomain(e.target.value);
+                      onSelectCompanyDomain?.(e.target.value);
+                    }}
+                    className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-[11px] outline-none cursor-pointer border border-[#2D3277]/20"
+                    title="Selecione a empresa da ocorrência"
+                  >
+                    {availableCompanies.map(c => (
+                      <option key={c.domain} value={c.domain} className="bg-white text-slate-800">
+                        {c.companyName || c.domain} (@{c.domain})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-[11px]">
+                    @{targetDomain || companyDomain}
+                  </span>
+                )}
                 <span className="px-2 py-0.5 rounded bg-white/10 text-white/90 text-[10px] font-bold uppercase flex items-center gap-1">
                   <Lock className="w-3 h-3 text-[#FFE600]" />
                   Apenas Usuários da Empresa
