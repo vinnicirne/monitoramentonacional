@@ -191,15 +191,19 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
       icon: Shield,
       accentColor: 'text-[#2D3277]',
       items: [
-        {
-          id: 'company_register_action',
-          title: 'Criar Conta Corporativa',
-          subtitle: 'Cadastro institucional para empresas de logística, transporte e segurança',
-          icon: Building2,
-          badge: 'Novo',
-          badgeColor: 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]',
-          isActionOnly: true
-        },
+        ...(!isCompanyAdmin
+          ? [
+              {
+                id: 'company_register_action' as const,
+                title: 'Criar Conta Corporativa',
+                subtitle: 'Cadastro institucional para empresas de logística, transporte e segurança',
+                icon: Building2,
+                badge: 'Novo',
+                badgeColor: 'bg-[#2D3277] text-[#FFE600] border-[#1E2258]',
+                isActionOnly: true
+              }
+            ]
+          : []),
         ...(isCompanyAdmin || isAdmin
           ? [
               {

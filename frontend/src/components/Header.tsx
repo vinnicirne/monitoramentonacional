@@ -100,8 +100,8 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* Botão de Criar Conta Corporativa com as cores do sistema */}
-        {onOpenCompanyRegister && (
+        {/* Botão de Criar Conta Corporativa visível apenas para visitantes anônimos (sem conta) */}
+        {onOpenCompanyRegister && !firebaseUser && (
           <button
             onClick={onOpenCompanyRegister}
             title="Criar Conta Corporativa (Acesso Corporativo & Gestão de Equipe)"

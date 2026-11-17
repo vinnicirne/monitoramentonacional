@@ -6,6 +6,24 @@
 
 ---
 
+## [17/11/2026] — Separação Estrita de Perfis: SuperAdmin Geral vs. Admin Corporativo de Empresa
+
+### 15. Eliminação de Redundâncias e Ambiguidade de Perfis ("Criar Conta Corporativa")
+- **Isolamento de Escopo e Papéis**:
+  - **SuperAdmin Geral**: Controla todo o sistema via **Painel ADM** (aba *Empresas & Licenças*), onde cria, precifica e aprova empresas e licenças. Ao acessar o **Painel Empresa**, atua como auditor com poderes globais.
+  - **Admin Corporativo**: Gestor da transportadora/empresa cliente (ex.: `@mercadolivre.com`). Atua exclusivamente no domínio da sua empresa gerenciando sua equipe, licenças e ocorrências criminais.
+- **Remoção de Botões Incoerentes**:
+  - **No Painel Empresa (`CompanyAdminView.tsx`)**: Removido o botão "+ Criar Conta Corporativa" que aparecia indevidamente ao lado de "Copiar Link da Equipe". Uma vez dentro da conta de uma empresa existente, não faz sentido induzir o usuário a cadastrar outra.
+  - **No Cabeçalho Superior Amarelo (`Header.tsx`)**: O botão "Criar Conta Corporativa" foi condicionado a aparecer **apenas para visitantes anônimos** que ainda não possuem conta. Para usuários logados (SuperAdmin ou Corporativo), o botão é suprimido, eliminando poluição visual.
+  - **No Menu Lateral (`NavigationDrawer.tsx`)**: A opção "Criar Conta Corporativa" é ocultada para quem já é administrador corporativo ativo.
+- **Identificação Visual Transparente no Painel Empresa**:
+  - Quando o **SuperAdmin** acessa o painel de um cliente (ex.: Mercado Livre), o badge agora exibe claramente: `👑 SuperAdmin no Painel` e o seletor para inspecionar outras empresas.
+  - Quando um **Admin Corporativo** da própria empresa acessa, ele vê `ADM Corporativo` restrito ao seu próprio ecossistema.
+- **Formulário de Provisionamento Restrito ao SuperAdmin**:
+  - Na subaba "Cadastro & Gestão da Empresa", o formulário de cadastrar novas organizações foi restrito ao SuperAdmin e renomeado para "Provisionar Nova Empresa (SuperAdmin)". Para o gestor corporativo, a tela exibe exclusivamente as configurações da sua própria empresa em largura total.
+
+---
+
 ## [17/11/2026] — Correção Crítica de Ocorrências: Sincronização de Domínio, Renderização em Tempo Real e Ajustes Visuais
 
 ### 13. Correção de Cadastro e Exibição de Ocorrências Corporativas (Painel e Mapa de Calor)
