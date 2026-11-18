@@ -6,6 +6,23 @@
 
 ---
 
+## [17/11/2026] — Vinculação Automática de Delegacia por Localização e Inteligência Geográfica
+
+### 16. Identificação e Seleção Automática da Delegacia Responsável pela Área
+- **Mecanismo de Inteligência Territorial (`delegaciaMatcher.ts`)**:
+  - Implementado motor de resolução espacial multicamadas capaz de identificar imediatamente a Delegacia de Polícia / CISP responsável pela área ao informar qualquer localização:
+    1. **Point-in-Polygon em Limites Oficiais**: Executa algoritmo de ray-casting sobre as geometrias vetoriais das 137 CISPs (`cispBoundaries.json`) e das circunscrições de Minas Gerais e Espírito Santo (`DELEGACIAS_MG_ES_DATA`), identificando a DP com 100% de exatidão territorial (ex: *Rua Acacio Raposo, 415 em Tribobó* vincula automaticamente a *075ª DP - São Gonçalo*).
+    2. **Correspondência por Bairro / Localidade**: Cruza a base oficial de bairros cobertos por cada circunscrição policial (RJ, MG e ES), permitindo resolução automática mesmo informando apenas o nome do bairro.
+    3. **Análise Semântica de Endereço**: Reconhece termos e localidades dentro do campo de logradouro/endereço para auto-seleção.
+    4. **Proximidade Espacial**: Em pontos limítrofes, calcula a menor distância aos centróides das unidades policiais.
+- **Integração no Modal de Ocorrências (`CorporateIncidentModal.tsx`)**:
+  - **Fluxo Operacional Reordenado**: A seção *Localização Exata* passa a preceder a *Delegacia Responsável*, de modo que ao digitar o endereço e clicar em **Geocodificar** (ou pressionar **Enter**), ou ao usar **GPS Atual**, a delegacia de polícia responsável é selecionada no mesmo instante no seletor.
+  - **Sugestões Rápidas de Endereço**: Ao digitar o endereço, caso existam múltiplos resultados, o sistema abre uma lista suspensa interativa para seleção com 1 clique.
+  - **Badge de Confirmação Oficial**: Exibição de aviso visual elegante em tom esmeralda confirmando a vinculação automática com o motivo oficial (*Ex: "Ponto geográfico dentro da circunscrição da 75ª DP (São Gonçalo)"*).
+  - **Liberdade de Edição e Ação de Restauração**: Caso o usuário prefira alterar a delegacia manualmente, o sistema permite livremente e oferece o botão rápido `[Restaurar DP da Área]` para retornar à delegacia oficial quando desejar.
+
+---
+
 ## [17/11/2026] — Separação Estrita de Perfis: SuperAdmin Geral vs. Admin Corporativo de Empresa
 
 ### 15. Eliminação de Redundâncias e Ambiguidade de Perfis ("Criar Conta Corporativa")

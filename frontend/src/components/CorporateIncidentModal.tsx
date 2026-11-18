@@ -17,7 +17,9 @@ import {
   History,
   Send,
   Lock,
-  Layers
+  Layers,
+  Sparkles,
+  RotateCcw
 } from 'lucide-react';
 import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError } from '../firebase';
@@ -33,6 +35,7 @@ import { TerritorialRegistry } from '../types';
 import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
 import { useAuth } from '../contexts/AuthContext';
 import { searchAddressesFree } from '../utils/geocoding';
+import { findResponsibleDelegacia, DelegaciaMatchResult } from '../utils/delegaciaMatcher';
 
 interface CorporateIncidentModalProps {
   isOpen: boolean;
@@ -161,6 +164,8 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   const [delegaciaUfFilter, setDelegaciaUfFilter] = useState<'TODAS' | 'RJ' | 'MG' | 'ES'>('TODAS');
   const [delegaciaSearch, setDelegaciaSearch] = useState('');
   const [selectedDelegaciaId, setSelectedDelegaciaId] = useState('');
+  const [autoMatchInfo, setAutoMatchInfo] = useState<DelegaciaMatchResult | null>(null);
+  const [isManuallyOverridden, setIsManuallyOverridden] = useState<boolean>(false);
   const [packageAtStation, setPackageAtStation] = useState(true);
   const [custodyStatus, setCustodyStatus] = useState<PackageCustodyStatus>('em_ocorrencia_delegacia');
   const [estimatedValue, setEstimatedValue] = useState('');
@@ -185,6 +190,39 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Helper para disparar busca e vinculação automática da delegacia
+  const triggerAutoDelegaciaMatch = (
+    latVal?: string | number | null,
+    lngVal?: string | number | null,
+    bairroVal?: string | null,
+    addrVal?: string | null
+  ) => {
+    const lat = latVal !== undefined ? latVal : latInput;
+    const lng = lngVal !== undefined ? lngVal : lngInput;
+    const bairro = bairroVal !== undefined ? bairroVal : bairroInput;
+    const addr = addrVal !== undefined ? addrVal : addressInput;
+
+    const match = findResponsibleDelegacia({
+      lat,
+      lng,
+      bairro,
+      addressText: addr,
+      registry
+    });
+
+    if (match) {
+      setSelectedDelegaciaId(match.delegaciaId);
+      setAutoMatchInfo(match);
+      setIsManuallyOverridden(false);
+
+      if (delegaciaUfFilter !== 'TODAS' && delegaciaUfFilter !== match.uf) {
+        setDelegaciaUfFilter(match.uf);
+      }
+      return match;
+    }
+    return null;
+  };
 
   // Delegacias catalog
   const allDelegacias = useMemo(() => {
@@ -266,9 +304,11 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       if (initialCoords) {
         setLatInput(initialCoords.lat.toFixed(6));
         setLngInput(initialCoords.lng.toFixed(6));
+        triggerAutoDelegaciaMatch(initialCoords.lat, initialCoords.lng);
       } else {
         setLatInput('');
         setLngInput('');
+        setAutoMatchInfo(null);
       }
 
       if (filteredDelegacias.length > 0 && !selectedDelegaciaId) {
@@ -276,6 +316,34 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       }
     }
   }, [isOpen, activeIncident, initialCoords]);
+
+  // Sincronização automática contínua quando o usuário digita/cola latitude, longitude ou bairro
+  useEffect(() => {
+    if (!isOpen || activeIncident) return;
+    const lat = parseFloat(latInput.replace(',', '.'));
+    const lng = parseFloat(lngInput.replace(',', '.'));
+    const hasCoords = !Number.isNaN(lat) && !Number.isNaN(lng) && lat !== 0 && lng !== 0;
+
+    if (hasCoords || (bairroInput.trim().length >= 3 && !isManuallyOverridden)) {
+      const timer = setTimeout(() => {
+        const match = findResponsibleDelegacia({
+          lat: hasCoords ? lat : null,
+          lng: hasCoords ? lng : null,
+          bairro: bairroInput.trim(),
+          addressText: addressInput.trim(),
+          registry
+        });
+        if (match && match.delegaciaId !== selectedDelegaciaId && !isManuallyOverridden) {
+          setSelectedDelegaciaId(match.delegaciaId);
+          setAutoMatchInfo(match);
+          if (delegaciaUfFilter !== 'TODAS' && delegaciaUfFilter !== match.uf) {
+            setDelegaciaUfFilter(match.uf);
+          }
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [latInput, lngInput, bairroInput, isOpen, activeIncident, isManuallyOverridden]);
 
   if (!isOpen) return null;
 
@@ -291,7 +359,13 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         const first = results[0];
         setLatInput(first.lat.toFixed(6));
         setLngInput(first.lng.toFixed(6));
-        if (first.subtitle) setBairroInput(first.subtitle.split('·')[0].trim());
+        const detectedBairro = first.subtitle ? first.subtitle.split('·')[0].trim() : '';
+        if (detectedBairro) setBairroInput(detectedBairro);
+
+        const match = triggerAutoDelegaciaMatch(first.lat, first.lng, detectedBairro, addressInput.trim());
+        if (match) {
+          setSuccessMessage(`Área localizada! Delegacia vinculada: ${match.delegaciaName}`);
+        }
       } else {
         setErrorMessage('Nenhum endereço encontrado para a busca informada.');
       }
@@ -299,6 +373,20 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setErrorMessage('Falha na busca de endereço. Verifique sua conexão.');
     } finally {
       setIsSearchingAddress(false);
+    }
+  };
+
+  const handleSelectAddressItem = (item: any) => {
+    setLatInput(item.lat.toFixed(6));
+    setLngInput(item.lng.toFixed(6));
+    const detectedBairro = item.subtitle ? item.subtitle.split('·')[0].trim() : '';
+    if (detectedBairro) setBairroInput(detectedBairro);
+    setAddressInput(item.displayName || item.shortTitle);
+    setAddressSearchResults([]);
+
+    const match = triggerAutoDelegaciaMatch(item.lat, item.lng, detectedBairro, item.displayName || item.shortTitle);
+    if (match) {
+      setSuccessMessage(`Área selecionada! Delegacia vinculada: ${match.delegaciaName}`);
     }
   };
 
@@ -310,9 +398,16 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     }
     navigator.geolocation.getCurrentPosition(
       pos => {
-        setLatInput(pos.coords.latitude.toFixed(6));
-        setLngInput(pos.coords.longitude.toFixed(6));
-        setSuccessMessage('Coordenadas capturadas via GPS com sucesso!');
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setLatInput(lat.toFixed(6));
+        setLngInput(lng.toFixed(6));
+        const match = triggerAutoDelegaciaMatch(lat, lng, bairroInput, addressInput);
+        if (match) {
+          setSuccessMessage(`GPS capturado! Delegacia identificada: ${match.delegaciaName}`);
+        } else {
+          setSuccessMessage('Coordenadas capturadas via GPS com sucesso!');
+        }
       },
       err => {
         setErrorMessage(`Não foi possível obter sua localização: ${err.message}`);
@@ -705,8 +800,123 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                 </div>
               </div>
 
-              {/* Delegacia Responsável Selection */}
-              <div className="space-y-1.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+              {/* 1. Localização Exata (Ponto no Mapa de Calor) */}
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-red-600" />
+                    <span>Localização Exata (Ponto no Mapa de Calor)</span>
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleUseCurrentLocation}
+                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Capturar GPS Atual e Vincular DP"
+                    >
+                      <Navigation className="w-3 h-3 text-[#3483FA]" />
+                      <span>GPS Atual</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleUseDelegaciaCoords}
+                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Copiar Coordenadas da Delegacia"
+                    >
+                      <Building2 className="w-3 h-3 text-[#2D3277]" />
+                      <span>Coord. DP</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={addressInput}
+                      onChange={e => setAddressInput(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleSearchAddress();
+                        }
+                      }}
+                      placeholder="Digite endereço ou localidade (ex: Rua Acacio Raposo, 415 ou Av. Brasil, Pavuna)"
+                      className="flex-1 px-3 py-2 rounded-xl border border-slate-300 bg-white focus:border-[#3483FA] focus:outline-none text-xs text-slate-800"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSearchAddress}
+                      disabled={isSearchingAddress}
+                      className="px-3.5 py-2 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-bold cursor-pointer transition-colors flex items-center gap-1.5 shrink-0 text-xs shadow-xs"
+                      title="Geocodificar endereço e puxar a delegacia responsável automaticamente"
+                    >
+                      {isSearchingAddress ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Search className="w-3.5 h-3.5" />
+                      )}
+                      <span>Geocodificar</span>
+                    </button>
+                  </div>
+
+                  {/* Sugestões de Endereço Geocodificado */}
+                  {addressSearchResults.length > 1 && (
+                    <div className="mt-1.5 max-h-40 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-lg text-xs z-10 relative">
+                      {addressSearchResults.map((res, i) => (
+                        <button
+                          key={res.id || i}
+                          type="button"
+                          onClick={() => handleSelectAddressItem(res)}
+                          className="w-full text-left p-2.5 hover:bg-blue-50 transition-colors flex items-start gap-2 cursor-pointer"
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-[#3483FA] mt-0.5 shrink-0" />
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-800 truncate">{res.shortTitle || res.displayName}</div>
+                            <div className="text-[11px] text-slate-500 truncate">{res.subtitle}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Bairro</label>
+                    <input
+                      type="text"
+                      value={bairroInput}
+                      onChange={e => setBairroInput(e.target.value)}
+                      placeholder="Ex: Pavuna, Bonsucesso, Tribobó"
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white focus:outline-none text-xs text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Latitude (ex: -22.8123)</label>
+                    <input
+                      type="text"
+                      value={latInput}
+                      onChange={e => setLatInput(e.target.value)}
+                      placeholder="-22.812300"
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono focus:outline-none text-xs text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Longitude (ex: -43.3456)</label>
+                    <input
+                      type="text"
+                      value={lngInput}
+                      onChange={e => setLngInput(e.target.value)}
+                      placeholder="-43.345600"
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono focus:outline-none text-xs text-slate-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Delegacia Responsável (Puxada Automaticamente pela Localização) */}
+              <div className="space-y-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between">
                   <label className="font-bold text-slate-700 flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#2D3277]" />
@@ -718,10 +928,10 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                         key={uf}
                         type="button"
                         onClick={() => setDelegaciaUfFilter(uf)}
-                        className={`px-1.5 py-0.5 rounded font-bold cursor-pointer ${
+                        className={`px-1.5 py-0.5 rounded font-bold cursor-pointer transition-colors ${
                           delegaciaUfFilter === uf
                             ? 'bg-[#2D3277] text-white'
-                            : 'bg-white border border-slate-200 text-slate-600'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                         }`}
                       >
                         {uf}
@@ -730,115 +940,73 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <div className="relative sm:w-1/3">
                     <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
                     <input
                       type="text"
                       value={delegaciaSearch}
                       onChange={e => setDelegaciaSearch(e.target.value)}
-                      placeholder="Buscar por nome da DP ou município..."
-                      className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:outline-none"
+                      placeholder="Buscar por nome ou município..."
+                      className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs focus:outline-none focus:border-[#3483FA]"
                     />
                   </div>
-                  <select
-                    value={selectedDelegaciaId}
-                    onChange={e => setSelectedDelegaciaId(e.target.value)}
-                    className="flex-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-semibold text-slate-800 focus:outline-none"
-                  >
-                    {filteredDelegacias.map(del => (
-                      <option key={del.id} value={del.id}>
-                        [{del.uf}] {del.name} ({del.municipio})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative flex-1">
+                    <select
+                      value={selectedDelegaciaId}
+                      onChange={e => {
+                        setSelectedDelegaciaId(e.target.value);
+                        setIsManuallyOverridden(true);
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-semibold text-xs text-slate-800 focus:outline-none focus:border-[#3483FA]"
+                    >
+                      {filteredDelegacias.map(del => (
+                        <option key={del.id} value={del.id}>
+                          [{del.uf}] {del.name} ({del.municipio})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              {/* Geographic Coordinates & Heatmap Placement */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-red-600" />
-                    <span>Localização Exata (Ponto no Mapa de Calor)</span>
-                  </span>
-                  <div className="flex items-center gap-1.5">
+                {/* Badge Dinâmico de Reconhecimento Automático de Delegacia */}
+                {autoMatchInfo && selectedDelegaciaId === autoMatchInfo.delegaciaId ? (
+                  <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs shadow-2xs">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="truncate">
+                        <strong className="text-emerald-950 font-extrabold">Delegacia Vinculada pela Localização:</strong> {autoMatchInfo.reason}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono font-extrabold uppercase shrink-0 border border-emerald-300">
+                      {autoMatchInfo.confidence === 'exact_boundary' ? 'Limite Oficial' : 'Área Mapeada'}
+                    </span>
+                  </div>
+                ) : isManuallyOverridden && autoMatchInfo ? (
+                  <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs shadow-2xs">
+                    <div className="flex items-center gap-1.5 min-w-0 truncate">
+                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span className="truncate">
+                        Alterada manualmente. A delegacia oficial da área é <strong>{autoMatchInfo.delegaciaName}</strong>.
+                      </span>
+                    </div>
                     <button
                       type="button"
-                      onClick={handleUseCurrentLocation}
-                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center gap-1 cursor-pointer"
-                      title="Usar GPS Atual"
+                      onClick={() => {
+                        setSelectedDelegaciaId(autoMatchInfo.delegaciaId);
+                        setIsManuallyOverridden(false);
+                        if (delegaciaUfFilter !== 'TODAS' && delegaciaUfFilter !== autoMatchInfo.uf) {
+                          setDelegaciaUfFilter(autoMatchInfo.uf);
+                        }
+                      }}
+                      className="px-2 py-0.5 rounded-lg bg-amber-200/80 hover:bg-amber-300 text-amber-900 text-[10px] font-bold flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
+                      title="Restaurar a delegacia calculada pela localização"
                     >
-                      <Navigation className="w-3 h-3 text-[#3483FA]" />
-                      <span>GPS Atual</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleUseDelegaciaCoords}
-                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center gap-1 cursor-pointer"
-                      title="Copiar Coordenadas da Delegacia"
-                    >
-                      <Building2 className="w-3 h-3 text-[#2D3277]" />
-                      <span>Coord. DP</span>
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Restaurar DP da Área</span>
                     </button>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={addressInput}
-                    onChange={e => setAddressInput(e.target.value)}
-                    placeholder="Logradouro ou ponto de referência (ex: Av. Brasil, altura Pavuna)"
-                    className="flex-1 px-3 py-2 rounded-xl border border-slate-300 bg-white focus:border-[#3483FA] focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSearchAddress}
-                    disabled={isSearchingAddress}
-                    className="px-3 py-2 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-bold cursor-pointer transition-colors flex items-center gap-1 shrink-0"
-                  >
-                    {isSearchingAddress ? (
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Search className="w-3.5 h-3.5" />
-                    )}
-                    <span>Geocodificar</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Bairro</label>
-                    <input
-                      type="text"
-                      value={bairroInput}
-                      onChange={e => setBairroInput(e.target.value)}
-                      placeholder="Ex: Pavuna, Bonsucesso"
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Latitude (ex: -22.8123)</label>
-                    <input
-                      type="text"
-                      value={latInput}
-                      onChange={e => setLatInput(e.target.value)}
-                      placeholder="-22.812300"
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-600 mb-0.5 text-[10px] font-bold">Longitude (ex: -43.3456)</label>
-                    <input
-                      type="text"
-                      value={lngInput}
-                      onChange={e => setLngInput(e.target.value)}
-                      placeholder="-43.345600"
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono focus:outline-none"
-                    />
-                  </div>
-                </div>
+                ) : null}
               </div>
 
               {/* Financial value & Custody status */}
