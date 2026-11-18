@@ -90,6 +90,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   const [trackingCode, setTrackingCode] = useState('');
   const [carrierName, setCarrierName] = useState('');
   const [packageQuantity, setPackageQuantity] = useState('1');
+  const [packagesDelivered, setPackagesDelivered] = useState('0');
+  const [packagesRecovered, setPackagesRecovered] = useState('0');
+  const [packagesStolen, setPackagesStolen] = useState('0');
   const [incidentType, setIncidentType] = useState<PackageIncidentType>('roubo_carga');
   const [boNumber, setBoNumber] = useState('');
   const [delegaciaUfFilter, setDelegaciaUfFilter] = useState<'TODAS' | 'RJ' | 'MG' | 'ES'>('TODAS');
@@ -208,6 +211,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setTrackingCode(activeIncident.trackingCode || '');
       setCarrierName(activeIncident.carrierName || '');
       setPackageQuantity(String(Math.max(1, Number(activeIncident.packageQuantity) || 1)));
+      setPackagesDelivered(String(Math.max(0, Number(activeIncident.packagesDelivered) || 0)));
+      setPackagesRecovered(String(Math.max(0, Number(activeIncident.packagesRecovered) || 0)));
+      setPackagesStolen(String(Math.max(0, Number(activeIncident.packagesStolen) || 0)));
       setIncidentType(activeIncident.incidentType || 'roubo_carga');
       setBoNumber(activeIncident.boNumber || '');
       setSelectedDelegaciaId(activeIncident.delegaciaId || '');
@@ -225,6 +231,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setTrackingCode('');
       setCarrierName('');
       setPackageQuantity('1');
+      setPackagesDelivered('0');
+      setPackagesRecovered('0');
+      setPackagesStolen('0');
       setIncidentType('roubo_carga');
       setBoNumber('');
       setPackageAtStation(true);
@@ -412,6 +421,13 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     const cleanBo = boNumber.trim().slice(0, 64);
     const cleanCarrier = carrierName.trim().slice(0, 120);
     const quantity = Math.min(100000, Math.max(1, Math.floor(Number(packageQuantity) || 1)));
+    const deliveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesDelivered) || 0)));
+    const recoveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesRecovered) || 0)));
+    const stolenCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesStolen) || 0)));
+    if (deliveredCount + recoveredCount + stolenCount > quantity) {
+      setErrorMessage('A soma de pacotes entregues, recuperados e roubados não pode ultrapassar a quantidade envolvida.');
+      return;
+    }
     const unitValue = parseBrlInput(estimatedUnitValue);
     const numValue = Number((unitValue * quantity).toFixed(2));
     const cleanNotes = notes.trim().slice(0, 500);
@@ -463,6 +479,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       trackingCode: cleanCode,
       carrierName: cleanCarrier,
       packageQuantity: quantity,
+      packagesDelivered: deliveredCount,
+      packagesRecovered: recoveredCount,
+      packagesStolen: stolenCount,
       estimatedUnitValue: unitValue,
       incidentType,
       boNumber: cleanBo,
@@ -492,6 +511,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           trackingCode: cleanCode,
           carrierName: cleanCarrier,
           packageQuantity: quantity,
+          packagesDelivered: deliveredCount,
+          packagesRecovered: recoveredCount,
+          packagesStolen: stolenCount,
           estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
@@ -519,6 +541,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           trackingCode: cleanCode,
           carrierName: cleanCarrier,
           packageQuantity: quantity,
+          packagesDelivered: deliveredCount,
+          packagesRecovered: recoveredCount,
+          packagesStolen: stolenCount,
           estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
@@ -868,6 +893,19 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                   />
                   <p className="mt-1 text-[10px] text-slate-500">Os totais de pacotes e valores são calculados automaticamente conforme a quantidade informada.</p>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                {([
+                  ['Pacotes Entregues', packagesDelivered, setPackagesDelivered],
+                  ['Pacotes Recuperados', packagesRecovered, setPackagesRecovered],
+                  ['Pacotes Roubados', packagesStolen, setPackagesStolen]
+                ] as const).map(([label, value, setter]) => (
+                  <div key={label}>
+                    <label className="block font-bold text-slate-700 mb-1">{label}</label>
+                    <input type="number" min="0" max={packageQuantity} step="1" value={value} onChange={e => setter(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800" />
+                  </div>
+                ))}
               </div>
 
               {/* 1. Localização Exata (Ponto no Mapa de Calor) */}

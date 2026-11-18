@@ -325,6 +325,7 @@ service cloud.firestore {
           'packageAtStation', 'custodyStatus', 'estimatedValue', 'notes',
           'lat', 'lng', 'address', 'bairro', 'history', 'legacyCreatedAt',
           'carrierName', 'packageQuantity', 'estimatedUnitValue',
+          'packagesDelivered', 'packagesRecovered', 'packagesStolen',
           'createdByUid', 'createdByName', 'createdAt', 'updatedAt'
         ]) &&
         isValidId(data.id) &&
@@ -349,6 +350,13 @@ service cloud.firestore {
         (!('carrierName' in data) || (data.carrierName is string && data.carrierName.size() <= 120)) &&
         (!('packageQuantity' in data) || (data.packageQuantity is int && data.packageQuantity >= 1 && data.packageQuantity <= 100000)) &&
         (!('estimatedUnitValue' in data) || (data.estimatedUnitValue is number && data.estimatedUnitValue >= 0 && data.estimatedUnitValue <= 1000000000)) &&
+        (!('packagesDelivered' in data) || (data.packagesDelivered is int && data.packagesDelivered >= 0 && data.packagesDelivered <= 100000)) &&
+        (!('packagesRecovered' in data) || (data.packagesRecovered is int && data.packagesRecovered >= 0 && data.packagesRecovered <= 100000)) &&
+        (!('packagesStolen' in data) || (data.packagesStolen is int && data.packagesStolen >= 0 && data.packagesStolen <= 100000)) &&
+        (!('packagesDelivered' in data) || !('packageQuantity' in data) || data.packagesDelivered <= data.packageQuantity) &&
+        (!('packagesRecovered' in data) || !('packageQuantity' in data) || data.packagesRecovered <= data.packageQuantity) &&
+        (!('packagesStolen' in data) || !('packageQuantity' in data) || data.packagesStolen <= data.packageQuantity) &&
+        data.get('packagesDelivered', 0) + data.get('packagesRecovered', 0) + data.get('packagesStolen', 0) <= data.packageQuantity &&
         (!('packageQuantity' in data) || !('estimatedUnitValue' in data) || (
           data.estimatedValue >= data.estimatedUnitValue * data.packageQuantity - 0.01 &&
           data.estimatedValue <= data.estimatedUnitValue * data.packageQuantity + 0.01
@@ -933,6 +941,7 @@ service cloud.firestore {
             'trackingCode', 'incidentType', 'boNumber', 'delegaciaId', 'delegaciaName',
             'delegaciaUf', 'delegaciaMunicipio', 'packageAtStation', 'custodyStatus',
             'estimatedValue', 'estimatedUnitValue', 'packageQuantity', 'carrierName',
+            'packagesDelivered', 'packagesRecovered', 'packagesStolen',
             'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
           ]);
 

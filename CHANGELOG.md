@@ -6,6 +6,20 @@
 
 ---
 
+## [18/11/2026] — Histórico da Transportadora e Desfecho dos Pacotes
+
+### 32. Nova Aba de Transportadoras e Novos Campos de Resultado
+- Criada a aba **Transportadoras** no Painel Empresa; histórico, gráfico mensal e indicadores de pacotes foram retirados da aba de extravios e ocorrências.
+- Adicionados ao formulário os campos **Pacotes Entregues**, **Pacotes Recuperados** e **Pacotes Roubados**, abaixo da transportadora e da quantidade envolvida.
+- Os três valores são salvos e sincronizados no Firestore ao criar ou editar registros; o detalhe da ocorrência também os apresenta.
+- A validação impede que a soma dos resultados exceda a quantidade envolvida, e as regras do Firestore permitem os novos campos.
+
+## [18/11/2026] — Permissão de Exclusão por Licença de Edição
+
+### 31. Sincronização entre Perfil, Licença e Ação de Excluir
+- O botão de exclusão agora considera a permissão **Editar** registrada no perfil ou na licença corporativa ativa.
+- Erros do Firestore exibem o código de falha para facilitar o diagnóstico de permissões.
+
 ## [18/11/2026] — Correção de Salvamento dos Dados de Transportadora
 
 ### 30. Inclusão dos Novos Campos na Regra de Atualização do Firestore

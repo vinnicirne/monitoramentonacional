@@ -138,6 +138,9 @@ export interface CorporatePackageIncident {
   trackingCode: string;
   carrierName?: string;
   packageQuantity?: number;
+  packagesDelivered?: number;
+  packagesRecovered?: number;
+  packagesStolen?: number;
   estimatedUnitValue?: number;
   incidentType: PackageIncidentType;
   boNumber: string;
