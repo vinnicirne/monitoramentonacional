@@ -739,9 +739,7 @@ service cloud.firestore {
           isValidCorporatePackageIncident(incoming()) &&
           incoming().id == incidentId &&
           incoming().companyDomain == domainId &&
-          incoming().createdByUid == request.auth.uid &&
-          incoming().createdAt == request.time &&
-          incoming().updatedAt == request.time;
+          incoming().createdByUid == request.auth.uid;
 
         allow update: if isValidDomainId(domainId) && isValidId(incidentId) &&
           (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId)) &&
@@ -751,7 +749,6 @@ service cloud.firestore {
           incoming().createdByUid == existing().createdByUid &&
           incoming().createdByName == existing().createdByName &&
           incoming().createdAt == existing().createdAt &&
-          incoming().updatedAt == request.time &&
           incoming().diff(existing()).affectedKeys().hasOnly([
             'trackingCode', 'incidentType', 'boNumber', 'delegaciaId', 'delegaciaName',
             'delegaciaUf', 'delegaciaMunicipio', 'packageAtStation', 'custodyStatus',

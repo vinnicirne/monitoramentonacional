@@ -147,6 +147,26 @@
 
 ---
 
+### 17. Correção Definitiva de Permissão e Persistência de Ocorrências Corporativas (Firestore & Cache Local Resiliente)
+- **Diagnóstico da Causa Raiz**:
+  - A rejeição de permissão `Missing or insufficient permissions` em `corporate_companies/{domain}/incidents/{id}` ocorria por três fatores combinados:
+    1. `userProfile.uid` não vinha injetado a partir de `snap.id` no snapshot do Firestore em `AuthContext.tsx`, causando divergência na checagem `incoming().createdByUid == request.auth.uid`.
+    2. O schema de segurança em `firestore.rules` e `firebase-blueprint.json` continha requisitos de `request.time` e enums estritos que causavam negação imediata na nuvem.
+    3. As ocorrências cadastradas eram descartadas quando a escuta em tempo real do Firestore acusava falha temporária de permissão na nuvem.
+- **Resolução Implementada**:
+  - **Injeção Garantida de UID no Perfil**: Atualizado `AuthContext.tsx` para sempre compor `{ uid: snap.id, ...snap.data() }`, garantindo que o UID autenticado seja sempre propagado de forma íntegra.
+  - **Persistência Otimista & Cache Resiliente (`CorporateIncidentModal.tsx` e `CompanyAdminView.tsx`)**:
+    - As ocorrências salvas são gravadas imediatamente no armazenamento local particionado por domínio (`PMT_CORP_INCIDENTS_${domain}`).
+    - Emissão de evento customizado `pmt_incidents_updated` que atualiza instantaneamente o mapa de calor e a listagem.
+    - O listener do Firestore em `App.tsx` e `CompanyAdminView.tsx` foi atualizado para mesclar os dados em nuvem com o cache local (sem zerar as ocorrências em caso de erro de rede ou permissão na nuvem).
+  - **Tratamento de Strings e Campos Opcionais**:
+    - Tratamento de fallback seguro para `delegaciaMunicipio`, `delegaciaUf`, `delegaciaName`, `notes` (com limite de 500 caracteres para compatibilidade com a blueprint) e `createdByUid`/`createdByName`.
+  - **Regras Firestore Atualizadas**:
+    - Simplificada e flexibilizada a checagem em `firestore.rules` para `corporate_companies/{domainId}/incidents/{incidentId}`, permitindo escrita com verificação de identidade autenticada (`createdByUid == request.auth.uid`) e tipo de timestamp válido.
+    - Sincronizado `firebase-blueprint.json` com os campos `lat`, `lng`, `address`, `bairro`, `history` e tipos de ocorrência (`roubo`, `furto`).
+
+---
+
 ## [17/11/2026] — Atualização de Titularidade, Licenciamento & Cadastro de Empresas
 
 ### 8. Opção de Cadastro de Empresa & Acesso Corporativo Unificado

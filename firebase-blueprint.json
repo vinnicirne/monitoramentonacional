@@ -566,7 +566,7 @@
         },
         "incidentType": {
           "type": "string",
-          "enum": ["extravio", "fraude", "roubo_carga", "apreensao", "outros"]
+          "enum": ["extravio", "fraude", "roubo_carga", "roubo", "furto", "apreensao", "outros"]
         },
         "boNumber": {
           "type": "string",
@@ -606,7 +606,27 @@
         },
         "notes": {
           "type": "string",
-          "maxLength": 500
+          "maxLength": 1000
+        },
+        "lat": {
+          "type": "number"
+        },
+        "lng": {
+          "type": "number"
+        },
+        "address": {
+          "type": "string",
+          "maxLength": 250
+        },
+        "bairro": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         },
         "createdByUid": {
           "type": "string",

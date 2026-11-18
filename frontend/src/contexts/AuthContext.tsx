@@ -588,7 +588,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await ensureAdminSeedData(uid, email);
         }
       } else {
-        const data = existingSnap.data() as UserProfile;
+        const data = {
+          uid: existingSnap.id,
+          ...existingSnap.data()
+        } as UserProfile;
         const needsAdminPromotion =
           isBootstrapAdmin && (data.role !== 'admin' || data.status !== 'approved');
 
@@ -778,7 +781,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           userRef,
           snap => {
             if (snap.exists()) {
-              const prof = snap.data() as UserProfile;
+              const prof = {
+                uid: snap.id,
+                ...snap.data()
+              } as UserProfile;
               userProfileRef.current = prof;
               setUserProfile(prof);
               setAuthError(null);

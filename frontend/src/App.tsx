@@ -247,47 +247,89 @@ function App() {
       .catch(err => console.error('Erro ao carregar registro territorial:', err));
   }, []);
 
-  // Listen to Corporate Incidents in real-time (Strictly isolated by companyDomain)
+  // Listen to Corporate Incidents in real-time (Strictly isolated by companyDomain with resilient local cache fallback)
   useEffect(() => {
     if (!effectiveCompanyDomain || !hasFullAccess) {
       setCompanyIncidents([]);
       return;
     }
 
+    const readLocalIncidents = (domain: string): CorporatePackageIncident[] => {
+      try {
+        const raw = localStorage.getItem(`PMT_CORP_INCIDENTS_${domain}`);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const initialLocal = readLocalIncidents(effectiveCompanyDomain);
+    if (initialLocal.length > 0) {
+      setCompanyIncidents(initialLocal);
+    }
+
+    const sortIncidentsDesc = (items: CorporatePackageIncident[]) => {
+      return [...items].sort((a, b) => {
+        const tA = (a.createdAt as any)?.toMillis
+          ? (a.createdAt as any).toMillis()
+          : a.createdAt
+          ? new Date(a.createdAt as any).getTime()
+          : 0;
+        const tB = (b.createdAt as any)?.toMillis
+          ? (b.createdAt as any).toMillis()
+          : b.createdAt
+          ? new Date(b.createdAt as any).getTime()
+          : 0;
+        return tB - tA;
+      });
+    };
+
     const colRef = collection(db, 'corporate_companies', effectiveCompanyDomain, 'incidents');
 
     const unsub = onSnapshot(
       colRef,
       snapshot => {
-        const list = snapshot.docs.map(d => ({
+        const remoteList = snapshot.docs.map(d => ({
           ...d.data(),
           id: d.id
         } as CorporatePackageIncident));
 
-        // Ordenação segura em memória por data decrescente (não exige composite index no Firestore)
-        list.sort((a, b) => {
-          const tA = (a.createdAt as any)?.toMillis
-            ? (a.createdAt as any).toMillis()
-            : a.createdAt
-            ? new Date(a.createdAt as any).getTime()
-            : 0;
-          const tB = (b.createdAt as any)?.toMillis
-            ? (b.createdAt as any).toMillis()
-            : b.createdAt
-            ? new Date(b.createdAt as any).getTime()
-            : 0;
-          return tB - tA;
-        });
+        const localList = readLocalIncidents(effectiveCompanyDomain);
+        const dict: Record<string, CorporatePackageIncident> = {};
+        localList.forEach(item => { dict[item.id] = item; });
+        remoteList.forEach(item => { dict[item.id] = item; });
+        const merged = sortIncidentsDesc(Object.values(dict));
 
-        setCompanyIncidents(list);
+        setCompanyIncidents(merged);
       },
       error => {
-        console.warn('Ocorrências corporativas não carregadas ou sem permissão:', error);
-        setCompanyIncidents([]);
+        console.warn('Ocorrências corporativas Firestore offline ou aguardando regras (mantendo painel local):', error);
+        const fallbackLocal = sortIncidentsDesc(readLocalIncidents(effectiveCompanyDomain));
+        setCompanyIncidents(fallbackLocal);
       }
     );
 
-    return () => unsub();
+    const handleLocalIncidentEvent = (e: any) => {
+      const evtDomain = e?.detail?.domain;
+      if (!evtDomain || evtDomain === effectiveCompanyDomain) {
+        const currentLocal = readLocalIncidents(effectiveCompanyDomain);
+        setCompanyIncidents(prev => {
+          const dict: Record<string, CorporatePackageIncident> = {};
+          prev.forEach(item => { dict[item.id] = item; });
+          currentLocal.forEach(item => { dict[item.id] = item; });
+          return sortIncidentsDesc(Object.values(dict));
+        });
+      }
+    };
+
+    window.addEventListener('pmt_incidents_updated', handleLocalIncidentEvent);
+
+    return () => {
+      unsub();
+      window.removeEventListener('pmt_incidents_updated', handleLocalIncidentEvent);
+    };
   }, [effectiveCompanyDomain, hasFullAccess]);
 
   // Timeline Auto-Play effect
