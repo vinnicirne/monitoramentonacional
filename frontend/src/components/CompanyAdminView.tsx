@@ -1246,8 +1246,10 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       setIncidentSuccess('Ocorrência excluída com sucesso.');
       if (editingIncidentId === incId) resetIncidentForm();
     } catch (err) {
-      const errorCode = typeof (err as any)?.code === 'string' ? ` (${(err as any).code})` : '';
-      setIncidentError(`Não foi possível excluir a ocorrência${errorCode}. Verifique sua conexão e a permissão de edição da empresa.`);
+      const errorCode = typeof (err as any)?.code === 'string' ? (err as any).code : '';
+      setIncidentError(errorCode === 'permission-denied'
+        ? 'O Firebase recusou a exclusão. Confirme se sua conta está como SuperAdmin ou tem permissão Editar na empresa e se as regras atualizadas já foram publicadas.'
+        : `Não foi possível excluir a ocorrência${errorCode ? ` (${errorCode})` : ''}. Verifique sua conexão e tente novamente.`);
       handleFirestoreError(
         err,
         OperationType.DELETE,

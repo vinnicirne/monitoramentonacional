@@ -4,6 +4,10 @@
 > **Licença Registrada:** `AID-VC-GIS-2026-BR-RJ` • Todos os direitos reservados.  
 > **Instrução contínua:** A cada nova atualização aplicada ao sistema, acrescentar uma nova seção cronológica no topo deste arquivo preservando o histórico anterior.
 
+## Correção de exclusão de ocorrências
+- Alinhada a autorização de SuperAdmin do Firestore ao perfil `users/{uid}.role == 'admin'`, que já é reconhecido pela interface. Isso evita que a conta administradora tenha o botão de exclusão sem que as regras correspondentes permitam a operação.
+- Melhorada a mensagem exibida quando o Firebase rejeita uma exclusão por permissão.
+
 ---
 
 ## [18/11/2026] — Diagnóstico de Permissão nas Ocorrências
