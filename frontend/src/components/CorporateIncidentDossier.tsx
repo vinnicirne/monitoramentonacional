@@ -133,6 +133,9 @@ export const CorporateIncidentDossier: React.FC<CorporateIncidentDossierProps> =
           <IncidentSection icon={FileText} title="Dados do registro">
             <div className="grid grid-cols-2 gap-2.5">
               <DetailField label="Tipo de ocorrência" value={typeMeta.label} />
+              <DetailField label="Transportadora" value={incident.carrierName || 'Não informada'} />
+              <DetailField label="Pacotes envolvidos" value={String(Math.max(1, Number(incident.packageQuantity) || 1))} />
+              <DetailField label="Valor por pacote" value={(incident.estimatedUnitValue ?? incident.estimatedValue / Math.max(1, Number(incident.packageQuantity) || 1)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
               <DetailField label="Número do B.O." value={incident.boNumber} />
               <DetailField label="Valor estimado" value={estimatedValue > 0 ? estimatedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Não informado'} />
               <DetailField label="Empresa" value={`@${incident.companyDomain}`} />

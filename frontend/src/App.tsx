@@ -409,6 +409,9 @@ function App() {
             id: item.id,
             companyDomain: effectiveCompanyDomain,
             trackingCode: item.trackingCode,
+            carrierName: item.carrierName || '',
+            packageQuantity: Number(item.packageQuantity) || 1,
+            estimatedUnitValue: Number(item.estimatedUnitValue) || (Number(item.estimatedValue) || 0) / Math.max(1, Number(item.packageQuantity) || 1),
             incidentType: item.incidentType,
             boNumber: item.boNumber || '',
             delegaciaId: item.delegaciaId,
@@ -1322,6 +1325,7 @@ function App() {
           }}
           companyDomain={effectiveCompanyDomain}
           availableCompanies={availableCompanies}
+          registeredCarrierOptions={Array.from(new Set(companyIncidents.map(incident => incident.carrierName?.trim()).filter((name): name is string => Boolean(name))))}
           onSelectCompanyDomain={domain => setCompanyAdminDomainOverride(domain)}
           existingIncident={selectedCorporateIncident}
           initialCoords={incidentInitialCoords}

@@ -29,8 +29,10 @@ import {
   Globe,
   History,
   Flame,
-  Crown
+  Crown,
+  BarChart3
 } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
   collection,
   deleteDoc,
@@ -64,6 +66,7 @@ import { TerritorialRegistry } from '../types';
 import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
 import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../contexts/AuthContext';
 import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
+import { formatBrlAmount, formatBrlInput, parseBrlInput } from '../utils/currency';
 
 type CompanyPanelSubTab = 'users' | 'incidents' | 'audit' | 'company_info';
 type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'ameaca' | 'resolved';
@@ -150,7 +153,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   onViewIncidentDossier,
   onLocateOnMap
 }) => {
-  const { userProfile: currentAdmin, firebaseUser, isAdmin } = useAuth();
+  const { userProfile: currentAdmin, firebaseUser, isAdmin, isCompanyAdmin } = useAuth();
   const [subTab, setSubTab] = useState<CompanyPanelSubTab>('users');
 
   // Available companies (for System Admin switcher)
@@ -211,6 +214,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   // Incident Form state
   const [editingIncidentId, setEditingIncidentId] = useState<string | null>(null);
   const [trackingCode, setTrackingCode] = useState('');
+  const [carrierName, setCarrierName] = useState('');
+  const [packageQuantity, setPackageQuantity] = useState('1');
   const [incidentType, setIncidentType] = useState<PackageIncidentType>('extravio');
   const [boNumber, setBoNumber] = useState('');
   const [delegaciaUfFilter, setDelegaciaUfFilter] = useState<'TODAS' | 'RJ' | 'MG' | 'ES'>('TODAS');
@@ -218,7 +223,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   const [selectedDelegaciaId, setSelectedDelegaciaId] = useState('');
   const [packageAtStation, setPackageAtStation] = useState(true);
   const [custodyStatus, setCustodyStatus] = useState<PackageCustodyStatus>('em_ocorrencia_delegacia');
-  const [estimatedValue, setEstimatedValue] = useState('');
+  const [estimatedUnitValue, setEstimatedUnitValue] = useState('');
   const [incidentNotes, setIncidentNotes] = useState('');
   const [incidentSearch, setIncidentSearch] = useState('');
   const [incidentFilter, setIncidentFilter] = useState<IncidentFilterMode>('all');
@@ -537,6 +542,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         (inc.trackingCode || '').toLowerCase().includes(q) ||
         (inc.boNumber || '').toLowerCase().includes(q) ||
         (inc.delegaciaName || '').toLowerCase().includes(q) ||
+        (inc.carrierName || '').toLowerCase().includes(q) ||
         (inc.delegaciaMunicipio || '').toLowerCase().includes(q) ||
         (inc.notes || '').toLowerCase().includes(q)
       );
@@ -553,8 +559,56 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       i => i.custodyStatus === 'liberado_retirada' || i.custodyStatus === 'devolvido_empresa'
     ).length;
     const totalValue = incidents.reduce((sum, i) => sum + (i.estimatedValue || 0), 0);
-    return { total, atStation, totalRoubos, resolved, totalValue };
+    const packageTotals = incidents.reduce((totals, incident) => {
+      const quantity = Math.max(1, Math.floor(Number(incident.packageQuantity) || 1));
+      totals.involved += quantity;
+      if (incident.custodyStatus === 'devolvido_empresa') totals.recovered += quantity;
+      else if (
+        incident.custodyStatus === 'extraviado_nao_localizado' ||
+        ['roubo_carga', 'roubo', 'furto'].includes(incident.incidentType)
+      ) totals.lost += quantity;
+      return totals;
+    }, { involved: 0, recovered: 0, lost: 0 });
+    return { total, atStation, totalRoubos, resolved, totalValue, ...packageTotals };
   }, [incidents]);
+
+  const carrierAnalytics = useMemo(() => {
+    const byCarrier = new Map<string, { carrier: string; occurrences: number; packages: number; recovered: number; lost: number; inProgress: number }>();
+    incidents.forEach(incident => {
+      const carrier = incident.carrierName?.trim() || 'Não informada';
+      const current = byCarrier.get(carrier) || { carrier, occurrences: 0, packages: 0, recovered: 0, lost: 0, inProgress: 0 };
+      const quantity = Math.max(1, Math.floor(Number(incident.packageQuantity) || 1));
+      current.occurrences += 1;
+      current.packages += quantity;
+      if (incident.custodyStatus === 'devolvido_empresa') current.recovered += quantity;
+      else if (incident.custodyStatus === 'extraviado_nao_localizado' || ['roubo_carga', 'roubo', 'furto'].includes(incident.incidentType)) current.lost += quantity;
+      else current.inProgress += quantity;
+      byCarrier.set(carrier, current);
+    });
+    return Array.from(byCarrier.values()).sort((a, b) => b.occurrences - a.occurrences || b.packages - a.packages);
+  }, [incidents]);
+
+  const carrierMonthlyTrend = useMemo(() => {
+    const topCarriers = carrierAnalytics.slice(0, 5).map(item => item.carrier);
+    const byMonth = new Map<string, Record<string, string | number>>();
+    incidents.forEach(incident => {
+      const carrier = incident.carrierName?.trim() || 'Não informada';
+      if (!topCarriers.includes(carrier)) return;
+      const timestamp = incident.createdAt;
+      const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp || '');
+      if (Number.isNaN(date.getTime())) return;
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const entry = byMonth.get(key) || { month: key, label: date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }) };
+      entry[carrier] = Number(entry[carrier] || 0) + 1;
+      byMonth.set(key, entry);
+    });
+    return { carriers: topCarriers, months: Array.from(byMonth.values()).sort((a, b) => String(a.month).localeCompare(String(b.month))) };
+  }, [incidents, carrierAnalytics]);
+
+  const registeredCarriers = useMemo(
+    () => Array.from(new Set(incidents.map(incident => incident.carrierName?.trim()).filter((value): value is string => Boolean(value)))),
+    [incidents]
+  );
 
   const handleAddAndLinkUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -858,11 +912,13 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   const resetIncidentForm = () => {
     setEditingIncidentId(null);
     setTrackingCode('');
+    setCarrierName('');
+    setPackageQuantity('1');
     setIncidentType('extravio');
     setBoNumber('');
     setPackageAtStation(true);
     setCustodyStatus('em_ocorrencia_delegacia');
-    setEstimatedValue('');
+    setEstimatedUnitValue('');
     setIncidentNotes('');
     setIncidentError(null);
   };
@@ -870,6 +926,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   const handleEditIncident = (inc: CorporatePackageIncident) => {
     setEditingIncidentId(inc.id);
     setTrackingCode(inc.trackingCode);
+    setCarrierName(inc.carrierName || '');
+    setPackageQuantity(String(Math.max(1, Number(inc.packageQuantity) || 1)));
     setIncidentType(inc.incidentType);
     setBoNumber(inc.boNumber);
     if (inc.delegaciaUf === 'RJ' || inc.delegaciaUf === 'MG' || inc.delegaciaUf === 'ES') {
@@ -881,7 +939,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     setSelectedDelegaciaId(inc.delegaciaId);
     setPackageAtStation(inc.packageAtStation);
     setCustodyStatus(inc.custodyStatus);
-    setEstimatedValue(inc.estimatedValue > 0 ? String(inc.estimatedValue) : '');
+    setEstimatedUnitValue(inc.estimatedUnitValue != null ? formatBrlAmount(inc.estimatedUnitValue) : inc.estimatedValue > 0 ? formatBrlAmount(inc.estimatedValue / Math.max(1, Number(inc.packageQuantity) || 1)) : '');
     setIncidentNotes(inc.notes);
     setIncidentError(null);
     setIncidentSuccess(null);
@@ -906,7 +964,10 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     }
 
     const cleanBo = boNumber.trim().slice(0, 64);
-    const numValue = Math.max(0, Number(estimatedValue.replace(',', '.')) || 0);
+    const cleanCarrier = carrierName.trim().slice(0, 120);
+    const quantity = Math.min(100000, Math.max(1, Math.floor(Number(packageQuantity) || 1)));
+    const unitValue = parseBrlInput(estimatedUnitValue);
+    const numValue = Number((unitValue * quantity).toFixed(2));
     const cleanNotes = incidentNotes.trim().slice(0, 500);
     const incId =
       editingIncidentId ||
@@ -969,6 +1030,9 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       id: incId,
       companyDomain: activeDomain,
       trackingCode: cleanCode,
+      carrierName: cleanCarrier,
+      packageQuantity: quantity,
+      estimatedUnitValue: unitValue,
       incidentType,
       boNumber: cleanBo,
       delegaciaId: safeDelId,
@@ -993,6 +1057,9 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       if (editingIncidentId) {
         await updateDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId), {
           trackingCode: cleanCode,
+          carrierName: cleanCarrier,
+          packageQuantity: quantity,
+          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -1014,6 +1081,9 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           id: incId,
           companyDomain: activeDomain,
           trackingCode: cleanCode,
+          carrierName: cleanCarrier,
+          packageQuantity: quantity,
+          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -1108,12 +1178,20 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
   const handleDeleteIncident = async (incId: string) => {
     if (!activeDomain) return;
+    if (!isAdmin && !isCompanyAdmin && currentAdmin?.incidentAccess !== 'edit') {
+      setIncidentError('Seu usuário não tem permissão para excluir ocorrências.');
+      return;
+    }
+    const incident = incidents.find(item => item.id === incId);
+    if (!window.confirm(`Excluir definitivamente a ocorrência ${incident?.trackingCode || incId}?`)) return;
     try {
       await deleteDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId));
-      const deleted = incidents.find(item => item.id === incId);
-      if (deleted) await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: deleted.trackingCode, boNumber: deleted.boNumber, delegaciaName: deleted.delegaciaName, action: 'deleted', previousStatus: deleted.custodyStatus, previousAtStation: deleted.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: 'Ocorrência removida.' });
+      if (incident) await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: incident.trackingCode, boNumber: incident.boNumber, delegaciaName: incident.delegaciaName, action: 'deleted', previousStatus: incident.custodyStatus, previousAtStation: incident.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: 'Ocorrência removida.' });
+      setIncidentError(null);
+      setIncidentSuccess('Ocorrência excluída com sucesso.');
       if (editingIncidentId === incId) resetIncidentForm();
     } catch (err) {
+      setIncidentError('Não foi possível excluir a ocorrência. Verifique sua conexão e a permissão de edição da empresa.');
       handleFirestoreError(
         err,
         OperationType.DELETE,
@@ -1851,7 +1929,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           </div>
 
           {/* KPI Summary Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-500 uppercase">
@@ -1926,7 +2004,91 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                 Soma dos pacotes em ocorrência
               </div>
             </div>
+
+            <div className="p-4 bg-white border border-blue-200 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-blue-700 uppercase">Pacotes envolvidos</div>
+              <div className="text-2xl font-extrabold text-blue-800 font-mono mt-1">{incidentStats.involved}</div>
+              <div className="text-[11px] text-slate-500 mt-1">Quantidade informada nos registros</div>
+            </div>
+            <div className="p-4 bg-white border border-emerald-200 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-emerald-700 uppercase">Recuperados / entregues</div>
+              <div className="text-2xl font-extrabold text-emerald-700 font-mono mt-1">{incidentStats.recovered}</div>
+              <div className="text-[11px] text-slate-500 mt-1">Soma automática no status devolvido</div>
+            </div>
+            <div className="p-4 bg-white border border-rose-200 rounded-2xl shadow-sm">
+              <div className="text-[11px] font-bold text-rose-700 uppercase">Perdidos / roubados</div>
+              <div className="text-2xl font-extrabold text-rose-700 font-mono mt-1">{incidentStats.lost}</div>
+              <div className="text-[11px] text-slate-500 mt-1">Não recuperados em roubo, furto ou extravio</div>
+            </div>
           </div>
+
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-4">
+            <div>
+              <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#2D3277]"><BarChart3 className="h-4 w-4" /> Histórico por transportadora</h3>
+              <p className="mt-1 text-xs text-slate-500">Dados calculados a partir das ocorrências sincronizadas no Firestore desta empresa.</p>
+            </div>
+            {carrierAnalytics.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-500">Cadastre a transportadora nos registros para começar a comparar ocorrências.</div>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                <div>
+                  <h4 className="mb-2 text-xs font-bold text-slate-700">Ocorrências registradas</h4>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={carrierAnalytics.slice(0, 10)} margin={{ top: 8, right: 12, left: -18, bottom: 42 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="carrier" angle={-25} textAnchor="end" interval={0} height={56} tick={{ fontSize: 10 }} />
+                        <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                        <Tooltip />
+                        <Bar dataKey="occurrences" name="Ocorrências" fill="#3483FA" radius={[5, 5, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="mb-2 text-xs font-bold text-slate-700">Pacotes por desfecho</h4>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={carrierAnalytics.slice(0, 10)} margin={{ top: 8, right: 12, left: -18, bottom: 42 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="carrier" angle={-25} textAnchor="end" interval={0} height={56} tick={{ fontSize: 10 }} />
+                        <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                        <Tooltip />
+                        <Bar dataKey="recovered" name="Recuperados / entregues" stackId="packages" fill="#00A650" />
+                        <Bar dataKey="lost" name="Perdidos / roubados" stackId="packages" fill="#E11D48" />
+                        <Bar dataKey="inProgress" name="Em andamento / custódia" stackId="packages" fill="#3483FA" radius={[5, 5, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            )}
+            {carrierMonthlyTrend.months.length > 0 && (
+              <div className="border-t border-slate-100 pt-4">
+                <h4 className="mb-2 text-xs font-bold text-slate-700">Evolução mensal — 5 transportadoras com mais ocorrências</h4>
+                <div className="h-72 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={carrierMonthlyTrend.months} margin={{ top: 8, right: 18, left: -18, bottom: 8 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="label" tick={{ fontSize: 10 }} />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                      <Tooltip />
+                      <Legend />
+                      {carrierMonthlyTrend.carriers.map((carrier, index) => (
+                        <Line key={carrier} type="monotone" dataKey={carrier} name={carrier} stroke={['#2D3277', '#3483FA', '#00A650', '#E11D48', '#D97706'][index]} strokeWidth={2} dot={{ r: 3 }} />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[640px] text-left text-xs">
+                <thead className="bg-slate-50 text-slate-600"><tr><th className="p-2.5">Transportadora</th><th className="p-2.5">Ocorrências</th><th className="p-2.5">Pacotes</th><th className="p-2.5">Recuperados / entregues</th><th className="p-2.5">Perdidos / roubados</th></tr></thead>
+                <tbody className="divide-y divide-slate-100">{carrierAnalytics.map(row => <tr key={row.carrier}><td className="p-2.5 font-semibold text-slate-800">{row.carrier}</td><td className="p-2.5">{row.occurrences}</td><td className="p-2.5">{row.packages}</td><td className="p-2.5 text-emerald-700">{row.recovered}</td><td className="p-2.5 text-rose-700">{row.lost}</td></tr>)}</tbody>
+              </table>
+            </div>
+          </section>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Left: Register / Edit Lost or Fraud Package Incident */}
@@ -2003,6 +2165,36 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
+                    <label className="block font-semibold text-slate-700 mb-1">Transportadora</label>
+                    <input
+                      type="text"
+                      list="company-carrier-options"
+                      maxLength={120}
+                      value={carrierName}
+                      onChange={e => setCarrierName(e.target.value)}
+                      placeholder="Digite ou cadastre a transportadora"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                    <datalist id="company-carrier-options">{registeredCarriers.map(carrier => <option key={carrier} value={carrier} />)}</datalist>
+                  </div>
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">Quantidade de pacotes envolvidos</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100000"
+                      step="1"
+                      required
+                      value={packageQuantity}
+                      onChange={e => setPackageQuantity(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
+                    />
+                    <span className="mt-1 block text-[10px] text-slate-500">Recuperados e perdidos são totalizados automaticamente pelo status salvo.</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
                     <label className="block font-semibold text-slate-700 mb-1">
                       Nº do B.O. / Registro Policial
                     </label>
@@ -2018,17 +2210,17 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
                   <div>
                     <label className="block font-semibold text-slate-700 mb-1">
-                      Valor Estimado (R$)
+                      Valor estimado por pacote (R$)
                     </label>
                     <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={estimatedValue}
-                      onChange={e => setEstimatedValue(e.target.value)}
+                      type="text"
+                      inputMode="numeric"
+                      value={estimatedUnitValue}
+                      onChange={e => setEstimatedUnitValue(formatBrlInput(e.target.value))}
                       placeholder="0,00"
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
                     />
+                    <span className="mt-1 block text-[10px] font-bold text-[#2D3277]">Total calculado: {formatBrlAmount(parseBrlInput(estimatedUnitValue) * Math.max(1, Math.floor(Number(packageQuantity) || 1)))}</span>
                   </div>
                 </div>
 
@@ -2256,6 +2448,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                                   B.O. {inc.boNumber}
                                 </span>
                               )}
+                              {inc.carrierName && <span className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-800">{inc.carrierName}</span>}
                               {inc.estimatedValue > 0 && (
                                 <span className="font-mono font-bold text-[11px] text-slate-800">
                                   R$ {inc.estimatedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -2263,6 +2456,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                               )}
                             </div>
 
+                            <div className="flex items-center gap-1.5 text-slate-700 flex-wrap">
+                              <span className="font-mono font-semibold text-slate-700">{Math.max(1, Number(inc.packageQuantity) || 1)} pacote(s)</span>
+                              <span className="text-slate-400">·</span>
+                              <span className="text-[10px] font-semibold text-slate-600">{inc.custodyStatus === 'devolvido_empresa' ? 'Recuperados / entregues' : inc.custodyStatus === 'extraviado_nao_localizado' || ['roubo_carga', 'roubo', 'furto'].includes(inc.incidentType) ? 'Perdidos / roubados' : 'Em andamento / custódia'}</span>
+                            </div>
                             <div className="flex items-center gap-1.5 text-slate-700 flex-wrap">
                               <span className="px-1.5 py-0.5 rounded bg-[#2D3277] text-[#FFE600] font-mono font-bold text-[10px]">
                                 {inc.delegaciaUf}

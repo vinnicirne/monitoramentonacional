@@ -136,6 +136,9 @@ export interface CorporatePackageIncident {
   id: string;
   companyDomain: string;
   trackingCode: string;
+  carrierName?: string;
+  packageQuantity?: number;
+  estimatedUnitValue?: number;
   incidentType: PackageIncidentType;
   boNumber: string;
   delegaciaId: string;

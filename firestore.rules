@@ -324,6 +324,7 @@ service cloud.firestore {
           'delegaciaId', 'delegaciaName', 'delegaciaUf', 'delegaciaMunicipio',
           'packageAtStation', 'custodyStatus', 'estimatedValue', 'notes',
           'lat', 'lng', 'address', 'bairro', 'history', 'legacyCreatedAt',
+          'carrierName', 'packageQuantity', 'estimatedUnitValue',
           'createdByUid', 'createdByName', 'createdAt', 'updatedAt'
         ]) &&
         isValidId(data.id) &&
@@ -343,8 +344,15 @@ service cloud.firestore {
           'devolvido_empresa',
           'extraviado_nao_localizado'
         ] &&
-        data.estimatedValue is number && data.estimatedValue >= 0 &&
+        data.estimatedValue is number && data.estimatedValue >= 0 && data.estimatedValue <= 100000000000000 &&
         data.notes is string && data.notes.size() <= 1000 &&
+        (!('carrierName' in data) || (data.carrierName is string && data.carrierName.size() <= 120)) &&
+        (!('packageQuantity' in data) || (data.packageQuantity is int && data.packageQuantity >= 1 && data.packageQuantity <= 100000)) &&
+        (!('estimatedUnitValue' in data) || (data.estimatedUnitValue is number && data.estimatedUnitValue >= 0 && data.estimatedUnitValue <= 1000000000)) &&
+        (!('packageQuantity' in data) || !('estimatedUnitValue' in data) || (
+          data.estimatedValue >= data.estimatedUnitValue * data.packageQuantity - 0.01 &&
+          data.estimatedValue <= data.estimatedUnitValue * data.packageQuantity + 0.01
+        )) &&
         (!('lat' in data) || (data.lat is number && data.lat >= -90 && data.lat <= 90)) &&
         (!('lng' in data) || (data.lng is number && data.lng >= -180 && data.lng <= 180)) &&
         (!('address' in data) || (data.address is string && data.address.size() <= 250)) &&
@@ -929,7 +937,7 @@ service cloud.firestore {
 
         allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (
           isAdmin() ||
-          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+          (isCorporateCompanyActive(domainId) && canEditCompanyIncidents(domainId))
         );
       }
 

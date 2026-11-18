@@ -38,12 +38,14 @@ import { searchAddressesFree } from '../utils/geocoding';
 import { findResponsibleDelegacia, DelegaciaMatchResult } from '../utils/delegaciaMatcher';
 import { CUSTODY_LABELS, INCIDENT_TYPE_META } from '../utils/corporateIncidentMetadata';
 import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
+import { formatBrlAmount, formatBrlInput, parseBrlInput } from '../utils/currency';
 
 interface CorporateIncidentModalProps {
   isOpen: boolean;
   onClose: () => void;
   companyDomain: string;
   availableCompanies?: CorporateCompany[];
+  registeredCarrierOptions?: string[];
   onSelectCompanyDomain?: (domain: string) => void;
   incidentToEdit?: CorporatePackageIncident | null;
   existingIncident?: CorporatePackageIncident | null;
@@ -58,6 +60,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   onClose,
   companyDomain,
   availableCompanies = [],
+  registeredCarrierOptions = [],
   onSelectCompanyDomain,
   incidentToEdit = null,
   existingIncident = null,
@@ -85,6 +88,8 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
 
   // Form Fields
   const [trackingCode, setTrackingCode] = useState('');
+  const [carrierName, setCarrierName] = useState('');
+  const [packageQuantity, setPackageQuantity] = useState('1');
   const [incidentType, setIncidentType] = useState<PackageIncidentType>('roubo_carga');
   const [boNumber, setBoNumber] = useState('');
   const [delegaciaUfFilter, setDelegaciaUfFilter] = useState<'TODAS' | 'RJ' | 'MG' | 'ES'>('TODAS');
@@ -94,7 +99,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   const [isManuallyOverridden, setIsManuallyOverridden] = useState<boolean>(false);
   const [packageAtStation, setPackageAtStation] = useState(true);
   const [custodyStatus, setCustodyStatus] = useState<PackageCustodyStatus>('em_ocorrencia_delegacia');
-  const [estimatedValue, setEstimatedValue] = useState('');
+  const [estimatedUnitValue, setEstimatedUnitValue] = useState('');
   const [notes, setNotes] = useState('');
 
   // Geographic fields
@@ -201,12 +206,14 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
 
     if (activeIncident) {
       setTrackingCode(activeIncident.trackingCode || '');
+      setCarrierName(activeIncident.carrierName || '');
+      setPackageQuantity(String(Math.max(1, Number(activeIncident.packageQuantity) || 1)));
       setIncidentType(activeIncident.incidentType || 'roubo_carga');
       setBoNumber(activeIncident.boNumber || '');
       setSelectedDelegaciaId(activeIncident.delegaciaId || '');
       setPackageAtStation(activeIncident.packageAtStation ?? true);
       setCustodyStatus(activeIncident.custodyStatus || 'em_ocorrencia_delegacia');
-      setEstimatedValue(activeIncident.estimatedValue ? String(activeIncident.estimatedValue) : '');
+      setEstimatedUnitValue(activeIncident.estimatedUnitValue != null ? formatBrlAmount(activeIncident.estimatedUnitValue) : activeIncident.estimatedValue ? formatBrlAmount(activeIncident.estimatedValue / Math.max(1, Number(activeIncident.packageQuantity) || 1)) : '');
       setNotes(activeIncident.notes || '');
       setAddressInput(activeIncident.address || '');
       setBairroInput(activeIncident.bairro || '');
@@ -216,11 +223,13 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setNewHistoryStatus(activeIncident.custodyStatus || 'em_ocorrencia_delegacia');
     } else {
       setTrackingCode('');
+      setCarrierName('');
+      setPackageQuantity('1');
       setIncidentType('roubo_carga');
       setBoNumber('');
       setPackageAtStation(true);
       setCustodyStatus('em_ocorrencia_delegacia');
-      setEstimatedValue('');
+      setEstimatedUnitValue('');
       setNotes('');
       setAddressInput('');
       setBairroInput('');
@@ -401,7 +410,10 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     }
 
     const cleanBo = boNumber.trim().slice(0, 64);
-    const numValue = Math.max(0, Number(estimatedValue.replace(',', '.')) || 0);
+    const cleanCarrier = carrierName.trim().slice(0, 120);
+    const quantity = Math.min(100000, Math.max(1, Math.floor(Number(packageQuantity) || 1)));
+    const unitValue = parseBrlInput(estimatedUnitValue);
+    const numValue = Number((unitValue * quantity).toFixed(2));
     const cleanNotes = notes.trim().slice(0, 500);
     const cleanAddress = addressInput.trim().slice(0, 250);
     const cleanBairro = bairroInput.trim().slice(0, 120);
@@ -449,6 +461,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       id: incId,
       companyDomain: domainToUse,
       trackingCode: cleanCode,
+      carrierName: cleanCarrier,
+      packageQuantity: quantity,
+      estimatedUnitValue: unitValue,
       incidentType,
       boNumber: cleanBo,
       delegaciaId: safeDelId,
@@ -475,6 +490,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       if (activeIncident) {
         await updateDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', incId), {
           trackingCode: cleanCode,
+          carrierName: cleanCarrier,
+          packageQuantity: quantity,
+          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -499,6 +517,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           id: incId,
           companyDomain: domainToUse,
           trackingCode: cleanCode,
+          carrierName: cleanCarrier,
+          packageQuantity: quantity,
+          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -819,6 +840,36 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Transportadora</label>
+                  <input
+                    type="text"
+                    value={carrierName}
+                    onChange={e => setCarrierName(e.target.value)}
+                    list="corporate-carrier-options"
+                    maxLength={120}
+                    placeholder="Digite ou cadastre o nome da transportadora"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
+                  />
+                  <datalist id="corporate-carrier-options">{registeredCarrierOptions.map(carrier => <option key={carrier} value={carrier} />)}</datalist>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Quantidade de pacotes envolvidos</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100000"
+                    step="1"
+                    required
+                    value={packageQuantity}
+                    onChange={e => setPackageQuantity(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
+                  />
+                  <p className="mt-1 text-[10px] text-slate-500">Os totais de pacotes e valores são calculados automaticamente conforme a quantidade informada.</p>
+                </div>
+              </div>
+
               {/* 1. Localização Exata (Ponto no Mapa de Calor) */}
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
@@ -1032,15 +1083,17 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Valor Estimado da Carga / Prejuízo (R$)
+                    Valor estimado por pacote (R$)
                   </label>
                   <input
                     type="text"
-                    value={estimatedValue}
-                    onChange={e => setEstimatedValue(e.target.value)}
-                    placeholder="Ex: 25000.00"
+                    inputMode="numeric"
+                    value={estimatedUnitValue}
+                    onChange={e => setEstimatedUnitValue(formatBrlInput(e.target.value))}
+                    placeholder="Ex: 250,00"
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
                   />
+                  <p className="mt-1 text-[11px] font-bold text-[#2D3277]">Total calculado: {formatBrlAmount(parseBrlInput(estimatedUnitValue) * Math.max(1, Math.floor(Number(packageQuantity) || 1)))}</p>
                 </div>
 
                 <div>

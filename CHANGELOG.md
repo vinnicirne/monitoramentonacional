@@ -6,6 +6,18 @@
 
 ---
 
+## [18/11/2026] — Transportadoras, Quantidade e Valor de Carga
+
+### 28. Análise de Ocorrências e Pacotes por Transportadora
+- Incluídos no registro os campos de transportadora e quantidade de pacotes envolvidos, com sugestão de nomes já registrados pela empresa.
+- O valor estimado total agora é calculado automaticamente a partir do valor por pacote multiplicado pela quantidade; o campo usa formatação monetária brasileira durante a digitação.
+- Salvos no Firestore o nome da transportadora, quantidade, valor unitário e valor total, sincronizados entre os dispositivos da empresa.
+- Adicionados indicadores e gráficos no painel empresarial para ocorrências por transportadora, evolução mensal e pacotes recuperados/entregues ou perdidos/roubados.
+- O total recuperado é calculado pelo status **Devolvido à empresa**. Perdas incluem ocorrências de extravio sem localização e roubo/furto ainda não devolvidos; demais pacotes permanecem em andamento/custódia.
+
+### 29. Permissão de Exclusão de Ocorrências
+- Alinhada a exclusão no Firestore à permissão de editar ocorrências; a ação pede confirmação e apresenta o resultado para o usuário.
+
 ## [18/11/2026] — Novo Tipo de Ocorrência: Ameaça
 
 ### 27. Registro e Visualização de Ameaças
