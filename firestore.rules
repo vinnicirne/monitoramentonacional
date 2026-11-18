@@ -99,8 +99,11 @@ service cloud.firestore {
         isValidDomainId(domain) &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         (
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain == domain ||
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain == domain
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == domain ||
+          (
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == '' &&
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain == domain
+          )
         ) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
     }
@@ -481,6 +484,8 @@ service cloud.firestore {
             existing().role == 'user' &&
             incoming().role == 'user' &&
             userId != request.auth.uid &&
+            existing().get('companyDomain', '') in ['', existing().domain] &&
+            incoming().get('companyDomain', '') == existing().domain &&
             incoming().referralCode == existing().referralCode &&
             incoming().referredByCode == existing().referredByCode &&
             incoming().referredByUid == existing().referredByUid &&

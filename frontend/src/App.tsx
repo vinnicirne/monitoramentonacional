@@ -125,31 +125,35 @@ function App() {
   );
 
   const effectiveCompanyDomain = useMemo(() => {
-    // 1. Override explícito de domínio (selecionado no Painel Empresa ou criado)
-    if (companyAdminDomainOverride) {
-      return companyAdminDomainOverride.toLowerCase().trim();
+    if (isAdmin) {
+      if (companyAdminDomainOverride) return companyAdminDomainOverride.toLowerCase().trim();
+      const activeCompany = availableCompanies.find(company => company.active);
+      return activeCompany?.domain.toLowerCase().trim() || '';
     }
-    // 2. Se o usuário tem companyDomain corporativo no perfil
-    const userCompDomain = (userProfile?.companyDomain || '').toLowerCase().trim();
-    if (userCompDomain && !PUBLIC_EMAIL_DOMAINS.includes(userCompDomain)) {
-      return userCompDomain;
-    }
-    // 3. Se for administrador e houver empresas cadastradas no sistema
-    if (isAdmin && availableCompanies.length > 0) {
-      const activeFirst = availableCompanies.find(c => c.active) || availableCompanies[0];
-      return activeFirst.domain.toLowerCase().trim();
-    }
-    // 4. Se o e-mail do usuário tem domínio corporativo próprio
-    const userEmailDomain = (userProfile?.domain || '').toLowerCase().trim();
-    if (userEmailDomain && !PUBLIC_EMAIL_DOMAINS.includes(userEmailDomain)) {
-      return userEmailDomain;
-    }
-    // 5. Fallback para empresas cadastradas disponíveis
-    if (availableCompanies.length > 0) {
-      return availableCompanies[0].domain.toLowerCase().trim();
-    }
-    return userCompDomain || userEmailDomain || '';
+
+    // Non-admins are always scoped to their assigned company. A previous
+    // admin override or another company's first record must never set the tenant.
+    const assignedDomain = (userProfile?.companyDomain || userProfile?.domain || '')
+      .toLowerCase()
+      .trim();
+    return assignedDomain && !PUBLIC_EMAIL_DOMAINS.includes(assignedDomain)
+      ? assignedDomain
+      : '';
   }, [companyAdminDomainOverride, userProfile?.companyDomain, userProfile?.domain, isAdmin, availableCompanies, PUBLIC_EMAIL_DOMAINS]);
+
+  const canViewCompanyIncidents = Boolean(
+    hasFullAccess &&
+      effectiveCompanyDomain &&
+      (isAdmin ||
+        ((userProfile?.companyDomain || userProfile?.domain || '').toLowerCase().trim() ===
+          effectiveCompanyDomain))
+  );
+  const visibleCompanyIncidents = useMemo(() => {
+    if (!canViewCompanyIncidents) return [];
+    return companyIncidents.filter(
+      incident => incident.companyDomain?.toLowerCase().trim() === effectiveCompanyDomain
+    );
+  }, [companyIncidents, canViewCompanyIncidents, effectiveCompanyDomain]);
 
   // Search and Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -243,6 +247,10 @@ function App() {
   };
 
   const openCorporateIncidentDossier = (incident: CorporatePackageIncident) => {
+    if (
+      !canViewCompanyIncidents ||
+      incident.companyDomain?.toLowerCase().trim() !== effectiveCompanyDomain
+    ) return;
     setSelectedCorporateIncident(incident);
     setIncidentInitialCoords(undefined);
     setSelectedData(null);
@@ -277,10 +285,24 @@ function App() {
   };
 
   const viewCorporateIncidentFromCompanyPanel = (incident: CorporatePackageIncident) => {
+    if (!isAdmin && incident.companyDomain?.toLowerCase().trim() !== effectiveCompanyDomain) return;
     setCompanyAdminDomainOverride(incident.companyDomain);
     setActiveTab('map');
     openCorporateIncidentDossier(incident);
   };
+
+  useEffect(() => {
+    if (
+      selectedCorporateIncident &&
+      (!canViewCompanyIncidents ||
+        selectedCorporateIncident.companyDomain?.toLowerCase().trim() !== effectiveCompanyDomain)
+    ) {
+      setSelectedCorporateIncident(null);
+      setIsDossierOpen(false);
+      setIsIncidentModalOpen(false);
+      setIncidentInitialCoords(undefined);
+    }
+  }, [selectedCorporateIncident, canViewCompanyIncidents, effectiveCompanyDomain]);
 
   // Load main territorial registry JSON from repository's /data/territorial_registry.json
   useEffect(() => {
@@ -294,7 +316,8 @@ function App() {
 
   // Listen to Corporate Incidents in real-time (Strictly isolated by companyDomain with resilient local cache fallback)
   useEffect(() => {
-    if (!effectiveCompanyDomain || !hasFullAccess) {
+    setCompanyIncidents([]);
+    if (!canViewCompanyIncidents) {
       setCompanyIncidents([]);
       return;
     }
@@ -388,7 +411,7 @@ function App() {
     return () => {
       unsub();
     };
-  }, [effectiveCompanyDomain, hasFullAccess, userProfile?.uid]);
+  }, [effectiveCompanyDomain, canViewCompanyIncidents, userProfile?.uid]);
 
   // Timeline Auto-Play effect
   useEffect(() => {
@@ -762,8 +785,8 @@ function App() {
               setLayerOpacity={setLayerOpacity}
               activeSection={sidebarSection}
               companyDomain={effectiveCompanyDomain}
-              totalCompanyIncidents={companyIncidents.length}
-              totalCompanyRoubos={companyIncidents.filter(i => i.incidentType === 'roubo_carga' || i.incidentType === 'roubo' || i.incidentType === 'furto').length}
+              totalCompanyIncidents={visibleCompanyIncidents.length}
+              totalCompanyRoubos={visibleCompanyIncidents.filter(i => i.incidentType === 'roubo_carga' || i.incidentType === 'roubo' || i.incidentType === 'furto').length}
               onOpenIncidentModal={canEditCompanyIncidents ? () => {
                 setIncidentInitialCoords(undefined);
                 setSelectedCorporateIncident(null);
@@ -790,7 +813,7 @@ function App() {
                 selectedCommunityName={selectedCommunityName}
                 selectedDelegaciaMgEsId={selectedDelegaciaMgEsId}
                 canViewDetails={hasFullAccess}
-                companyIncidents={companyIncidents}
+                companyIncidents={visibleCompanyIncidents}
                 companyDomain={effectiveCompanyDomain}
                 onSelectCorporateIncident={openCorporateIncidentDossier}
                 onRequestRegisterIncident={canEditCompanyIncidents ? coords => {
@@ -810,7 +833,7 @@ function App() {
 
                   // Clique em ocorrência corporativa -> abre o dossier com o registro completo
                   if (feat.tipo === 'CORPORATE_INCIDENT') {
-                    const incident = feat.corporateIncident || companyIncidents.find(i => String(i.id) === String(feat.id));
+                    const incident = feat.corporateIncident || visibleCompanyIncidents.find(i => String(i.id) === String(feat.id));
                     if (incident) openCorporateIncidentDossier(incident);
                     return;
                   }
