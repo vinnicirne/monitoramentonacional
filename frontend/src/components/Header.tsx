@@ -42,10 +42,12 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="h-[calc(52px+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] md:h-16 md:pt-0 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
       {/* 1. Brand Identity — Monitoramento em cima e Territorial embaixo */}
-      <div
-        className="flex items-center gap-2 shrink-0 cursor-pointer select-none"
-        onClick={onOpenLicense}
-        title="Monitoramento Territorial (Agência Ícone Digital by Vinicius Cirne)"
+      <button
+        type="button"
+        className="flex items-center gap-2 shrink-0 cursor-pointer select-none text-left"
+        onClick={() => setActiveTab('map')}
+        aria-label="Ir para a página inicial — Mapa territorial"
+        title="Ir para a página inicial"
       >
         <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-[#2D3277] border border-[#1E2258] flex items-center justify-center text-[#FFE600] shadow-sm shrink-0">
           <Shield className="w-4 h-4 md:w-5 md:h-5" />
@@ -58,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
             Territorial
           </span>
         </div>
-      </div>
+      </button>
 
       {/* 2. State Scope Segmented Control — Fits cleanly on 375px+ mobile */}
       <div className="flex items-center gap-0.5 bg-[#F2DA00] p-1 rounded-xl border border-[#DFC700] min-w-0 overflow-x-auto no-scrollbar">

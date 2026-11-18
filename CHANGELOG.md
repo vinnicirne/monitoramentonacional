@@ -4,6 +4,10 @@
 > **Licença Registrada:** `AID-VC-GIS-2026-BR-RJ` • Todos os direitos reservados.  
 > **Instrução contínua:** A cada nova atualização aplicada ao sistema, acrescentar uma nova seção cronológica no topo deste arquivo preservando o histórico anterior.
 
+## Navegação da logo para a página inicial
+- O clique na logo do cabeçalho agora abre o mapa inicial, em vez de abrir o modal dos termos da licença.
+- O acesso aos termos continua disponível pelas ações próprias de licença.
+
 ## Correção da lista após excluir ocorrência
 - A exclusão agora grava um marcador permanente no Firestore antes de remover a ocorrência, impedindo que um cache antigo do navegador recupere o registro.
 - O cache local do dispositivo que excluiu a ocorrência também é atualizado imediatamente.
