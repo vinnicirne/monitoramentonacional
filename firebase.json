@@ -1,0 +1,9 @@
+{
+  "firestore": {
+    "database": "ai-studio-paineldemonitora-274ba797-8ae9-4b0a-a13c-fe819cbfd018",
+    "edition": "enterprise",
+    "location": "us-east1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
