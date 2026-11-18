@@ -6,6 +6,11 @@
 
 ---
 
+## [18/11/2026] — Correção de Salvamento dos Dados de Transportadora
+
+### 30. Inclusão dos Novos Campos na Regra de Atualização do Firestore
+- Corrigida a lista de campos permitidos em atualizações de ocorrências existentes para incluir transportadora, quantidade e valor estimado por pacote.
+
 ## [18/11/2026] — Transportadoras, Quantidade e Valor de Carga
 
 ### 28. Análise de Ocorrências e Pacotes por Transportadora

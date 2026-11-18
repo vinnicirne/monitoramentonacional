@@ -932,7 +932,8 @@ service cloud.firestore {
           incoming().diff(existing()).affectedKeys().hasOnly([
             'trackingCode', 'incidentType', 'boNumber', 'delegaciaId', 'delegaciaName',
             'delegaciaUf', 'delegaciaMunicipio', 'packageAtStation', 'custodyStatus',
-            'estimatedValue', 'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
+            'estimatedValue', 'estimatedUnitValue', 'packageQuantity', 'carrierName',
+            'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
           ]);
 
         allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (
