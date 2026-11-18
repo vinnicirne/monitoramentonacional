@@ -6,6 +6,13 @@
 
 ---
 
+## [18/11/2026] — Remoção Definitiva de Usuário da Empresa
+
+### 26. Limpeza do Quadro de Usuários Corporativos
+- Adicionada ação para remover definitivamente um usuário da empresa, excluindo a licença e desvinculando o perfil corporativo em uma operação atômica.
+- A conta global continua existindo, mas perde o acesso corporativo; perfis desvinculados deixam de aparecer na lista de usuários vinculados.
+- Mantida confirmação antes da remoção e proteção contra auto remoção e exclusão de administradores gerais.
+
 ## [18/11/2026] — Sincronização do Papel de Administrador da Empresa
 
 ### 25. Promoção de Usuário a Administrador da Empresa

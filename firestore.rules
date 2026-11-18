@@ -549,7 +549,15 @@ service cloud.firestore {
             incoming().role == 'user' &&
             userId != request.auth.uid &&
             existing().get('companyDomain', '') in ['', existing().domain] &&
-            incoming().get('companyDomain', '') == existing().domain &&
+            (
+              incoming().get('companyDomain', '') == existing().domain ||
+              (
+                incoming().get('companyDomain', '') == '' &&
+                incoming().get('licenseStatus', 'none') == 'suspended' &&
+                incoming().get('companyRole', 'member') == 'member' &&
+                incoming().get('incidentAccess', 'read') == 'read'
+              )
+            ) &&
             incoming().planId in [existing().planId, get(/databases/$(database)/documents/corporate_companies/$(existing().domain)).data.planId] &&
             incoming().referralCode == existing().referralCode &&
             incoming().referredByCode == existing().referredByCode &&

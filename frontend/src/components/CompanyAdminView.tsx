@@ -316,7 +316,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
     unsubs.push(
       onSnapshot(
-        query(collection(db, 'users'), where('domain', '==', activeDomain)),
+        query(collection(db, 'users'), where('companyDomain', '==', activeDomain)),
         snap => {
           setCompanyUsers(snap.docs.map(d => d.data() as UserProfile));
         },
@@ -819,25 +819,36 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   };
 
   const handleRemoveLicense = async (member: UnifiedCompanyMember) => {
-    if (!activeDomain || !member.license) return;
-    if (member.user?.uid === currentAdmin?.uid) return;
+    if (!activeDomain || (!member.license && !member.user)) return;
+    if (member.user?.uid === currentAdmin?.uid || member.user?.role === 'admin') return;
+    const confirmed = window.confirm(
+      `Remover ${member.displayName} (${member.email}) definitivamente desta empresa? A licença será excluída. A conta global do usuário permanecerá, mas perderá o acesso corporativo.`
+    );
+    if (!confirmed) return;
 
     try {
-      await deleteDoc(
-        doc(db, 'corporate_companies', activeDomain, 'licenses', member.license.id)
-      );
-      if (member.user && member.user.uid !== currentAdmin?.uid && member.user.role !== 'admin') {
-        await updateDoc(doc(db, 'users', member.user.uid), {
+      const batch = writeBatch(db);
+      if (member.license) {
+        batch.delete(doc(db, 'corporate_companies', activeDomain, 'licenses', member.license.id));
+      }
+      if (member.user) {
+        batch.update(doc(db, 'users', member.user.uid), {
+          companyDomain: '',
           licenseStatus: 'suspended',
-          status: 'blocked',
+          companyRole: 'member',
+          incidentAccess: 'read',
+          licenseKey: '',
           updatedAt: serverTimestamp()
         });
       }
+      await batch.commit();
     } catch (err) {
       handleFirestoreError(
         err,
-        OperationType.DELETE,
-        `corporate_companies/${activeDomain}/licenses/${member.license.id}`
+        OperationType.WRITE,
+        member.user
+          ? `users/${member.user.uid}`
+          : `corporate_companies/${activeDomain}/licenses/${member.license?.id}`
       );
     }
   };
@@ -1782,13 +1793,14 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                                     </select>
                                   </label>
 
-                                  {m.license && (
+                                  {(m.license || m.user) && m.user?.role !== 'admin' && (
                                     <button
                                       onClick={() => handleRemoveLicense(m)}
-                                      title="Remover vínculo de licença"
+                                      title="Remover definitivamente da empresa"
                                       className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 cursor-pointer"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
+                                      <span className="sr-only">Remover {m.displayName} da empresa</span>
                                     </button>
                                   )}
                                 </div>
