@@ -6,6 +6,39 @@
 
 ---
 
+## [18/11/2026] — Esclarecimento da Cláusula de Dados e Licenciamento
+
+### 18. Separação entre Software, Dados Públicos e Dados do Cliente
+- Revisada a seção de titularidade para limitar a reivindicação da Agência Ícone Digital ao software e aos elementos originais que desenvolveu, sem incluir dados públicos nem materiais de terceiros.
+- Esclarecido que bases oriundas de fontes como ISP Dados e Fogo Cruzado não são propriedade da Agência; acesso e reutilização devem respeitar as condições de cada fonte, inclusive eventuais requisitos de autorização de API.
+- Incluída disposição esclarecendo que esta licença não reivindica como propriedade da Agência as ocorrências e informações registradas pelo cliente ou por seus usuários.
+- Atualizado `LICENSE.md` com referências às fontes citadas.
+
+---
+
+## [18/11/2026] — Acesso às Ocorrências Corporativas, Permissões e Isolamento por Empresa
+
+### 17. Atualização do Fluxo de Consulta, Persistência e Acesso ao Mapa Corporativo
+- **Consulta de ocorrência em painel lateral**: clicar em uma ocorrência abre o dossiê lateral com os dados e o histórico, sem iniciar diretamente o formulário de edição.
+- **Permissões por usuário**: distinção entre acesso de leitura e edição nas ocorrências, respeitada pela interface e pelas regras do Firestore.
+- **Sincronização entre dispositivos**: ocorrências corporativas são acompanhadas em tempo real pelo Firestore para que usuários autorizados da mesma empresa vejam os registros em outros dispositivos; o cache local fica restrito à recuperação de registros legados.
+- **Isolamento do mapa de calor**: dados e ocorrências corporativas são filtrados pelo domínio da empresa; as regras do Firestore restringem a leitura aos membros da empresa correspondente.
+- **Acesso de teste do Mercado Livre**: contas verificadas com domínio `@mercadolivre.com` podem entrar com acesso de leitura durante a fase de avaliação, sem exigir licença individual.
+- **Publicação**: as alterações de isolamento foram enviadas para `main` e as regras do Firestore foram publicadas no projeto Firebase configurado.
+
+---
+
+## [18/11/2026] — Proposta Base de Piloto Comercial para o Mercado Livre
+
+### Preparação da Proposta de Avaliação do Sistema
+- Elaborada proposta comercial inicial para um piloto de 90 dias do painel de monitoramento territorial e gestão de ocorrências.
+- Escopo-base: uma região operacional, até 30 participantes, permissões de leitura e edição, orientação inicial, acompanhamento quinzenal e resumo final de resultados.
+- Investimento de referência para negociação: R$ 10.000 de implantação e R$ 10.000 por mês durante três meses, totalizando R$ 40.000.
+- Registrada referência preliminar de R$ 15.000 mensais para eventual continuidade anual após avaliação do piloto, sujeita à revisão de escopo, segurança, suporte e integrações.
+- A proposta-base foi salva em `Documentação/Proposta Comercial - Piloto Mercado Livre.pdf` para servir de referência em futuras revisões. O piloto não cria obrigação de contratação posterior.
+
+---
+
 ## [17/11/2026] — Vinculação Automática de Delegacia por Localização e Inteligência Geográfica
 
 ### 16. Identificação e Seleção Automática da Delegacia Responsável pela Área
