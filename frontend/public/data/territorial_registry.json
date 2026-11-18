@@ -2065,26 +2065,24 @@
     "75": {
       "cisp": 75,
       "cisp_formatado": "075ª DP",
-      "nome_oficial": "075ª DP - Rio Bonito",
+      "nome_oficial": "075ª DP - Rio do Ouro",
       "aisp": 7,
       "batalhao": "7º BPM - São Gonçalo",
       "risp": 4,
       "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
-      "municipio": "Rio Bonito",
+      "municipio": "São Gonçalo",
       "bairros": [
-        "Centro",
-        "Praça Cruzeiro",
-        "Mangueirinha",
-        "Boa Esperança"
+        "Ipiiba",
+        "Sete Pontes"
       ],
       "telefone": "(21) 2734-9400",
-      "endereco": "Rua Quinze de Novembro, 250 - Centro",
+      "endereco": "Estrada Velha de Maricá, s/n - Rio do Ouro, São Gonçalo - RJ",
       "marcolegal": "SESP 310/2000",
-      "validacao": "Segue camada do ISPGeo",
+      "validacao": "Localidade e município conferidos com a relação territorial oficial da CISP 75.",
       "areakm2": 88.5,
       "centroide": [
-        -42.960479,
-        -22.861673
+        -43.01,
+        -22.865
       ],
       "indicadores": {
         "atual_2025": {
@@ -9436,24 +9434,24 @@
     "119": {
       "cisp": 119,
       "cisp_formatado": "119ª DP",
-      "nome_oficial": "119ª DP",
+      "nome_oficial": "119ª DP - Rio Bonito",
       "aisp": 35,
       "batalhao": "35º BPM - Itaboraí",
       "risp": 4,
       "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
-      "municipio": "Município da CISP 119",
+      "municipio": "Rio Bonito",
       "bairros": [
-        "Bairros vinculados à 119ª DP",
-        "Setor Territorial 119"
+        "Rio Bonito",
+        "Boa Esperança"
       ],
       "telefone": "(21) 2332-8419",
-      "endereco": "Sede Oficial da 119ª DP",
+      "endereco": "Rua Rodrigues Coelho, s/n - Green Valley, Rio Bonito - RJ",
       "marcolegal": "SESP 310/2000",
-      "validacao": "Segue limites de municípios definidos em outro diploma legal",
+      "validacao": "Localidade conferida com a relação territorial da CISP 119 e Carta de Serviços da PCERJ.",
       "areakm2": 459.5,
       "centroide": [
-        -42.588067,
-        -22.735015
+        -42.625,
+        -22.705
       ],
       "indicadores": {
         "atual_2025": {
