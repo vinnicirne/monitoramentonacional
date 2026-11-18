@@ -5,9 +5,10 @@
 > **Instrução contínua:** A cada nova atualização aplicada ao sistema, acrescentar uma nova seção cronológica no topo deste arquivo preservando o histórico anterior.
 
 ## Correção da lista após excluir ocorrência
-- A exclusão agora remove a ocorrência do Firestore em lote e grava um marcador de exclusão permanente para impedir que um cache antigo do navegador recupere o registro.
+- A exclusão agora grava um marcador permanente no Firestore antes de remover a ocorrência, impedindo que um cache antigo do navegador recupere o registro.
 - O cache local do dispositivo que excluiu a ocorrência também é atualizado imediatamente.
 - Marcadores existentes podem ser atualizados com segurança, permitindo repetir a exclusão sem bloquear a operação.
+- Exclusões antigas aceitam IDs válidos do Firestore mesmo quando incluem pontuação; a operação indica se a falha ocorreu no marcador ou na remoção do documento.
 
 ## Correção de exclusão de ocorrências
 - Alinhada a autorização de SuperAdmin do Firestore ao perfil `users/{uid}.role == 'admin'`, que já é reconhecido pela interface. Isso evita que a conta administradora tenha o botão de exclusão sem que as regras correspondentes permitam a operação.

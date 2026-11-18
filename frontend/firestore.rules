@@ -11,6 +11,10 @@ service cloud.firestore {
       return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
+    function isValidIncidentId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && !id.matches('^.*/.*$');
+    }
+
     function isValidDomainId(domain) {
       return domain is string && domain.size() >= 3 && domain.size() <= 120 && domain.matches('^[a-z0-9.\\-]+$');
     }
@@ -762,17 +766,17 @@ service cloud.firestore {
             'estimatedValue', 'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
           ]);
 
-        allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (isAdmin() || isCompanyAdmin(domainId));
+        allow delete: if isValidDomainId(domainId) && isValidIncidentId(incidentId) && (isAdmin() || isCompanyAdmin(domainId));
       }
     }
 
       // Tombstones prevent legacy browser caches from recreating deleted incidents.
       match /deleted_incidents/{incidentId} {
-        allow get: if isValidDomainId(domainId) && isValidId(incidentId) &&
+        allow get: if isValidDomainId(domainId) && isValidIncidentId(incidentId) &&
           (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
         allow list: if isValidDomainId(domainId) &&
           (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
-        allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
+        allow create: if isValidDomainId(domainId) && isValidIncidentId(incidentId) &&
           isSignedIn() &&
           (isAdmin() || isCompanyAdmin(domainId)) &&
           incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&
@@ -780,7 +784,7 @@ service cloud.firestore {
           incoming().companyDomain == domainId &&
           incoming().deletedByUid == request.auth.uid &&
           incoming().deletedAt == request.time;
-        allow update: if isValidDomainId(domainId) && isValidId(incidentId) &&
+        allow update: if isValidDomainId(domainId) && isValidIncidentId(incidentId) &&
           isSignedIn() &&
           (isAdmin() || isCompanyAdmin(domainId)) &&
           incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&

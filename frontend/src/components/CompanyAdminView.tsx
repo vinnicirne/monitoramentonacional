@@ -36,6 +36,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import {
   collection,
   deleteField,
+  deleteDoc,
   doc,
   getDocs,
   onSnapshot,
@@ -1238,6 +1239,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     }
     const incident = incidents.find(item => item.id === incId);
     if (!window.confirm(`Excluir definitivamente a ocorrência ${incident?.trackingCode || incId}?`)) return;
+    let deleteStage: 'marker' | 'incident' = 'marker';
     try {
       const incidentRef = doc(db, 'corporate_companies', activeDomain, 'incidents', incId);
       const deletionRef = doc(db, 'corporate_companies', activeDomain, 'deleted_incidents', incId);
@@ -1247,15 +1249,15 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       const cachedList: CorporatePackageIncident[] = Array.isArray(cachedItems) ? cachedItems : [];
       localStorage.setItem(cacheKey, JSON.stringify(cachedList.filter(item => item.id !== incId)));
 
-      const batch = writeBatch(db);
-      batch.delete(incidentRef);
-      batch.set(deletionRef, {
+      await setDoc(deletionRef, {
         id: incId,
         companyDomain: activeDomain,
         deletedByUid: firebaseUser?.uid || currentAdmin?.uid || '',
         deletedAt: serverTimestamp()
       });
-      await batch.commit();
+      deleteStage = 'incident';
+      await deleteDoc(incidentRef);
+      setIncidents(previous => previous.filter(item => item.id !== incId));
       if (incident) await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: incident.trackingCode, boNumber: incident.boNumber, delegaciaName: incident.delegaciaName, action: 'deleted', previousStatus: incident.custodyStatus, previousAtStation: incident.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: 'Ocorrência removida.' });
       setIncidentError(null);
       setIncidentSuccess('Ocorrência excluída com sucesso.');
@@ -1263,7 +1265,9 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     } catch (err) {
       const errorCode = typeof (err as any)?.code === 'string' ? (err as any).code : '';
       setIncidentError(errorCode === 'permission-denied'
-        ? 'O Firebase recusou uma das etapas da exclusão (registro ou marcador de sincronização). Confira a permissão SuperAdmin/Editar e as regras publicadas.'
+        ? deleteStage === 'marker'
+          ? 'O Firebase recusou gravar a proteção de sincronização desta ocorrência. Atualize o app e confira as regras de segurança.'
+          : 'O Firebase recusou excluir este registro. Atualize o app e confira se a conta tem permissão SuperAdmin ou Editar.'
         : `Não foi possível excluir a ocorrência${errorCode ? ` (${errorCode})` : ''}. Verifique sua conexão e tente novamente.`);
       handleFirestoreError(
         err,
