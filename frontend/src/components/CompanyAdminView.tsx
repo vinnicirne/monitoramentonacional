@@ -69,7 +69,7 @@ import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../conte
 import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
 import { formatBrlAmount, formatBrlInput, parseBrlInput } from '../utils/currency';
 
-type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'company_info';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit';
 type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'ameaca' | 'resolved';
 
 interface CompanyAdminViewProps {
@@ -77,7 +77,6 @@ interface CompanyAdminViewProps {
   overrideDomain?: string;
   onSelectOverrideDomain?: (domain: string) => void;
   onGoToAdminCompanies?: () => void;
-  onOpenCompanyRegister?: () => void;
   onOpenIncidentModal?: (incident?: CorporatePackageIncident | null) => void;
   onViewIncidentDossier?: (incident: CorporatePackageIncident) => void;
   onLocateOnMap?: (lat: number, lng: number) => void;
@@ -149,7 +148,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   overrideDomain,
   onSelectOverrideDomain,
   onGoToAdminCompanies,
-  onOpenCompanyRegister,
   onOpenIncidentModal,
   onViewIncidentDossier,
   onLocateOnMap
@@ -245,7 +243,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     )
   );
 
-  // Company Registration & Management States (Sub-tab: 'company_info')
+  // Company records are managed only from the global SuperAdmin dashboard.
   const [availablePlans, setAvailablePlans] = useState<PlanConfig[]>([]);
   const [newCompDomain, setNewCompDomain] = useState('');
   const [newCompName, setNewCompName] = useState('');
@@ -991,10 +989,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     const deliveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesDelivered) || 0)));
     const recoveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesRecovered) || 0)));
     const stolenCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesStolen) || 0)));
-    if (deliveredCount + recoveredCount + stolenCount > quantity) {
-      setIncidentError('A soma de pacotes entregues, recuperados e roubados não pode ultrapassar a quantidade envolvida.');
-      return;
-    }
     const numValue = parseBrlInput(estimatedUnitValue);
     const cleanNotes = incidentNotes.trim().slice(0, 500);
     const incId =
@@ -1254,6 +1248,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
   const handleCreateNewCompany = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) return;
     setNewCompError(null);
     setNewCompSuccess(null);
 
@@ -1313,7 +1308,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       if (onSelectOverrideDomain) {
         onSelectOverrideDomain(cleanDomain);
       }
-      setSubTab('company_info');
     } catch (err: any) {
       setNewCompError(err?.message || 'Falha ao cadastrar a empresa corporativa.');
       handleFirestoreError(err, OperationType.CREATE, `corporate_companies/${cleanDomain}`);
@@ -1324,6 +1318,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
   const handleUpdateActiveCompany = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) return;
     if (!activeDomain || !company) return;
     setEditCompError(null);
     setEditCompSuccess(null);
@@ -1358,136 +1353,29 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     }
   };
 
-  // Empty state if no company is registered yet or active
+  // Company records are managed in the global SuperAdmin panel, outside a company workspace.
   if ((isAdmin && allCompanies.length === 0 && !activeDomain) || (!activeDomain && !company)) {
     return (
       <div className="flex-1 h-full bg-[#F5F5F5] overflow-y-auto p-4 md:p-8 flex items-center justify-center">
-        <div className="max-w-xl w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm space-y-5">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#2D3277] text-[#FFE600] flex items-center justify-center shrink-0 shadow-sm">
-              <Building2 className="w-6 h-6" />
-            </div>
-            <div>
-              <h2 className="text-base md:text-lg font-extrabold text-[#2D3277]">
-                Cadastrar Empresa no Painel Corporativo
-              </h2>
-              <p className="text-xs text-slate-500">
-                Cadastre sua empresa corporativa para habilitar o controle de usuários, licenças e ocorrências em delegacias.
-              </p>
-            </div>
-          </div>
-
-          {newCompError && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
-              <span>{newCompError}</span>
-            </div>
-          )}
-
-          {newCompSuccess && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
-              <span>{newCompSuccess}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleCreateNewCompany} className="space-y-3.5 text-xs">
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">
-                Razão Social ou Nome Fantasia *
-              </label>
-              <input
-                type="text"
-                value={newCompName}
-                onChange={e => setNewCompName(e.target.value)}
-                placeholder="Ex: Mercado Livre Brasil Logística Ltda"
-                required
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">
-                Domínio Corporativo *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-2 font-mono font-bold text-slate-400">@</span>
-                <input
-                  type="text"
-                  value={newCompDomain}
-                  onChange={e => setNewCompDomain(e.target.value)}
-                  placeholder="empresa.com ou suaempresa.com.br"
-                  required
-                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                />
-              </div>
-              <p className="text-[10px] text-slate-500 mt-1">
-                Colaboradores com e-mail deste domínio serão vinculados automaticamente.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Assentos / Licenças</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={newCompSeats}
-                  onChange={e => setNewCompSeats(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Preço / Licença (R$)</label>
-                <input
-                  type="text"
-                  value={newCompPrice}
-                  onChange={e => setNewCompPrice(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                />
-              </div>
-            </div>
-
-            <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={newCompAutoApprove}
-                onChange={e => setNewCompAutoApprove(e.target.checked)}
-                className="rounded border-slate-300 text-[#00A650] focus:ring-0"
-              />
-              <span className="text-slate-700 font-semibold">
-                Aprovar automaticamente colaboradores com o domínio cadastrado
-              </span>
-            </label>
-
-            <button
-              type="submit"
-              disabled={isSavingNewComp}
-              className="w-full py-2.5 rounded-xl bg-[#00A650] hover:bg-[#008744] text-white font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {isSavingNewComp ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Cadastrando Empresa...</span>
-                </>
-              ) : (
-                <>
-                  <Plus className="w-4 h-4" />
-                  <span>Cadastrar Empresa e Ativar Painel</span>
-                </>
-              )}
+        <div className="max-w-xl w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm space-y-4 text-center">
+          <Building2 className="w-10 h-10 text-[#2D3277] mx-auto" />
+          <h2 className="text-base md:text-lg font-extrabold text-[#2D3277]">
+            {isAdmin ? 'Selecione uma empresa para gerenciar' : 'Sua conta ainda não está vinculada a uma empresa'}
+          </h2>
+          <p className="text-xs text-slate-500">
+            {isAdmin
+              ? 'O cadastro e a gestão ficam no Painel SuperAdmin, na seção Empresas & Licenças.'
+              : 'Peça ao SuperAdmin da sua organização para vincular sua conta.'}
+          </p>
+          {isAdmin && onGoToAdminCompanies && (
+            <button type="button" onClick={onGoToAdminCompanies} className="px-4 py-2 rounded-xl bg-[#2D3277] text-[#FFE600] text-xs font-extrabold">
+              Ir ao Painel SuperAdmin
             </button>
-          </form>
-
-          <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-[10px] text-slate-400">
-            <span>Agência Ícone Digital by Vinicius Cirne</span>
-            <span>Licença AID-VC-GIS-2026-BR-RJ</span>
-          </div>
+          )}
         </div>
       </div>
     );
   }
-
   return (
     <div className="flex-1 h-full bg-[#F5F5F5] overflow-y-auto p-3.5 md:p-6 space-y-5">
       {/* Header Banner + Company Switcher (for System Admin) + Sub-Tabs */}
@@ -1607,18 +1495,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
             <span>Transportadoras</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setSubTab('company_info')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-              subTab === 'company_info'
-                ? 'bg-[#2D3277] text-[#FFE600] shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>Cadastro & Gestão da Empresa</span>
-          </button>
           {(isAdmin || currentAdmin?.companyRole === 'company_admin') && (
             <button
               type="button"
@@ -2693,461 +2569,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         </section>
       )}
 
-      {/* SUBTAB 3: CADASTRO & GESTÃO DA EMPRESA                              */}
-      {/* =================================================================== */}
-      {subTab === 'company_info' && (
-        <div className="space-y-6">
-          {/* Top Banner / Corporate License Badge */}
-          <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-r from-[#2D3277] to-[#1E2355] text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                <Building2 className="w-6 h-6 text-[#FFE600]" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-base font-extrabold text-white">
-                    {company?.companyName || `Empresa @${activeDomain}`}
-                  </h3>
-                  <span className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-xs">
-                    @{activeDomain}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                      company?.active
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                    }`}
-                  >
-                    {company?.active ? 'Empresa Ativa' : 'Empresa Inativa'}
-                  </span>
-                </div>
-                <p className="text-xs text-white/80 mt-1">
-                  Licença e Certificação: <strong className="text-white">Agência Ícone Digital by Vinicius Cirne</strong> · Registro Oficial: <code className="font-mono text-[#FFE600]">AID-VC-GIS-2026-BR-RJ</code>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <a
-                href="https://wa.me/5521974976130?text=Ol%C3%A1%2C%20gostaria%20de%20suporte%20sobre%20as%20licen%C3%A7as%20corporativas%20do%20Painel%20de%20Monitoramento%20Territorial"
-                target="_blank"
-                rel="noreferrer"
-                className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-              >
-                <span>Suporte WhatsApp</span>
-              </a>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Form 1: Cadastrar Nova Empresa Corporativa (Apenas SuperAdmin) */}
-            {isAdmin && (
-              <div className="lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-purple-100 text-purple-800">
-                      <Crown className="w-4 h-4 text-purple-700" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-extrabold text-[#2D3277]">
-                        Provisionar Nova Empresa (SuperAdmin)
-                      </h4>
-                      <p className="text-[11px] text-slate-500">
-                        Adicione outra organização corporativa no sistema e defina assentos.
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 uppercase">
-                    Ação Master ADM
-                  </span>
-                </div>
-
-                {newCompError && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
-                    <span>{newCompError}</span>
-                  </div>
-                )}
-
-                {newCompSuccess && (
-                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
-                    <span>{newCompSuccess}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleCreateNewCompany} className="space-y-3.5 text-xs">
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Razão Social ou Nome Fantasia *
-                    </label>
-                    <input
-                      type="text"
-                      value={newCompName}
-                      onChange={e => setNewCompName(e.target.value)}
-                      placeholder="Ex: Transportadora Rio Express Ltda"
-                      required
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Domínio Corporativo *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 font-mono font-bold text-slate-400">@</span>
-                      <input
-                        type="text"
-                        value={newCompDomain}
-                        onChange={e => setNewCompDomain(e.target.value)}
-                        placeholder="empresa.com ou filial.com.br"
-                        required
-                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                      />
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-1">
-                      Colaboradores com e-mail deste domínio receberão as licenças da empresa.
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Plano Corporativo
-                    </label>
-                    <select
-                      value={newCompPlanId}
-                      onChange={e => {
-                        setNewCompPlanId(e.target.value);
-                        const sel = availablePlans.find(p => p.id === e.target.value);
-                        if (sel) {
-                          setNewCompPrice(String(sel.pricePerLicense ?? sel.priceMonthly ?? 49));
-                        }
-                      }}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800 bg-white"
-                    >
-                      {availablePlans.length > 0 ? (
-                        availablePlans.map(p => (
-                          <option key={p.id} value={p.id}>
-                            {p.name} ({p.billingModel === 'per_user' ? 'Por Usuário' : 'Fixo'} · R$ {p.pricePerLicense ?? p.priceMonthly})
-                          </option>
-                        ))
-                      ) : (
-                        <>
-                          <option value="corp_licenca">Corporativo Padrão (Por Licença)</option>
-                          <option value="corp_enterprise">Corporativo Enterprise Custom</option>
-                          <option value="corp_basic">Corporativo Básico</option>
-                        </>
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">
-                        Assentos (Licenças)
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={newCompSeats}
-                        onChange={e => setNewCompSeats(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">
-                        Preço / Licença (R$)
-                      </label>
-                      <input
-                        type="text"
-                        value={newCompPrice}
-                        onChange={e => setNewCompPrice(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                      />
-                    </div>
-                  </div>
-
-                  <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={newCompAutoApprove}
-                      onChange={e => setNewCompAutoApprove(e.target.checked)}
-                      className="rounded border-slate-300 text-[#00A650] focus:ring-0"
-                    />
-                    <span className="text-slate-700 font-semibold">
-                      Aprovar colaboradores automaticamente no 1º login
-                    </span>
-                  </label>
-
-                  <button
-                    type="submit"
-                    disabled={isSavingNewComp}
-                    className="w-full py-2.5 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 border border-[#1E2258]"
-                  >
-                    {isSavingNewComp ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin text-[#FFE600]" />
-                        <span>Salvando Cadastro...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 text-[#FFE600]" />
-                        <span>Cadastrar Nova Empresa</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {/* Form 2: Dados e Configurações da Empresa Ativa */}
-            <div className={`${isAdmin ? 'lg:col-span-6' : 'lg:col-span-12 max-w-3xl mx-auto'} bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4`}>
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-[#3483FA]/10 text-[#3483FA]">
-                    <Pencil className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-extrabold text-[#2D3277]">
-                      Configurações da Empresa Ativa
-                    </h4>
-                    <p className="text-[11px] text-slate-500">
-                      Atualize a razão social, limite de licenças e parâmetros contratuais.
-                    </p>
-                  </div>
-                </div>
-                <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-slate-100 text-[#2D3277]">
-                  @{activeDomain || 'empresa'}
-                </span>
-              </div>
-
-              {editCompError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
-                  <span>{editCompError}</span>
-                </div>
-              )}
-
-              {editCompSuccess && (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
-                  <span>{editCompSuccess}</span>
-                </div>
-              )}
-
-              {company ? (
-                <form onSubmit={handleUpdateActiveCompany} className="space-y-3.5 text-xs">
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Razão Social / Nome da Empresa *
-                    </label>
-                    <input
-                      type="text"
-                      value={editCompName}
-                      onChange={e => setEditCompName(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Domínio Corporativo (Chave Única)
-                    </label>
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 font-mono text-slate-700 text-xs">
-                      <span>@{activeDomain}</span>
-                      <span className="text-[10px] text-slate-400 font-sans ml-auto">(Identificador corporativo)</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">
-                      Plano Corporativo
-                    </label>
-                    <select
-                      value={editCompPlanId}
-                      onChange={e => setEditCompPlanId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none text-slate-800 bg-white"
-                    >
-                      {availablePlans.length > 0 ? (
-                        availablePlans.map(p => (
-                          <option key={p.id} value={p.id}>
-                            {p.name} ({p.billingModel === 'per_user' ? 'Por Licença' : 'Fixo'})
-                          </option>
-                        ))
-                      ) : (
-                        <>
-                          <option value="corp_licenca">Corporativo Padrão (Por Licença)</option>
-                          <option value="corp_enterprise">Corporativo Enterprise Custom</option>
-                          <option value="corp_basic">Corporativo Básico</option>
-                        </>
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">
-                        Assentos Contratados
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={editCompSeats}
-                        onChange={e => setEditCompSeats(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                      />
-                      <span className="text-[10px] text-slate-400">0 = sem limite estrito</span>
-                    </div>
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">
-                        Preço por Licença (R$)
-                      </label>
-                      <input
-                        type="text"
-                        value={editCompPrice}
-                        onChange={e => setEditCompPrice(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
-                      />
-                      <span className="text-[10px] text-slate-400">Cobrança mensal por usuário</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={editCompAutoApprove}
-                        onChange={e => setEditCompAutoApprove(e.target.checked)}
-                        className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
-                      />
-                      <span className="text-slate-700 font-semibold">
-                        Aprovação Automática
-                      </span>
-                    </label>
-
-                    <label className="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={editCompActive}
-                        onChange={e => setEditCompActive(e.target.checked)}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-0"
-                      />
-                      <span className="text-slate-700 font-semibold">
-                        Empresa Ativa no Sistema
-                      </span>
-                    </label>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSavingEditComp}
-                    className="w-full py-2.5 rounded-xl bg-[#3483FA] hover:bg-[#2968C8] text-white font-extrabold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {isSavingEditComp ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>Atualizando Empresa...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        <span>Salvar Alterações da Empresa</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              ) : (
-                <div className="p-8 text-center text-xs text-slate-500 space-y-2">
-                  <Building2 className="w-8 h-8 text-slate-300 mx-auto" />
-                  <p>Selecione uma empresa ou utilize o formulário ao lado para cadastrar uma nova.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Table / List of Registered Companies */}
-          {allCompanies.length > 0 && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-[#2D3277]/10 text-[#2D3277]">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-extrabold text-[#2D3277]">
-                      Empresas Corporativas Cadastradas ({allCompanies.length})
-                    </h4>
-                    <p className="text-[11px] text-slate-500">
-                      Organizações com domínio homologado no Painel de Monitoramento Territorial.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                {allCompanies.map(comp => {
-                  const isCurrent = comp.domain === activeDomain;
-                  return (
-                    <div
-                      key={comp.domain}
-                      className={`p-4 rounded-xl border transition-all space-y-2.5 text-xs ${
-                        isCurrent
-                          ? 'bg-[#2D3277]/5 border-[#2D3277] ring-1 ring-[#2D3277]'
-                          : 'bg-white border-slate-200 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h5 className="font-bold text-slate-900 line-clamp-1">
-                            {comp.companyName}
-                          </h5>
-                          <span className="font-mono text-[#3483FA] font-bold text-[11px]">
-                            @{comp.domain}
-                          </span>
-                        </div>
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            comp.active
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-slate-100 text-slate-600'
-                          }`}
-                        >
-                          {comp.active ? 'Ativa' : 'Inativa'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-600">
-                        <span>Assentos: <strong className="font-mono">{comp.licensedSeats || '∞'}</strong></span>
-                        <span>R$ {comp.pricePerLicense?.toFixed(2).replace('.', ',') || '0,00'}/lic</span>
-                      </div>
-
-                      <div className="pt-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (onSelectOverrideDomain) {
-                              onSelectOverrideDomain(comp.domain);
-                            }
-                          }}
-                          className={`w-full py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
-                            isCurrent
-                              ? 'bg-[#2D3277] text-[#FFE600]'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                          }`}
-                        >
-                          {isCurrent ? 'Empresa Selecionada' : 'Gerenciar Esta Empresa'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

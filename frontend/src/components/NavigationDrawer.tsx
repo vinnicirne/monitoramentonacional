@@ -196,7 +196,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
       icon: Shield,
       accentColor: 'text-[#2D3277]',
       items: [
-        ...(!isCompanyAdmin
+        ...(isAdmin && !isCompanyAdmin
           ? [
               {
                 id: 'company_register_action' as const,

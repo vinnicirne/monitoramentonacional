@@ -376,7 +376,7 @@ export const AuthGateModal: React.FC<AuthGateModalProps> = ({
                     </button>
                   </div>
 
-                  {onOpenCompanyRegister && (
+                  {isAdmin && onOpenCompanyRegister && (
                     <button
                       type="button"
                       onClick={() => {
@@ -633,7 +633,7 @@ export const AuthGateModal: React.FC<AuthGateModalProps> = ({
                     <span>{isSubmitting ? 'Criando conta...' : 'Criar Conta'}</span>
                   </button>
 
-                  {onOpenCompanyRegister && (
+                  {isAdmin && onOpenCompanyRegister && (
                     <div className="pt-2 border-t border-slate-200 text-center space-y-1">
                       <span className="text-[11px] text-slate-500 block">
                         É gestor ou administrador de transportadora/empresa?

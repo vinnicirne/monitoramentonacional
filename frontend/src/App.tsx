@@ -781,7 +781,7 @@ function App() {
           setActiveTab('map');
         }}
         onOpenLicense={() => setShowLicenseModal(true)}
-        onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+        onOpenCompanyRegister={isAdmin ? () => setShowCompanyRegisterModal(true) : undefined}
         onOpenNavigation={() => setIsNavigationOpen(true)}
         isFactionPanelOpen={isFactionPanelOpen}
         onToggleFactions={() => {
@@ -1163,7 +1163,6 @@ function App() {
             overrideDomain={companyAdminDomainOverride}
             onSelectOverrideDomain={setCompanyAdminDomainOverride}
             onGoToAdminCompanies={() => setActiveTab('admin')}
-            onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
             onOpenIncidentModal={inc => {
               setSelectedCorporateIncident(inc || null);
               setIncidentInitialCoords(undefined);
@@ -1339,7 +1338,7 @@ function App() {
       <AuthGateModal
         onOpenAdmin={() => setActiveTab('admin')}
         onOpenCompanyAdmin={() => setActiveTab('company_admin')}
-        onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
+        onOpenCompanyRegister={isAdmin ? () => setShowCompanyRegisterModal(true) : undefined}
       />
 
       {/* Menu Lateral Estruturado por Assuntos Relacionados */}
@@ -1386,8 +1385,10 @@ function App() {
           );
         }}
         onOpenCompanyRegister={() => {
-          setIsNavigationOpen(false);
-          setShowCompanyRegisterModal(true);
+          if (isAdmin) {
+            setIsNavigationOpen(false);
+            setShowCompanyRegisterModal(true);
+          }
         }}
         onOpenLicense={() => {
           setIsNavigationOpen(false);

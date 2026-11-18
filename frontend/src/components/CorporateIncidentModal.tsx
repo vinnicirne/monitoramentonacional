@@ -424,10 +424,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
     const deliveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesDelivered) || 0)));
     const recoveredCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesRecovered) || 0)));
     const stolenCount = Math.min(quantity, Math.max(0, Math.floor(Number(packagesStolen) || 0)));
-    if (deliveredCount + recoveredCount + stolenCount > quantity) {
-      setErrorMessage('A soma de pacotes entregues, recuperados e roubados não pode ultrapassar a quantidade envolvida.');
-      return;
-    }
     const numValue = parseBrlInput(estimatedUnitValue);
     const cleanNotes = notes.trim().slice(0, 500);
     const cleanAddress = addressInput.trim().slice(0, 250);

@@ -356,7 +356,6 @@ service cloud.firestore {
         (!('packagesDelivered' in data) || !('packageQuantity' in data) || data.packagesDelivered <= data.packageQuantity) &&
         (!('packagesRecovered' in data) || !('packageQuantity' in data) || data.packagesRecovered <= data.packageQuantity) &&
         (!('packagesStolen' in data) || !('packageQuantity' in data) || data.packagesStolen <= data.packageQuantity) &&
-        data.get('packagesDelivered', 0) + data.get('packagesRecovered', 0) + data.get('packagesStolen', 0) <= data.packageQuantity &&
         (!('lat' in data) || (data.lat is number && data.lat >= -90 && data.lat <= 90)) &&
         (!('lng' in data) || (data.lng is number && data.lng >= -180 && data.lng <= 180)) &&
         (!('address' in data) || (data.address is string && data.address.size() <= 250)) &&
@@ -805,26 +804,11 @@ service cloud.firestore {
         incoming().domain == existing().domain &&
         incoming().createdAt == existing().createdAt &&
         incoming().updatedAt == request.time &&
-        (
-          (
-            isAdmin() &&
-            incoming().diff(existing()).affectedKeys().hasOnly([
-              'companyName', 'planId', 'pricePerLicense', 'licensedSeats',
-              'autoApprove', 'active', 'updatedAt'
-            ])
-          ) ||
-          (
-            isCompanyAdmin(domainId) &&
-            existing().active == true &&
-            incoming().planId == existing().planId &&
-            incoming().pricePerLicense == existing().pricePerLicense &&
-            incoming().licensedSeats == existing().licensedSeats &&
-            incoming().active == existing().active &&
-            incoming().diff(existing()).affectedKeys().hasOnly([
-              'companyName', 'autoApprove', 'updatedAt'
-            ])
-          )
-        );
+        isAdmin() &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'companyName', 'planId', 'pricePerLicense', 'licensedSeats',
+          'autoApprove', 'active', 'updatedAt'
+        ]);
 
       allow delete: if isValidDomainId(domainId) && isAdmin();
 

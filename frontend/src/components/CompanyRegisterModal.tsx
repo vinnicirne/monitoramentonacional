@@ -77,10 +77,11 @@ export const CompanyRegisterModal: React.FC<CompanyRegisterModalProps> = ({
       });
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !isAdmin) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdmin) return;
     setErrorMessage(null);
     setSuccessMessage(null);
 

@@ -6,6 +6,13 @@
 
 ---
 
+## [18/11/2026] — Gestão de Empresas Restrita ao SuperAdmin
+
+### 34. Separação entre Gestão Global e Painel da Empresa
+- Removida do Painel Empresa a aba **Cadastro & Gestão da Empresa**; empresas passam a ser cadastradas e administradas somente em **Painel SuperAdmin → Empresas & Licenças**.
+- Ocultados os atalhos de criação corporativa para usuários comuns e bloqueadas as ações de cadastro/alteração da empresa para perfis que não sejam SuperAdmin.
+- Removida a validação que somava entregues, recuperados e roubados, permitindo que esses indicadores se sobreponham. Cada contador continua limitado à quantidade envolvida.
+
 ## [18/11/2026] — Valor Total Estimado da Carga
 
 ### 33. Valor Financeiro Informado como Total da Ocorrência
@@ -19,7 +26,7 @@
 - Criada a aba **Transportadoras** no Painel Empresa; histórico, gráfico mensal e indicadores de pacotes foram retirados da aba de extravios e ocorrências.
 - Adicionados ao formulário os campos **Pacotes Entregues**, **Pacotes Recuperados** e **Pacotes Roubados**, abaixo da transportadora e da quantidade envolvida.
 - Os três valores são salvos e sincronizados no Firestore ao criar ou editar registros; o detalhe da ocorrência também os apresenta.
-- A validação impede que a soma dos resultados exceda a quantidade envolvida, e as regras do Firestore permitem os novos campos.
+- Cada contador de resultado é validado individualmente em relação à quantidade envolvida, e as regras do Firestore permitem os novos campos.
 
 ## [18/11/2026] — Permissão de Exclusão por Licença de Edição
 
