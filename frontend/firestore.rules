@@ -774,13 +774,23 @@ service cloud.firestore {
           (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
         allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
           isSignedIn() &&
-          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId)) &&
+          (isAdmin() || isCompanyAdmin(domainId)) &&
           incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&
           incoming().id == incidentId &&
           incoming().companyDomain == domainId &&
           incoming().deletedByUid == request.auth.uid &&
           incoming().deletedAt == request.time;
-        allow update, delete: if false;
+        allow update: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          isSignedIn() &&
+          (isAdmin() || isCompanyAdmin(domainId)) &&
+          incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&
+          incoming().id == existing().id &&
+          incoming().companyDomain == existing().companyDomain &&
+          incoming().id == incidentId &&
+          incoming().companyDomain == domainId &&
+          incoming().deletedByUid == request.auth.uid &&
+          incoming().deletedAt == request.time;
+        allow delete: if false;
       }
 
     // /plans/{planId}

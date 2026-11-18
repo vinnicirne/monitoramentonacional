@@ -1263,7 +1263,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     } catch (err) {
       const errorCode = typeof (err as any)?.code === 'string' ? (err as any).code : '';
       setIncidentError(errorCode === 'permission-denied'
-        ? 'O Firebase recusou a exclusão. Confirme se sua conta está como SuperAdmin ou tem permissão Editar na empresa e se as regras atualizadas já foram publicadas.'
+        ? 'O Firebase recusou uma das etapas da exclusão (registro ou marcador de sincronização). Confira a permissão SuperAdmin/Editar e as regras publicadas.'
         : `Não foi possível excluir a ocorrência${errorCode ? ` (${errorCode})` : ''}. Verifique sua conexão e tente novamente.`);
       handleFirestoreError(
         err,
