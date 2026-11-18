@@ -565,6 +565,18 @@ service cloud.firestore {
           (
             isOwner(userId) &&
             (
+              // Safe login/access refresh for older profiles without optional fields.
+              (
+                incoming().diff(existing()).affectedKeys().hasOnly([
+                  'displayName', 'photoURL', 'lastLoginAt', 'updatedAt', 'accessCount'
+                ]) &&
+                (
+                  ('accessCount' in existing() &&
+                    incoming().accessCount >= existing().accessCount &&
+                    incoming().accessCount <= existing().accessCount + 1) ||
+                  (!('accessCount' in existing()) && incoming().accessCount <= 1)
+                )
+              ) ||
               (
                 incoming().role == existing().role &&
                 incoming().status == existing().status &&

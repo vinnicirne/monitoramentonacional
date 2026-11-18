@@ -6,6 +6,12 @@
 
 ---
 
+## [18/11/2026] — Sincronização do Papel de Administrador da Empresa
+
+### 25. Promoção de Usuário a Administrador da Empresa
+- A alteração do papel agora sincroniza, em uma única gravação, o perfil do usuário e a licença corporativa.
+- O vínculo `companyDomain` é explicitado no perfil para que as regras reconheçam a empresa responsável pelo usuário.
+
 ## [18/11/2026] — Segurança Firestore, Auditoria e Correções Territoriais
 
 ### 22. Regras Firestore e Auditoria de Ocorrências Corporativas

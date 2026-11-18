@@ -751,13 +751,14 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       generateCorporateLicenseKey(activeDomain, member.user?.uid || member.email);
 
     try {
+      const batch = writeBatch(db);
       if (member.license) {
-        await updateDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+        batch.update(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
           companyRole: nextRole,
           updatedAt: serverTimestamp()
         });
       } else {
-        await setDoc(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+        batch.set(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
           id: licId,
           email: member.email.toLowerCase(),
           displayName: member.displayName,
@@ -774,11 +775,13 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       }
 
       if (member.user && member.user.uid !== currentAdmin.uid && member.user.role !== 'admin') {
-        await updateDoc(doc(db, 'users', member.user.uid), {
+        batch.update(doc(db, 'users', member.user.uid), {
           companyRole: nextRole,
+          companyDomain: activeDomain,
           updatedAt: serverTimestamp()
         });
       }
+      await batch.commit();
     } catch (err) {
       handleFirestoreError(
         err,
