@@ -107,7 +107,7 @@ export const LicenseModal: React.FC<LicenseModalProps> = ({ isOpen, onClose }) =
 
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
                 <strong className="text-slate-100 block mb-0.5">2. Dados públicos e fontes externas:</strong>
-                Dados do ISP, Fogo Cruzado e de outras fontes permanecem vinculados às respectivas fontes e às condições de acesso e reutilização por elas estabelecidas. A integração ou exibição desses dados no sistema não os torna propriedade da Agência Ícone Digital.
+                O painel reproduz, integra e apresenta dados publicados pelo ISP, pelo Fogo Cruzado e por outros portais. A produção, o conteúdo original, os critérios, as atualizações e as correções dessas bases cabem às respectivas fontes. A Agência Ícone Digital não reivindica esses dados como propriedade nem se apresenta como sua fonte original; sua reprodução no painel não altera sua origem ou as condições de uso.
               </div>
 
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">

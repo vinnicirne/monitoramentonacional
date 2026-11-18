@@ -15,6 +15,7 @@
 - Atualizado `LICENSE.md` com referências às fontes citadas.
 - Corrigidos o certificado exibido no aplicativo e os textos de titularidade da seção **Metodologia & Fontes**, que ainda descreviam dados cartográficos públicos como propriedade exclusiva da agência.
 - Sincronizada a licença resumida em `frontend/LICENSE.md` com o esclarecimento sobre dados públicos.
+- Reforçado que o painel reproduz e apresenta dados publicados pelos portais, aos quais cabe a responsabilidade pelo conteúdo original, critérios, atualização e correções.
 
 ---
 

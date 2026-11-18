@@ -67,7 +67,7 @@ export const AboutMethodologyView: React.FC<AboutMethodologyViewProps> = ({ onOp
             </span>
             <div className="text-sm font-bold text-slate-900">Agência Ícone Digital</div>
             <p className="text-slate-600 text-[11px] leading-relaxed">
-              Titular dos direitos sobre o software e seus componentes originais. Os dados públicos integrados, incluindo bases do ISP e do Fogo Cruzado, permanecem vinculados às respectivas fontes e não são propriedade da agência.
+              Titular dos direitos sobre o software e seus componentes originais. O painel reproduz dados públicos do ISP, do Fogo Cruzado e de outras fontes; o conteúdo original e suas atualizações cabem a esses portais, e os dados não são propriedade da agência.
             </p>
           </div>
 
@@ -220,7 +220,7 @@ export const AboutMethodologyView: React.FC<AboutMethodologyViewProps> = ({ onOp
             </span>
             <div className="text-sm font-bold text-slate-900">Agência Ícone Digital</div>
             <p className="text-slate-600 text-[11px] leading-relaxed">
-              Titular dos direitos sobre o software e seus componentes originais. Os dados públicos integrados, incluindo bases do ISP e do Fogo Cruzado, permanecem vinculados às respectivas fontes e não são propriedade da agência.
+              Titular dos direitos sobre o software e seus componentes originais. O painel reproduz dados públicos do ISP, do Fogo Cruzado e de outras fontes; o conteúdo original e suas atualizações cabem a esses portais, e os dados não são propriedade da agência.
             </p>
           </div>
 
