@@ -434,9 +434,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       `inc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 
     const creatorUid =
+      auth.currentUser?.uid ||
       firebaseUser?.uid ||
       userProfile?.uid ||
-      (auth.currentUser?.uid as string) ||
       'user_unknown';
 
     const creatorName = (
@@ -590,9 +590,25 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         onClose();
       }, 1200);
     } catch (err: any) {
-      console.error('Falha ao gravar ocorrência no Firebase:', err);
+      const incidentPath = `corporate_companies/${domainToUse}/incidents/${incId}`;
+      console.error('Falha ao gravar ocorrência no Firebase:', {
+        error: err,
+        path: incidentPath,
+        operation: activeIncident ? 'update' : 'create',
+        uid: auth.currentUser?.uid,
+        email: auth.currentUser?.email,
+        emailVerified: auth.currentUser?.emailVerified,
+        profileUid: userProfile?.uid,
+        companyRole: userProfile?.companyRole,
+        incidentAccess: userProfile?.incidentAccess || 'read',
+        licenseStatus: userProfile?.licenseStatus
+      });
       const errorCode = typeof err?.code === 'string' ? ` (${err.code})` : '';
-      setErrorMessage(`Não foi possível gravar a ocorrência no Firebase${errorCode}. Verifique sua conexão e suas permissões; o registro não foi confirmado.`);
+      const hasEditAccess = isAdmin || userProfile?.companyRole === 'company_admin' || userProfile?.incidentAccess === 'edit';
+      const permissionHint = err?.code === 'permission-denied' && !hasEditAccess
+        ? ' Esta conta está sem permissão Editar; peça ao ADM da Empresa para habilitá-la.'
+        : ` Operação: ${activeIncident ? 'editar' : 'criar'} em ${incidentPath}.`;
+      setErrorMessage(`Não foi possível gravar a ocorrência no Firebase${errorCode}.${permissionHint}`);
     } finally {
       setIsSaving(false);
     }

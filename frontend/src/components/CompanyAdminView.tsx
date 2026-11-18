@@ -1028,7 +1028,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       }
     }
 
-    const adminUid = firebaseUser?.uid || currentAdmin?.uid || auth.currentUser?.uid || 'user_unknown';
+    const adminUid = auth.currentUser?.uid || firebaseUser?.uid || currentAdmin?.uid || 'user_unknown';
     const adminName = (firebaseUser?.displayName || currentAdmin?.displayName || firebaseUser?.email || currentAdmin?.email || 'Administrador').slice(0, 120);
 
     const safeDelMunicipio = (chosenDelegacia.municipio || '').slice(0, 100);
@@ -1155,9 +1155,35 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       }
       resetIncidentForm();
     } catch (err: any) {
-      console.error('Falha ao gravar ocorrência no Firebase:', err);
+      const incidentPath = `corporate_companies/${activeDomain}/incidents/${incId}`;
+      const matchingLicense = licenses.find(license =>
+        license.email.toLowerCase() === (auth.currentUser?.email || '').toLowerCase()
+      );
+      console.error('Falha ao gravar ocorrência no Firebase:', {
+        error: err,
+        path: incidentPath,
+        operation: editingIncidentId ? 'update' : 'create',
+        uid: auth.currentUser?.uid,
+        email: auth.currentUser?.email,
+        emailVerified: auth.currentUser?.emailVerified,
+        profileUid: currentAdmin?.uid,
+        companyRole: currentAdmin?.companyRole,
+        profileIncidentAccess: currentAdmin?.incidentAccess || 'read',
+        licenseStatus: matchingLicense?.status || 'not-found',
+        licenseIncidentAccess: matchingLicense?.incidentAccess || 'read'
+      });
       const errorCode = typeof err?.code === 'string' ? ` (${err.code})` : '';
-      setIncidentError(`Não foi possível gravar a ocorrência no Firebase${errorCode}. Verifique sua conexão e suas permissões; o registro não foi confirmado.`);
+      const hasEditAccess = isAdmin || (
+        currentAdmin?.licenseStatus !== 'suspended' && (
+          isCompanyAdmin ||
+          currentAdmin?.incidentAccess === 'edit' ||
+          (matchingLicense?.status === 'active' && (matchingLicense.incidentAccess === 'edit' || matchingLicense.companyRole === 'company_admin'))
+        )
+      );
+      const permissionHint = err?.code === 'permission-denied' && !hasEditAccess
+        ? ' Esta conta está sem permissão Editar; o ADM da Empresa deve habilitá-la em Usuários & Licenças.'
+        : ` Operação: ${editingIncidentId ? 'editar' : 'criar'} em ${incidentPath}.`;
+      setIncidentError(`Não foi possível gravar a ocorrência no Firebase${errorCode}.${permissionHint}`);
     } finally {
       setIsSavingIncident(false);
     }
@@ -1760,7 +1786,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                             </td>
 
                             <td className="p-3">
-                              {!isSelf && (
+                              {isSelf ? (
+                                <span className="text-[10px] text-slate-400" title="Para evitar autoelevação de permissões, outro administrador deve gerenciar esta conta.">
+                                  Sua conta · gerencie com outro ADM
+                                </span>
+                              ) : (
                                 <div className="flex items-center justify-end gap-1.5 flex-wrap">
                                   <button
                                     onClick={() => handleToggleMemberLicense(m)}

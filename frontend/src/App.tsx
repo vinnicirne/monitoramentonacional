@@ -73,7 +73,10 @@ interface InstallPromptEvent extends Event {
 function App() {
   const { userProfile, hasFullAccess, isAdmin, isCompanyAdmin, openAuthModal, logLocationAccess } = useAuth();
   const canEditCompanyIncidents = Boolean(
-    isAdmin || isCompanyAdmin || userProfile?.incidentAccess === 'edit'
+    isAdmin || (
+      userProfile?.licenseStatus !== 'suspended' &&
+      (isCompanyAdmin || userProfile?.incidentAccess === 'edit')
+    )
   );
   const [registry, setRegistry] = useState<TerritorialRegistry | null>(null);
   const [estadoScope, setEstadoScope] = useState<EstadoScope>('RJ');

@@ -6,6 +6,14 @@
 
 ---
 
+## [18/11/2026] — Diagnóstico de Permissão nas Ocorrências
+
+### 35. Alinhamento entre a Licença Ativa e o Acesso a Ocorrências
+- Uma licença corporativa ativa com perfil **ADM da Empresa** ou permissão **Editar** também autoriza gravações no Firestore, mesmo que o perfil de usuário ainda não tenha sincronizado esses campos.
+- O acesso ao Painel Empresa e aos formulários agora respeita a suspensão da licença, em linha com as regras do Firestore.
+- Falhas de gravação registram no console o caminho e o estado de permissão usado no diagnóstico; usuários veem uma orientação quando estão somente em leitura.
+- A lista de usuários identifica a própria conta e informa que outro administrador deve gerenciar suas permissões.
+
 ## [18/11/2026] — Gestão de Empresas Restrita ao SuperAdmin
 
 ### 34. Separação entre Gestão Global e Painel da Empresa

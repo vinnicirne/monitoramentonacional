@@ -982,6 +982,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     userProfile &&
       firebaseUser?.emailVerified &&
       userProfile.status === 'approved' &&
+      userProfile.licenseStatus !== 'suspended' &&
       userProfile.companyRole === 'company_admin' &&
       (userProfile.companyDomain || userProfile.domain)
   );
