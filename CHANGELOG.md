@@ -6,6 +6,13 @@
 
 ---
 
+## [18/11/2026] — Valor Total Estimado da Carga
+
+### 33. Valor Financeiro Informado como Total da Ocorrência
+- O campo financeiro dos formulários passou a se chamar **VALOR TOTAL ESTIMADO** e grava diretamente o valor informado, sem multiplicá-lo pela quantidade de pacotes.
+- O modal de detalhes exibe o valor total; ao editar registros antigos, valores unitários legados são convertidos para o total antes de salvar.
+- Ao salvar uma ocorrência editada, o campo legado de valor por pacote é removido do Firestore.
+
 ## [18/11/2026] — Histórico da Transportadora e Desfecho dos Pacotes
 
 ### 32. Nova Aba de Transportadoras e Novos Campos de Resultado

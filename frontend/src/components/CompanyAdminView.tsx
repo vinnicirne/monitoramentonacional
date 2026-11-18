@@ -35,6 +35,7 @@ import {
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
   collection,
+  deleteField,
   deleteDoc,
   doc,
   getDocs,
@@ -960,7 +961,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     setSelectedDelegaciaId(inc.delegaciaId);
     setPackageAtStation(inc.packageAtStation);
     setCustodyStatus(inc.custodyStatus);
-    setEstimatedUnitValue(inc.estimatedUnitValue != null ? formatBrlAmount(inc.estimatedUnitValue) : inc.estimatedValue > 0 ? formatBrlAmount(inc.estimatedValue / Math.max(1, Number(inc.packageQuantity) || 1)) : '');
+    setEstimatedUnitValue(inc.estimatedValue > 0 ? formatBrlAmount(inc.estimatedValue) : inc.estimatedUnitValue != null ? formatBrlAmount(inc.estimatedUnitValue * Math.max(1, Number(inc.packageQuantity) || 1)) : '');
     setIncidentNotes(inc.notes);
     setIncidentError(null);
     setIncidentSuccess(null);
@@ -994,8 +995,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       setIncidentError('A soma de pacotes entregues, recuperados e roubados não pode ultrapassar a quantidade envolvida.');
       return;
     }
-    const unitValue = parseBrlInput(estimatedUnitValue);
-    const numValue = Number((unitValue * quantity).toFixed(2));
+    const numValue = parseBrlInput(estimatedUnitValue);
     const cleanNotes = incidentNotes.trim().slice(0, 500);
     const incId =
       editingIncidentId ||
@@ -1063,7 +1063,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       packagesDelivered: deliveredCount,
       packagesRecovered: recoveredCount,
       packagesStolen: stolenCount,
-      estimatedUnitValue: unitValue,
       incidentType,
       boNumber: cleanBo,
       delegaciaId: safeDelId,
@@ -1093,7 +1092,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           packagesDelivered: deliveredCount,
           packagesRecovered: recoveredCount,
           packagesStolen: stolenCount,
-          estimatedUnitValue: unitValue,
+          estimatedUnitValue: deleteField(),
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -1120,7 +1119,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           packagesDelivered: deliveredCount,
           packagesRecovered: recoveredCount,
           packagesStolen: stolenCount,
-          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -2298,7 +2296,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
                   <div>
                     <label className="block font-semibold text-slate-700 mb-1">
-                      Valor estimado por pacote (R$)
+                      VALOR TOTAL ESTIMADO (R$)
                     </label>
                     <input
                       type="text"
@@ -2308,7 +2306,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                       placeholder="0,00"
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:outline-none focus:border-[#3483FA] focus:bg-white"
                     />
-                    <span className="mt-1 block text-[10px] font-bold text-[#2D3277]">Total calculado: {formatBrlAmount(parseBrlInput(estimatedUnitValue) * Math.max(1, Math.floor(Number(packageQuantity) || 1)))}</span>
                   </div>
                 </div>
 

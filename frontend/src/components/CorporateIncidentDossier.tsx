@@ -138,9 +138,8 @@ export const CorporateIncidentDossier: React.FC<CorporateIncidentDossierProps> =
               <DetailField label="Pacotes entregues" value={String(incident.packagesDelivered ?? 0)} />
               <DetailField label="Pacotes recuperados" value={String(incident.packagesRecovered ?? (incident.custodyStatus === 'devolvido_empresa' ? incident.packageQuantity ?? 1 : 0))} />
               <DetailField label="Pacotes roubados / não localizados" value={String(incident.packagesStolen ?? (incident.custodyStatus !== 'devolvido_empresa' && (incident.custodyStatus === 'extraviado_nao_localizado' || ['roubo_carga', 'roubo', 'furto'].includes(incident.incidentType)) ? incident.packageQuantity ?? 1 : 0))} />
-              <DetailField label="Valor por pacote" value={(incident.estimatedUnitValue ?? incident.estimatedValue / Math.max(1, Number(incident.packageQuantity) || 1)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
               <DetailField label="Número do B.O." value={incident.boNumber} />
-              <DetailField label="Valor estimado" value={estimatedValue > 0 ? estimatedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Não informado'} />
+              <DetailField label="Valor total estimado" value={estimatedValue > 0 ? estimatedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Não informado'} />
               <DetailField label="Empresa" value={`@${incident.companyDomain}`} />
               <DetailField label="Relato / observações" value={incident.notes} wide />
             </div>

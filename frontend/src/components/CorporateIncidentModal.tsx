@@ -21,7 +21,7 @@ import {
   Sparkles,
   RotateCcw
 } from 'lucide-react';
-import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { deleteField, doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db, handleFirestoreError } from '../firebase';
 import {
   CorporateCompany,
@@ -219,7 +219,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setSelectedDelegaciaId(activeIncident.delegaciaId || '');
       setPackageAtStation(activeIncident.packageAtStation ?? true);
       setCustodyStatus(activeIncident.custodyStatus || 'em_ocorrencia_delegacia');
-      setEstimatedUnitValue(activeIncident.estimatedUnitValue != null ? formatBrlAmount(activeIncident.estimatedUnitValue) : activeIncident.estimatedValue ? formatBrlAmount(activeIncident.estimatedValue / Math.max(1, Number(activeIncident.packageQuantity) || 1)) : '');
+      setEstimatedUnitValue(activeIncident.estimatedValue > 0 ? formatBrlAmount(activeIncident.estimatedValue) : activeIncident.estimatedUnitValue != null ? formatBrlAmount(activeIncident.estimatedUnitValue * Math.max(1, Number(activeIncident.packageQuantity) || 1)) : '');
       setNotes(activeIncident.notes || '');
       setAddressInput(activeIncident.address || '');
       setBairroInput(activeIncident.bairro || '');
@@ -428,8 +428,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       setErrorMessage('A soma de pacotes entregues, recuperados e roubados não pode ultrapassar a quantidade envolvida.');
       return;
     }
-    const unitValue = parseBrlInput(estimatedUnitValue);
-    const numValue = Number((unitValue * quantity).toFixed(2));
+    const numValue = parseBrlInput(estimatedUnitValue);
     const cleanNotes = notes.trim().slice(0, 500);
     const cleanAddress = addressInput.trim().slice(0, 250);
     const cleanBairro = bairroInput.trim().slice(0, 120);
@@ -482,7 +481,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       packagesDelivered: deliveredCount,
       packagesRecovered: recoveredCount,
       packagesStolen: stolenCount,
-      estimatedUnitValue: unitValue,
       incidentType,
       boNumber: cleanBo,
       delegaciaId: safeDelId,
@@ -514,7 +512,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           packagesDelivered: deliveredCount,
           packagesRecovered: recoveredCount,
           packagesStolen: stolenCount,
-          estimatedUnitValue: unitValue,
+          estimatedUnitValue: deleteField(),
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -544,7 +542,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           packagesDelivered: deliveredCount,
           packagesRecovered: recoveredCount,
           packagesStolen: stolenCount,
-          estimatedUnitValue: unitValue,
           incidentType,
           boNumber: cleanBo,
           delegaciaId: safeDelId,
@@ -1121,7 +1118,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    Valor estimado por pacote (R$)
+                    VALOR TOTAL ESTIMADO (R$)
                   </label>
                   <input
                     type="text"
@@ -1131,7 +1128,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                     placeholder="Ex: 250,00"
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#3483FA] focus:outline-none font-mono text-slate-800"
                   />
-                  <p className="mt-1 text-[11px] font-bold text-[#2D3277]">Total calculado: {formatBrlAmount(parseBrlInput(estimatedUnitValue) * Math.max(1, Math.floor(Number(packageQuantity) || 1)))}</p>
                 </div>
 
                 <div>
