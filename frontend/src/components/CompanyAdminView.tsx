@@ -66,7 +66,7 @@ import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../conte
 import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
 
 type CompanyPanelSubTab = 'users' | 'incidents' | 'audit' | 'company_info';
-type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'resolved';
+type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'ameaca' | 'resolved';
 
 interface CompanyAdminViewProps {
   registry?: TerritorialRegistry | null;
@@ -102,6 +102,7 @@ interface DelegaciaOption {
 }
 
 const INCIDENT_TYPE_LABELS: Record<PackageIncidentType, { label: string; badgeClass: string }> = {
+  ameaca: { label: 'Ameaça', badgeClass: 'bg-orange-100 text-orange-900 border-orange-300' },
   extravio: { label: 'Extravio', badgeClass: 'bg-amber-100 text-amber-800 border-amber-200' },
   fraude: { label: 'Fraude', badgeClass: 'bg-rose-100 text-rose-800 border-rose-200' },
   roubo_carga: { label: 'Roubo de Carga', badgeClass: 'bg-red-100 text-red-900 border-red-300 font-bold' },
@@ -523,6 +524,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       if (incidentFilter === 'fraude' && inc.incidentType !== 'fraude') return false;
       if (incidentFilter === 'extravio' && inc.incidentType !== 'extravio') return false;
       if (incidentFilter === 'roubo_carga' && inc.incidentType !== 'roubo_carga') return false;
+      if (incidentFilter === 'ameaca' && inc.incidentType !== 'ameaca') return false;
       if (
         incidentFilter === 'resolved' &&
         inc.custodyStatus !== 'liberado_retirada' &&
@@ -1990,6 +1992,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA]"
                     >
                       <option value="extravio">Extravio</option>
+                      <option value="ameaca">Ameaça</option>
                       <option value="fraude">Fraude</option>
                       <option value="roubo_carga">Roubo de Carga</option>
                       <option value="apreensao">Apreensão Policial</option>
@@ -2200,6 +2203,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                       { id: 'at_station', label: `Na Delegacia (${incidentStats.atStation})` },
                       { id: 'fraude', label: 'Fraudes' },
                       { id: 'extravio', label: 'Extravios' },
+                      { id: 'ameaca', label: 'Ameaças' },
                       { id: 'resolved', label: 'Liberados / Devolvidos' }
                     ] as const
                   ).map(tab => (

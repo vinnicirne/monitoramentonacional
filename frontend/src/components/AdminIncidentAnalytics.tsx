@@ -38,6 +38,7 @@ interface AdminIncidentAnalyticsProps {
 }
 
 const TYPE_COLORS: Record<PackageIncidentType, string> = {
+  ameaca: '#EA580C',
   roubo_carga: '#DC2626',
   roubo: '#EA580C',
   furto: '#D97706',

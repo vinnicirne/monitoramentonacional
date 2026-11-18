@@ -6,6 +6,12 @@
 
 ---
 
+## [18/11/2026] — Novo Tipo de Ocorrência: Ameaça
+
+### 27. Registro e Visualização de Ameaças
+- Adicionada a opção **Ameaça** aos formulários de ocorrência corporativa.
+- Integrada ao histórico, aos filtros, aos relatórios, ao mapa de ocorrências e às regras de validação do Firestore.
+
 ## [18/11/2026] — Remoção Definitiva de Usuário da Empresa
 
 ### 26. Limpeza do Quadro de Usuários Corporativos

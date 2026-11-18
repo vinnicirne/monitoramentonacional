@@ -628,6 +628,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         if (incType === 'roubo') return 0.9;
         if (incType === 'furto') return 0.7;
         if (incType === 'fraude') return 0.6;
+        if (incType === 'ameaca') return 0.65;
         if (incType === 'apreensao') return 0.5;
         return 0.5;
       },

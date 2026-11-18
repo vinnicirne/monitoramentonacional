@@ -329,7 +329,7 @@ service cloud.firestore {
         isValidId(data.id) &&
         isValidDomainId(data.companyDomain) &&
         data.trackingCode is string && data.trackingCode.size() >= 1 && data.trackingCode.size() <= 80 &&
-        data.incidentType in ['extravio', 'fraude', 'roubo_carga', 'roubo', 'furto', 'apreensao', 'outros'] &&
+        data.incidentType in ['extravio', 'fraude', 'roubo_carga', 'roubo', 'furto', 'apreensao', 'ameaca', 'outros'] &&
         data.boNumber is string && data.boNumber.size() <= 64 &&
         data.delegaciaId is string && data.delegaciaId.size() >= 1 && data.delegaciaId.size() <= 64 &&
         data.delegaciaName is string && data.delegaciaName.size() >= 1 && data.delegaciaName.size() <= 160 &&

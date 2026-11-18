@@ -105,6 +105,7 @@ export interface CorporateUserLicense {
 }
 
 export type PackageIncidentType =
+  | 'ameaca'
   | 'roubo_carga'
   | 'roubo'
   | 'furto'

@@ -4,6 +4,12 @@ export const INCIDENT_TYPE_META: Record<
   PackageIncidentType,
   { label: string; badgeClass: string; isRoubo: boolean; description: string }
 > = {
+  ameaca: {
+    label: 'Ameaça',
+    badgeClass: 'bg-orange-100 text-orange-900 border-orange-300',
+    isRoubo: false,
+    description: 'Ameaça ou intimidação direcionada a motorista, entregador ou equipe.'
+  },
   roubo_carga: {
     label: 'Roubo de Carga',
     badgeClass: 'bg-red-100 text-red-900 border-red-300',
