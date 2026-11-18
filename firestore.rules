@@ -78,25 +78,47 @@ service cloud.firestore {
         isAutoApproveDomain(get(/databases/$(database)/documents/referral_codes/$(code)).data.ownerDomain);
     }
 
-    function isCorporateLicenseActive(domain) {
+    function isPublicWebmailDomain(domain) {
+      return domain in [
+        'gmail.com', 'googlemail.com', 'hotmail.com', 'outlook.com',
+        'live.com', 'yahoo.com', 'yahoo.com.br', 'bol.com.br',
+        'uol.com.br', 'icloud.com', 'me.com', 'msn.com'
+      ];
+    }
+
+    function isCorporateCompanyActive(domain) {
       return isValidDomainId(domain) &&
+        !isPublicWebmailDomain(domain) &&
         exists(/databases/$(database)/documents/corporate_companies/$(domain)) &&
-        get(/databases/$(database)/documents/corporate_companies/$(domain)).data.active == true &&
+        get(/databases/$(database)/documents/corporate_companies/$(domain)).data.active == true;
+    }
+
+    function isCorporateLicenseActive(domain) {
+      return isCorporateCompanyActive(domain) &&
         get(/databases/$(database)/documents/corporate_companies/$(domain)).data.autoApprove == true;
     }
 
     function isCompanyAdmin(domain) {
       return isEmailVerified() &&
         isValidDomainId(domain) &&
+        !isPublicWebmailDomain(domain) &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyRole == 'company_admin' &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain == domain &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == domain ||
+          (
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == '' &&
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain == domain
+          )
+        ) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('licenseStatus', 'none') != 'suspended';
     }
 
     function isCompanyMember(domain) {
       return isEmailVerified() &&
         isValidDomainId(domain) &&
+        !isPublicWebmailDomain(domain) &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         (
           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == domain ||
@@ -105,7 +127,8 @@ service cloud.firestore {
             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain == domain
           )
         ) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('licenseStatus', 'none') != 'suspended';
     }
 
     function canEditCompanyIncidents(domain) {
@@ -300,7 +323,7 @@ service cloud.firestore {
           'id', 'companyDomain', 'trackingCode', 'incidentType', 'boNumber',
           'delegaciaId', 'delegaciaName', 'delegaciaUf', 'delegaciaMunicipio',
           'packageAtStation', 'custodyStatus', 'estimatedValue', 'notes',
-          'lat', 'lng', 'address', 'bairro', 'history',
+          'lat', 'lng', 'address', 'bairro', 'history', 'legacyCreatedAt',
           'createdByUid', 'createdByName', 'createdAt', 'updatedAt'
         ]) &&
         isValidId(data.id) &&
@@ -322,15 +345,47 @@ service cloud.firestore {
         ] &&
         data.estimatedValue is number && data.estimatedValue >= 0 &&
         data.notes is string && data.notes.size() <= 1000 &&
-        (!('lat' in data) || data.lat is number) &&
-        (!('lng' in data) || data.lng is number) &&
+        (!('lat' in data) || (data.lat is number && data.lat >= -90 && data.lat <= 90)) &&
+        (!('lng' in data) || (data.lng is number && data.lng >= -180 && data.lng <= 180)) &&
         (!('address' in data) || (data.address is string && data.address.size() <= 250)) &&
         (!('bairro' in data) || (data.bairro is string && data.bairro.size() <= 120)) &&
-        (!('history' in data) || data.history is list) &&
+        (!('legacyCreatedAt' in data) || (data.legacyCreatedAt is string && data.legacyCreatedAt.size() <= 64)) &&
+        (!('history' in data) || (data.history is list && data.history.size() <= 100 && (data.history.size() == 0 || data.history[0] is map))) &&
         isValidId(data.createdByUid) &&
         data.createdByName is string && data.createdByName.size() <= 120 &&
         data.createdAt is timestamp &&
         data.updatedAt is timestamp;
+    }
+
+    function isValidIncidentAuditLog(data) {
+      return data.keys().hasAll([
+          'id', 'companyDomain', 'incidentId', 'trackingCode', 'boNumber',
+          'delegaciaName', 'action', 'previousStatus', 'newStatus',
+          'previousAtStation', 'newAtStation', 'actorUid', 'actorName',
+          'actorEmail', 'summary', 'createdAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'companyDomain', 'incidentId', 'trackingCode', 'boNumber',
+          'delegaciaName', 'action', 'previousStatus', 'newStatus',
+          'previousAtStation', 'newAtStation', 'actorUid', 'actorName',
+          'actorEmail', 'summary', 'createdAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidDomainId(data.companyDomain) &&
+        isValidId(data.incidentId) &&
+        data.trackingCode is string && data.trackingCode.size() >= 1 && data.trackingCode.size() <= 80 &&
+        data.boNumber is string && data.boNumber.size() <= 64 &&
+        data.delegaciaName is string && data.delegaciaName.size() <= 160 &&
+        data.action in ['created', 'status_changed', 'station_toggled', 'history_added', 'updated', 'deleted'] &&
+        data.previousStatus is string && data.previousStatus.size() <= 64 &&
+        data.newStatus is string && data.newStatus.size() <= 64 &&
+        data.previousAtStation is bool &&
+        data.newAtStation is bool &&
+        isValidId(data.actorUid) &&
+        data.actorName is string && data.actorName.size() <= 120 &&
+        data.actorEmail is string && data.actorEmail.size() >= 3 && data.actorEmail.size() <= 160 &&
+        data.summary is string && data.summary.size() <= 500 &&
+        data.createdAt is timestamp;
     }
 
     function isValidPlanConfig(data) {
@@ -393,10 +448,18 @@ service cloud.firestore {
       allow get: if isValidId(userId) && (isOwner(userId) || isAdmin() || isCompanyAdmin(resource.data.domain));
       allow list: if isAdmin() || (
         isEmailVerified() &&
+        !isPublicWebmailDomain(resource.data.domain) &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyRole == 'company_admin' &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved' &&
-        resource.data.domain == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyDomain
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('licenseStatus', 'none') != 'suspended' &&
+        (
+          resource.data.domain == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') ||
+          (
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyDomain', '') == '' &&
+            resource.data.domain == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.domain
+          )
+        )
       );
 
       allow create: if isValidId(userId) &&
@@ -481,11 +544,13 @@ service cloud.firestore {
           ) ||
           (
             isCompanyAdmin(existing().domain) &&
+            isCorporateCompanyActive(existing().domain) &&
             existing().role == 'user' &&
             incoming().role == 'user' &&
             userId != request.auth.uid &&
             existing().get('companyDomain', '') in ['', existing().domain] &&
             incoming().get('companyDomain', '') == existing().domain &&
+            incoming().planId in [existing().planId, get(/databases/$(database)/documents/corporate_companies/$(existing().domain)).data.planId] &&
             incoming().referralCode == existing().referralCode &&
             incoming().referredByCode == existing().referredByCode &&
             incoming().referredByUid == existing().referredByUid &&
@@ -513,6 +578,7 @@ service cloud.firestore {
                 incoming().get('companyDomain', '') == existing().get('companyDomain', '') &&
                 incoming().get('licenseStatus', 'none') == existing().get('licenseStatus', 'none') &&
                 incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                incoming().get('incidentAccess', 'read') == existing().get('incidentAccess', 'read') &&
                 incoming().notes == existing().notes &&
                 incoming().accessCount >= existing().accessCount &&
                 incoming().accessCount <= existing().accessCount + 1 &&
@@ -520,7 +586,7 @@ service cloud.firestore {
               ) ||
               (
                 isEmailVerified() &&
-                existing().status == 'pending' &&
+                existing().status in ['pending', 'approved'] &&
                 incoming().status == 'approved' &&
                 incoming().role == existing().role &&
                 incoming().referralCode == existing().referralCode &&
@@ -531,6 +597,7 @@ service cloud.firestore {
                 incoming().accessCount == existing().accessCount &&
                 (
                   (
+                    existing().status == 'pending' &&
                     isFreeDomain(existing().domain) &&
                     incoming().planId == existing().planId &&
                     incoming().autoApprovedBy == 'free_domain' &&
@@ -538,6 +605,7 @@ service cloud.firestore {
                     incoming().get('companyDomain', '') == existing().get('companyDomain', '') &&
                     incoming().get('licenseStatus', 'none') == existing().get('licenseStatus', 'none') &&
                     incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                    incoming().get('incidentAccess', 'read') == existing().get('incidentAccess', 'read') &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['status', 'autoApprovedBy', 'displayName', 'photoURL', 'lastLoginAt', 'updatedAt'])
                   ) ||
                   (
@@ -555,6 +623,7 @@ service cloud.firestore {
                     ])
                   ) ||
                   (
+                    (existing().status == 'pending' || existing().get('licenseStatus', 'none') == 'none') &&
                     isCorporateLicenseActive(existing().domain) &&
                     incoming().autoApprovedBy == 'corporate_license' &&
                     incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(existing().domain)).data.planId &&
@@ -562,6 +631,7 @@ service cloud.firestore {
                     incoming().get('licenseStatus', 'none') == 'active' &&
                     incoming().get('licenseKey', '').size() >= 4 &&
                     incoming().get('companyRole', 'member') == existing().get('companyRole', 'member') &&
+                    incoming().get('incidentAccess', 'read') == existing().get('incidentAccess', 'read') &&
                     incoming().diff(existing()).affectedKeys().hasOnly([
                       'status', 'autoApprovedBy', 'planId', 'licenseKey', 'companyDomain', 'licenseStatus',
                       'displayName', 'photoURL', 'lastLoginAt', 'updatedAt'
@@ -605,9 +675,12 @@ service cloud.firestore {
           ) ||
           (
             isSignedIn() &&
+            request.auth.uid != existing().ownerUid &&
             incoming().active == existing().active &&
             incoming().ownerName == existing().ownerName &&
             incoming().totalReferrals == existing().totalReferrals + 1 &&
+            exists(/databases/$(database)/documents/referrals/$(existing().ownerUid + '_' + request.auth.uid)) &&
+            get(/databases/$(database)/documents/referrals/$(existing().ownerUid + '_' + request.auth.uid)).data.code == code &&
             incoming().diff(existing()).affectedKeys().hasOnly(['totalReferrals', 'updatedAt'])
           )
         );
@@ -680,10 +753,15 @@ service cloud.firestore {
 
     // /corporate_companies/{domainId}
     match /corporate_companies/{domainId} {
-      allow get: if isValidDomainId(domainId) && isSignedIn();
+      allow get: if isValidDomainId(domainId) && (
+        isAdmin() ||
+        (isSignedIn() && userEmailDomain() == domainId) ||
+        isCompanyMember(domainId)
+      );
       allow list: if isAdmin();
 
       allow create: if isValidDomainId(domainId) &&
+        !isPublicWebmailDomain(domainId) &&
         isAdmin() &&
         isValidCorporateCompany(incoming()) &&
         incoming().domain == domainId &&
@@ -691,15 +769,30 @@ service cloud.firestore {
         incoming().updatedAt == request.time;
 
       allow update: if isValidDomainId(domainId) &&
-        (isAdmin() || isCompanyAdmin(domainId)) &&
         isValidCorporateCompany(incoming()) &&
         incoming().domain == existing().domain &&
         incoming().createdAt == existing().createdAt &&
         incoming().updatedAt == request.time &&
-        incoming().diff(existing()).affectedKeys().hasOnly([
-          'companyName', 'planId', 'pricePerLicense', 'licensedSeats',
-          'autoApprove', 'active', 'updatedAt'
-        ]);
+        (
+          (
+            isAdmin() &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'companyName', 'planId', 'pricePerLicense', 'licensedSeats',
+              'autoApprove', 'active', 'updatedAt'
+            ])
+          ) ||
+          (
+            isCompanyAdmin(domainId) &&
+            existing().active == true &&
+            incoming().planId == existing().planId &&
+            incoming().pricePerLicense == existing().pricePerLicense &&
+            incoming().licensedSeats == existing().licensedSeats &&
+            incoming().active == existing().active &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'companyName', 'autoApprove', 'updatedAt'
+            ])
+          )
+        );
 
       allow delete: if isValidDomainId(domainId) && isAdmin();
 
@@ -707,14 +800,24 @@ service cloud.firestore {
       match /licenses/{licenseId} {
         allow get: if isValidDomainId(domainId) && isValidId(licenseId) && (
           isAdmin() ||
-          isCompanyAdmin(domainId) ||
-          (isEmailVerified() && licenseId == myEmailLicenseId())
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId)) ||
+          (isEmailVerified() && isCorporateCompanyActive(domainId) && licenseId == myEmailLicenseId())
         );
-        allow list: if isValidDomainId(domainId) && (isAdmin() || isCompanyAdmin(domainId));
+        allow list: if isValidDomainId(domainId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+        );
 
         allow create: if isValidDomainId(domainId) && isValidId(licenseId) &&
-          (isAdmin() || isCompanyAdmin(domainId)) &&
           isValidCorporateUserLicense(incoming()) &&
+          (
+            isAdmin() ||
+            (
+              isCorporateCompanyActive(domainId) &&
+              isCompanyAdmin(domainId) &&
+              incoming().planId == get(/databases/$(database)/documents/corporate_companies/$(domainId)).data.planId
+            )
+          ) &&
           incoming().id == licenseId &&
           incoming().companyDomain == domainId &&
           incoming().email.lower().split('@')[1] == domainId &&
@@ -732,13 +835,22 @@ service cloud.firestore {
           incoming().updatedAt == request.time &&
           (
             (
-              (isAdmin() || isCompanyAdmin(domainId)) &&
+              isAdmin() &&
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'displayName', 'planId', 'licenseKey', 'status', 'companyRole', 'incidentAccess', 'assignedUid', 'updatedAt'
+              ])
+            ) ||
+            (
+              isCorporateCompanyActive(domainId) &&
+              isCompanyAdmin(domainId) &&
+              incoming().planId in [existing().planId, get(/databases/$(database)/documents/corporate_companies/$(domainId)).data.planId] &&
               incoming().diff(existing()).affectedKeys().hasOnly([
                 'displayName', 'planId', 'licenseKey', 'status', 'companyRole', 'incidentAccess', 'assignedUid', 'updatedAt'
               ])
             ) ||
             (
               isEmailVerified() &&
+              isCorporateCompanyActive(domainId) &&
               licenseId == myEmailLicenseId() &&
               existing().email.lower() == request.auth.token.email.lower() &&
               incoming().displayName == existing().displayName &&
@@ -746,43 +858,83 @@ service cloud.firestore {
               incoming().licenseKey == existing().licenseKey &&
               incoming().status == existing().status &&
               incoming().companyRole == existing().companyRole &&
+              incoming().get('incidentAccess', 'read') == existing().get('incidentAccess', 'read') &&
               incoming().assignedUid == request.auth.uid &&
               incoming().diff(existing()).affectedKeys().hasOnly(['assignedUid', 'updatedAt'])
             )
           );
 
-        allow delete: if isValidDomainId(domainId) && isValidId(licenseId) && (isAdmin() || isCompanyAdmin(domainId));
+        allow delete: if isValidDomainId(domainId) && isValidId(licenseId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+        );
       }
 
       // /corporate_companies/{domainId}/incidents/{incidentId}
       match /incidents/{incidentId} {
-        allow get: if isValidDomainId(domainId) && isValidId(incidentId) &&
-          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
-        allow list: if isValidDomainId(domainId) &&
-          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
+        allow get: if isValidDomainId(domainId) && isValidId(incidentId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && (isCompanyAdmin(domainId) || isCompanyMember(domainId)))
+        );
+        allow list: if isValidDomainId(domainId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && (isCompanyAdmin(domainId) || isCompanyMember(domainId)))
+        );
 
         allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
-          canEditCompanyIncidents(domainId) &&
+          isSignedIn() &&
           isValidCorporatePackageIncident(incoming()) &&
+          (isAdmin() || (isCorporateCompanyActive(domainId) && canEditCompanyIncidents(domainId))) &&
           incoming().id == incidentId &&
           incoming().companyDomain == domainId &&
-          incoming().createdByUid == request.auth.uid;
+          incoming().createdByUid == request.auth.uid &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
 
         allow update: if isValidDomainId(domainId) && isValidId(incidentId) &&
-          canEditCompanyIncidents(domainId) &&
+          isSignedIn() &&
           isValidCorporatePackageIncident(incoming()) &&
+          (isAdmin() || (isCorporateCompanyActive(domainId) && canEditCompanyIncidents(domainId))) &&
           incoming().id == existing().id &&
           incoming().companyDomain == existing().companyDomain &&
           incoming().createdByUid == existing().createdByUid &&
           incoming().createdByName == existing().createdByName &&
           incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
           incoming().diff(existing()).affectedKeys().hasOnly([
             'trackingCode', 'incidentType', 'boNumber', 'delegaciaId', 'delegaciaName',
             'delegaciaUf', 'delegaciaMunicipio', 'packageAtStation', 'custodyStatus',
             'estimatedValue', 'notes', 'lat', 'lng', 'address', 'bairro', 'history', 'updatedAt'
           ]);
 
-        allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (isAdmin() || isCompanyAdmin(domainId));
+        allow delete: if isValidDomainId(domainId) && isValidId(incidentId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+        );
+      }
+
+      // /corporate_companies/{domainId}/incident_audit_logs/{logId}
+      match /incident_audit_logs/{logId} {
+        allow get: if isValidDomainId(domainId) && isValidId(logId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+        );
+        allow list: if isValidDomainId(domainId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && isCompanyAdmin(domainId))
+        );
+
+        allow create: if isValidDomainId(domainId) && isValidId(logId) &&
+          isSignedIn() &&
+          isValidIncidentAuditLog(incoming()) &&
+          (isAdmin() || (isCorporateCompanyActive(domainId) && canEditCompanyIncidents(domainId))) &&
+          incoming().id == logId &&
+          incoming().companyDomain == domainId &&
+          incoming().actorUid == request.auth.uid &&
+          incoming().actorEmail.lower() == request.auth.token.email.lower() &&
+          incoming().createdAt == request.time;
+
+        allow update, delete: if false;
       }
     }
 

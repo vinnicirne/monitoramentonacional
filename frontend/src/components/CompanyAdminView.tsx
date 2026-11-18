@@ -53,6 +53,7 @@ import {
   CorporateUserLicense,
   IncidentAccess,
   IncidentHistoryEntry,
+  IncidentAuditLog,
   OperationType,
   PackageCustodyStatus,
   PackageIncidentType,
@@ -62,8 +63,9 @@ import {
 import { TerritorialRegistry } from '../types';
 import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
 import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../contexts/AuthContext';
+import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
 
-type CompanyPanelSubTab = 'users' | 'incidents' | 'company_info';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'audit' | 'company_info';
 type IncidentFilterMode = 'all' | 'at_station' | 'roubos' | 'fraude' | 'extravio' | 'roubo_carga' | 'resolved';
 
 interface CompanyAdminViewProps {
@@ -191,6 +193,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   const [licenses, setLicenses] = useState<CorporateUserLicense[]>([]);
   const [companyUsers, setCompanyUsers] = useState<UserProfile[]>([]);
   const [incidents, setIncidents] = useState<CorporatePackageIncident[]>([]);
+  const [incidentAuditLogs, setIncidentAuditLogs] = useState<IncidentAuditLog[]>([]);
+  const [auditSearch, setAuditSearch] = useState('');
 
   // User/License Form state
   const [empName, setEmpName] = useState('');
@@ -279,6 +283,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       setLicenses([]);
       setCompanyUsers([]);
       setIncidents([]);
+      setIncidentAuditLogs([]);
       return;
     }
 
@@ -350,10 +355,21 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       )
     );
 
+    const canReadAudit = isAdmin || (currentAdmin?.companyRole === 'company_admin' && ownCompanyDomain === activeDomain);
+    if (canReadAudit) {
+      unsubs.push(onSnapshot(
+        query(collection(db, 'corporate_companies', activeDomain, 'incident_audit_logs'), orderBy('createdAt', 'desc')),
+        snap => setIncidentAuditLogs(snap.docs.map(d => ({ ...d.data(), id: d.id } as IncidentAuditLog))),
+        err => handleFirestoreError(err, OperationType.LIST, `corporate_companies/${activeDomain}/incident_audit_logs`)
+      ));
+    } else {
+      setIncidentAuditLogs([]);
+    }
+
     return () => {
       unsubs.forEach(u => u());
     };
-  }, [activeDomain]);
+  }, [activeDomain, isAdmin, currentAdmin?.companyRole, ownCompanyDomain]);
 
   // Unified Delegacias Catalog (RJ CISPs + MG/ES Delegacias)
   const allDelegacias = useMemo<DelegaciaOption[]>(() => {
@@ -975,6 +991,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           notes: cleanNotes,
           updatedAt: serverTimestamp()
         });
+        await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: cleanCode, boNumber: cleanBo, delegaciaName: safeDelName, action: 'updated', previousStatus: incidents.find(item => item.id === incId)?.custodyStatus, newStatus: custodyStatus, previousAtStation: incidents.find(item => item.id === incId)?.packageAtStation, newAtStation: packageAtStation, actorUid: adminUid, actorName: adminName, actorEmail: firebaseUser?.email || currentAdmin?.email || '', summary: 'Dados da ocorrência atualizados.' });
         setIncidentSuccess(`Ocorrência do pacote ${cleanCode} atualizada com sucesso.`);
       } else {
         await setDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId), {
@@ -999,6 +1016,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
+        await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: cleanCode, boNumber: cleanBo, delegaciaName: safeDelName, action: 'created', newStatus: custodyStatus, newAtStation: packageAtStation, actorUid: adminUid, actorName: adminName, actorEmail: firebaseUser?.email || currentAdmin?.email || '', summary: 'Ocorrência registrada.' });
         setIncidentSuccess(
           `Pacote ${cleanCode} registrado na ${safeDelName} (${
             packageAtStation ? 'em ocorrência na delegacia' : 'fora da delegacia'
@@ -1045,6 +1063,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         packageAtStation: autoAtStation,
         updatedAt: serverTimestamp()
       });
+      await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: inc.id, trackingCode: inc.trackingCode, boNumber: inc.boNumber, delegaciaName: inc.delegaciaName, action: 'status_changed', previousStatus: inc.custodyStatus, newStatus: nextStatus, previousAtStation: inc.packageAtStation, newAtStation: autoAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: `Status alterado para ${nextStatus}.` });
     } catch (err) {
       handleFirestoreError(
         err,
@@ -1061,6 +1080,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         packageAtStation: !inc.packageAtStation,
         updatedAt: serverTimestamp()
       });
+      await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: inc.id, trackingCode: inc.trackingCode, boNumber: inc.boNumber, delegaciaName: inc.delegaciaName, action: 'station_toggled', previousStatus: inc.custodyStatus, newStatus: inc.custodyStatus, previousAtStation: inc.packageAtStation, newAtStation: !inc.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: `Posse na delegacia ${!inc.packageAtStation ? 'confirmada' : 'removida'}.` });
     } catch (err) {
       handleFirestoreError(
         err,
@@ -1074,6 +1094,8 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     if (!activeDomain) return;
     try {
       await deleteDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId));
+      const deleted = incidents.find(item => item.id === incId);
+      if (deleted) await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: deleted.trackingCode, boNumber: deleted.boNumber, delegaciaName: deleted.delegaciaName, action: 'deleted', previousStatus: deleted.custodyStatus, previousAtStation: deleted.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: 'Ocorrência removida.' });
       if (editingIncidentId === incId) resetIncidentForm();
     } catch (err) {
       handleFirestoreError(
@@ -1454,6 +1476,16 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
             <Building2 className="w-4 h-4" />
             <span>Cadastro & Gestão da Empresa</span>
           </button>
+          {(isAdmin || currentAdmin?.companyRole === 'company_admin') && (
+            <button
+              type="button"
+              onClick={() => setSubTab('audit')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${subTab === 'audit' ? 'bg-[#2D3277] text-[#FFE600] shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+            >
+              <History className="w-4 h-4" />
+              <span>Auditoria de Ocorrências ({incidentAuditLogs.length})</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -2330,6 +2362,35 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       )}
 
       {/* =================================================================== */}
+      {subTab === 'audit' && (isAdmin || currentAdmin?.companyRole === 'company_admin') && (
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-extrabold text-[#2D3277]">Auditoria de Ocorrências</h3>
+              <p className="text-sm text-slate-500">Histórico de ações da equipe, armazenado no Firestore.</p>
+            </div>
+            <div className="flex gap-2">
+              <input value={auditSearch} onChange={e => setAuditSearch(e.target.value)} placeholder="Buscar pacote, usuário ou ação" className="min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+              <button type="button" onClick={() => {
+                const rows = [['Data','Ação','Pacote','B.O.','Delegacia','Usuário','E-mail','Resumo'], ...incidentAuditLogs.map(log => [formatTimestamp(log.createdAt), log.action, log.trackingCode, log.boNumber, log.delegaciaName, log.actorName, log.actorEmail, log.summary])];
+                const csv = rows.map(row => row.map(value => `"${String(value || '').replaceAll('"', '""')}"`).join(';')).join('\r\n');
+                const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' })); link.download = `auditoria-ocorrencias-${activeDomain}.csv`; link.click(); URL.revokeObjectURL(link.href);
+              }} className="rounded-xl bg-[#2D3277] px-3 py-2 text-xs font-bold text-white">Exportar CSV</button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {incidentAuditLogs.filter(log => `${log.trackingCode} ${log.actorName} ${log.actorEmail} ${log.summary} ${log.delegaciaName}`.toLowerCase().includes(auditSearch.toLowerCase())).map(log => {
+              const incident = incidents.find(item => item.id === log.incidentId);
+              return <article key={log.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4">
+                <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><strong className="text-sm text-slate-800">{log.summary}</strong><span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase text-slate-600">{log.action.replaceAll('_', ' ')}</span></div><p className="mt-1 text-xs text-slate-500">{formatTimestamp(log.createdAt)} · {log.actorName} ({log.actorEmail})</p><p className="text-xs text-slate-500">Pacote {log.trackingCode}{log.boNumber ? ` · B.O. ${log.boNumber}` : ''} · {log.delegaciaName}</p></div>
+                {incident && onViewIncidentDossier && <button type="button" onClick={() => onViewIncidentDossier(incident)} className="shrink-0 rounded-lg border border-blue-200 px-3 py-2 text-xs font-bold text-blue-700">Abrir dossiê</button>}
+              </article>;
+            })}
+            {incidentAuditLogs.length === 0 && <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">Ainda não há ações registradas para esta empresa.</div>}
+          </div>
+        </section>
+      )}
+
       {/* SUBTAB 3: CADASTRO & GESTÃO DA EMPRESA                              */}
       {/* =================================================================== */}
       {subTab === 'company_info' && (

@@ -29,7 +29,7 @@ const CorporateIncidentDossier = React.lazy(() => import('./components/Corporate
 import { AuthGateModal } from './components/AuthGateModal';
 import { useAuth } from './contexts/AuthContext';
 import { CorporateCompany, CorporatePackageIncident } from './types/admin';
-import { collection, doc, onSnapshot, orderBy, query, setDoc, Timestamp } from 'firebase/firestore';
+import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import {
   FAC_CATALOG,
@@ -94,7 +94,7 @@ function App() {
 
   // Sincronizar lista de empresas corporativas cadastradas
   useEffect(() => {
-    if (!hasFullAccess) return;
+    if (!isAdmin) return;
     const unsub = onSnapshot(
       collection(db, 'corporate_companies'),
       snap => {
@@ -106,7 +106,7 @@ function App() {
       }
     );
     return () => unsub();
-  }, [hasFullAccess]);
+  }, [isAdmin]);
 
   const PUBLIC_EMAIL_DOMAINS = useMemo(
     () => [
@@ -405,10 +405,6 @@ function App() {
         );
         localOnly.forEach(item => {
           migratingIncidentIdsRef.current.add(item.id);
-          const toTimestamp = (value: any) => {
-            const date = value?.toDate ? value.toDate() : new Date(value || Date.now());
-            return Timestamp.fromDate(Number.isNaN(date.getTime()) ? new Date() : date);
-          };
           const cloudRecord = {
             id: item.id,
             companyDomain: effectiveCompanyDomain,
@@ -430,8 +426,11 @@ function App() {
             history: Array.isArray(item.history) ? item.history : [],
             createdByUid: item.createdByUid,
             createdByName: item.createdByName || 'Usuário',
-            createdAt: toTimestamp(item.createdAt),
-            updatedAt: toTimestamp(item.updatedAt)
+            // Firestore rules require server timestamps for newly created records.
+            // Keep the original local creation time as migration metadata.
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            legacyCreatedAt: String(item.createdAt || '').slice(0, 64)
           };
           setDoc(doc(db, 'corporate_companies', effectiveCompanyDomain, 'incidents', item.id), cloudRecord)
             .catch(error => console.error(`Falha ao recuperar ocorrência local ${item.id} no Firebase:`, error))

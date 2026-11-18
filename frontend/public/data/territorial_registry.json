@@ -366,13 +366,13 @@
         "Glória (parte)"
       ],
       "telefone": "(21) 2332-8422",
-      "endereco": "Av. Mem de Sá, 163 - Centro / Lapa",
+      "endereco": "Av. Gomes Freire, 320 - Centro, Rio de Janeiro - RJ, 20231-013",
       "marcolegal": "SESP 310/2000 ; SESEG 151/2008",
       "validacao": "Segue memorial descritivo",
       "areakm2": 4.7,
       "centroide": [
-        -43.15236,
-        -22.858795
+        -43.1825,
+        -22.9128
       ],
       "indicadores": {
         "atual_2025": {
@@ -461,13 +461,13 @@
         "Jardim de Alah"
       ],
       "telefone": "(21) 2332-8461",
-      "endereco": "Av. Afrânio de Melo Franco, 159 - Leblon",
+      "endereco": "Av. Humberto de Campos, 315 - Leblon, Rio de Janeiro - RJ, 22430-190",
       "marcolegal": "SESP 310/2000",
       "validacao": "Segue memorial descritivo",
       "areakm2": 5.5,
       "centroide": [
-        -43.208154,
-        -22.99957
+        -43.2185,
+        -22.9845
       ],
       "indicadores": {
         "atual_2025": {
@@ -2072,17 +2072,19 @@
       "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
       "municipio": "São Gonçalo",
       "bairros": [
+        "Rio do Ouro",
         "Ipiiba",
+        "Tribobó",
         "Sete Pontes"
       ],
       "telefone": "(21) 2734-9400",
-      "endereco": "Estrada Velha de Maricá, s/n - Rio do Ouro, São Gonçalo - RJ",
+      "endereco": "Estrada Velha de Maricá, s/n - Rio do Ouro, São Gonçalo - RJ, 24753-060",
       "marcolegal": "SESP 310/2000",
       "validacao": "Localidade e município conferidos com a relação territorial oficial da CISP 75.",
       "areakm2": 88.5,
       "centroide": [
-        -43.01,
-        -22.865
+        -42.976,
+        -22.8685
       ],
       "indicadores": {
         "atual_2025": {
@@ -2361,13 +2363,13 @@
         "Silvestre"
       ],
       "telefone": "(21) 2332-8430",
-      "endereco": "Rua Santa Cristina, 18 - Santa Teresa",
+      "endereco": "Rua Francisco de Castro, 5 - Santa Teresa, Rio de Janeiro - RJ, 20241-300",
       "marcolegal": "SESP 310/2000",
       "validacao": "Segue memorial descritivo",
       "areakm2": 5.1,
       "centroide": [
-        -43.199889,
-        -22.932888
+        -43.1862,
+        -22.9212
       ],
       "indicadores": {
         "atual_2025": {
@@ -5979,13 +5981,13 @@
         "Goytacazes"
       ],
       "telefone": "(22) 2738-9400",
-      "endereco": "Rua Barão de Miracema, 231 - Centro",
+      "endereco": "Rua Barão de Miracema, 231 - Centro, Campos dos Goytacazes - RJ, 28035-301",
       "marcolegal": "SSP 865/2006",
       "validacao": "Segue memorial descritivo",
       "areakm2": 2668.9,
       "centroide": [
-        -41.427678,
-        -21.887837
+        -41.3235,
+        -21.7545
       ],
       "indicadores": {
         "atual_2025": {
@@ -6062,10 +6064,10 @@
       "cisp": 72,
       "cisp_formatado": "072ª DP",
       "nome_oficial": "072ª DP - Mutuá",
-      "aisp": 1,
-      "batalhao": "1º BPM",
-      "risp": 1,
-      "comando_regional": "RISP 1 - 1º CPA (Capital Centro e Zona Sul)",
+      "aisp": 7,
+      "batalhao": "7º BPM - São Gonçalo",
+      "risp": 4,
+      "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
       "municipio": "São Gonçalo",
       "bairros": [
         "Mutuá",
@@ -6075,13 +6077,13 @@
         "Estrela do Norte"
       ],
       "telefone": "(21) 3715-9100",
-      "endereco": "Rua Cel. Serrado, 1000 - Zé Garoto",
+      "endereco": "Av. Dezoito do Forte, 578 - Mutuá, São Gonçalo - RJ, 24460-000",
       "marcolegal": "SESP 310/2000",
       "validacao": "Segue camada do ISPGeo",
       "areakm2": 58.5,
       "centroide": [
-        -43.034613,
-        -22.788327
+        -43.0528,
+        -22.826
       ],
       "indicadores": {
         "atual_2025": {
@@ -6158,10 +6160,10 @@
       "cisp": 73,
       "cisp_formatado": "073ª DP",
       "nome_oficial": "073ª DP - Neves",
-      "aisp": 1,
-      "batalhao": "1º BPM",
-      "risp": 1,
-      "comando_regional": "RISP 1 - 1º CPA (Capital Centro e Zona Sul)",
+      "aisp": 7,
+      "batalhao": "7º BPM - São Gonçalo",
+      "risp": 4,
+      "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
       "municipio": "São Gonçalo",
       "bairros": [
         "Neves",
@@ -6171,13 +6173,13 @@
         "Gradim"
       ],
       "telefone": "(21) 3715-9200",
-      "endereco": "Rua Oliveira Botelho, 167 - Neves",
+      "endereco": "Rua Oliveira Botelho, s/n - Neves, São Gonçalo - RJ, 24425-000",
       "marcolegal": "SESP 310/2000",
       "validacao": "Segue camada do ISPGeo",
       "areakm2": 35.1,
       "centroide": [
-        -43.067242,
-        -22.843344
+        -43.0915,
+        -22.8595
       ],
       "indicadores": {
         "atual_2025": {
@@ -7567,12 +7569,12 @@
     "70": {
       "cisp": 70,
       "cisp_formatado": "070ª DP",
-      "nome_oficial": "070ª DP",
+      "nome_oficial": "070ª DP - Tanguá",
       "aisp": 35,
       "batalhao": "35º BPM - Itaboraí",
       "risp": 4,
       "comando_regional": "RISP 4 - 4º CPA (Leste Fluminense e Região dos Lagos)",
-      "municipio": "Município da CISP 70",
+      "municipio": "Tanguá",
       "bairros": [
         "Bairros vinculados à 070ª DP",
         "Setor Territorial 70"
@@ -7753,12 +7755,12 @@
     "48": {
       "cisp": 48,
       "cisp_formatado": "048ª DP",
-      "nome_oficial": "048ª DP",
+      "nome_oficial": "048ª DP - Seropédica",
       "aisp": 24,
       "batalhao": "24º BPM - Queimados",
       "risp": 3,
       "comando_regional": "RISP 3 - 3º CPA (Baixada Fluminense)",
-      "municipio": "Município da CISP 48",
+      "municipio": "Seropédica",
       "bairros": [
         "Bairros vinculados à 048ª DP",
         "Setor Territorial 48"
@@ -9153,24 +9155,24 @@
     "139": {
       "cisp": 139,
       "cisp_formatado": "139ª DP",
-      "nome_oficial": "139ª DP",
+      "nome_oficial": "139ª DP - Porciúncula",
       "aisp": 29,
       "batalhao": "29º BPM - Itaperuna",
       "risp": 6,
       "comando_regional": "RISP 6 - 6º CPA (Norte e Noroeste Fluminense)",
-      "municipio": "Município da CISP 139",
+      "municipio": "Porciúncula",
       "bairros": [
         "Bairros vinculados à 139ª DP",
         "Setor Territorial 139"
       ],
       "telefone": "(21) 2332-8439",
-      "endereco": "Sede Oficial da 139ª DP",
+      "endereco": "Rua Antônio Duarte, s/n - Centro, Porciúncula - RJ, 28390-000",
       "marcolegal": "SSP 865/2006",
       "validacao": "Segue memorial descritivo",
       "areakm2": 291.8,
       "centroide": [
-        -41.969583,
-        -20.906564
+        -42.041,
+        -20.9628
       ],
       "indicadores": {
         "atual_2025": {
@@ -9445,13 +9447,13 @@
         "Boa Esperança"
       ],
       "telefone": "(21) 2332-8419",
-      "endereco": "Rua Rodrigues Coelho, s/n - Green Valley, Rio Bonito - RJ",
+      "endereco": "Rua Rodrigues Coelho, s/n - Green Valley, Rio Bonito - RJ, 28800-000",
       "marcolegal": "SESP 310/2000",
       "validacao": "Localidade conferida com a relação territorial da CISP 119 e Carta de Serviços da PCERJ.",
       "areakm2": 459.5,
       "centroide": [
-        -42.625,
-        -22.705
+        -42.6265,
+        -22.7115
       ],
       "indicadores": {
         "atual_2025": {
@@ -12357,13 +12359,13 @@
         "Frade"
       ],
       "telefone": "(24) 3365-9600",
-      "endereco": "Rua Dr. Coutinho, 6 - Centro",
+      "endereco": "Rua Doutor Coutinho, 6 - Centro, Angra dos Reis - RJ, 23900-620",
       "marcolegal": "SESEG 475/2011",
       "validacao": "Segue memorial descritivo",
       "areakm2": 813.5,
       "centroide": [
-        -44.352748,
-        -22.986554
+        -44.3182,
+        -23.0068
       ],
       "indicadores": {
         "atual_2025": {
@@ -13196,7 +13198,7 @@
     "1": {
       "cisp": 1,
       "cisp_formatado": "001ª DP",
-      "nome_oficial": "001ª DP",
+      "nome_oficial": "001ª DP - Praça Mauá",
       "aisp": 5,
       "batalhao": "5º BPM - Centro / Harmonia",
       "risp": 1,

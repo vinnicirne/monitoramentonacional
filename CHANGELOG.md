@@ -6,6 +6,25 @@
 
 ---
 
+## [18/11/2026] — Segurança Firestore, Auditoria e Correções Territoriais
+
+### 22. Regras Firestore e Auditoria de Ocorrências Corporativas
+- Reforçado o isolamento por domínio corporativo ativo e a validação de vínculo/licença para leitura e escrita de ocorrências.
+- Bloqueadas operações em empresas com domínio de e-mail público e alterações de campos comerciais por administradores da empresa.
+- Acrescentadas validações de coordenadas, limites do histórico e timestamps do servidor; a migração de registros locais preserva a data antiga em `legacyCreatedAt`.
+- Criada subcoleção de auditoria corporativa com registros de criação, edição, andamento, status, custódia e exclusão; os registros não podem ser alterados nem removidos pelas regras.
+- Adicionada análise agregada de ocorrências por empresa para a administração.
+- A auditoria é registrada pelo cliente autenticado e protegida contra edição posterior; não substitui uma trilha gerada por backend confiável.
+
+### 23. Metadados neutros para instalação e compartilhamento
+- Removida a atribuição da agência dos metadados do navegador, PWA e compartilhamento social.
+- Alinhados título, descrição e nome de instalação ao manifesto existente, sem alterar ícones e identidade visual do aplicativo.
+
+### 24. Correções de delegacias e circunscrições
+- Corrigida a identificação da 075ª DP para Rio do Ouro, em São Gonçalo, e mantida a 119ª DP em Rio Bonito.
+- Corrigidos batalhão, AISP e RISP da 072ª e 073ª DP para 7º BPM, AISP 7 e RISP 4.
+- Atualizadas as posições das delegacias 005, 007, 014, 072, 073, 075, 119, 134, 139 e 166 e conferidos seus endereços com a Carta de Serviços da PCERJ.
+
 ## [18/11/2026] — Experiência Mobile e Aplicativo PWA
 
 ### 21. Ajustes Mobile, Acessibilidade e Instalação do Aplicativo

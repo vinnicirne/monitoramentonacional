@@ -37,6 +37,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { searchAddressesFree } from '../utils/geocoding';
 import { findResponsibleDelegacia, DelegaciaMatchResult } from '../utils/delegaciaMatcher';
 import { CUSTODY_LABELS, INCIDENT_TYPE_META } from '../utils/corporateIncidentMetadata';
+import { recordIncidentAuditLog } from '../utils/incidentAuditLogger';
 
 interface CorporateIncidentModalProps {
   isOpen: boolean;
@@ -491,6 +492,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           history: updatedHistory,
           updatedAt: serverTimestamp()
         });
+        await recordIncidentAuditLog({ companyDomain: domainToUse, incidentId: incId, trackingCode: cleanCode, boNumber: cleanBo, delegaciaName: safeDelName, action: 'updated', previousStatus: activeIncident.custodyStatus, newStatus: custodyStatus, previousAtStation: activeIncident.packageAtStation, newAtStation: packageAtStation, actorUid: creatorUid, actorName: creatorName, actorEmail: firebaseUser?.email || userProfile.email, summary: 'Dados da ocorrência atualizados.' });
         setSuccessMessage(`Ocorrência ${cleanCode} atualizada com sucesso! O mapa de calor foi recalculado.`);
       } else {
         await setDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', incId), {
@@ -517,6 +519,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
+        await recordIncidentAuditLog({ companyDomain: domainToUse, incidentId: incId, trackingCode: cleanCode, boNumber: cleanBo, delegaciaName: safeDelName, action: 'created', newStatus: custodyStatus, newAtStation: packageAtStation, actorUid: creatorUid, actorName: creatorName, actorEmail: firebaseUser?.email || userProfile.email, summary: 'Ocorrência registrada.' });
         setSuccessMessage(`Ocorrência ${cleanCode} registrada com sucesso e integrada ao Mapa de Calor de @${domainToUse}!`);
       }
 
@@ -598,6 +601,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         history: nextHistory,
         updatedAt: serverTimestamp()
       });
+      await recordIncidentAuditLog({ companyDomain: domainToUse, incidentId: activeIncident.id, trackingCode: activeIncident.trackingCode, boNumber: activeIncident.boNumber, delegaciaName: activeIncident.delegaciaName, action: 'history_added', previousStatus: activeIncident.custodyStatus, newStatus: newHistoryStatus, previousAtStation: activeIncident.packageAtStation, newAtStation: activeIncident.packageAtStation, actorUid: creatorUid, actorName: creatorName, actorEmail: firebaseUser?.email || userProfile.email, summary: `Andamento adicionado: ${newEntry.title}` });
 
       try {
         const storageKey = `PMT_CORP_INCIDENTS_${domainToUse}`;

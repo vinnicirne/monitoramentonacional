@@ -39,6 +39,7 @@ import {
   AccessLog,
   CompanyRole,
   CorporateCompany,
+  CorporatePackageIncident,
   FreeDomain,
   OperationType,
   PlanBillingModel,
@@ -49,8 +50,9 @@ import {
   UserStatus
 } from '../types/admin';
 import { emailToLicenseId, generateCorporateLicenseKey, useAuth } from '../contexts/AuthContext';
+import { AdminIncidentAnalytics } from './AdminIncidentAnalytics';
 
-type AdminSubTab = 'overview' | 'users' | 'companies' | 'plans' | 'domains' | 'referrals';
+type AdminSubTab = 'overview' | 'analytics' | 'users' | 'companies' | 'plans' | 'domains' | 'referrals';
 
 interface AdminDashboardViewProps {
   onOpenCompanyPanel?: (domain: string) => void;
@@ -67,6 +69,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [plans, setPlans] = useState<PlanConfig[]>([]);
   const [companies, setCompanies] = useState<CorporateCompany[]>([]);
+  const [incidentsByCompany, setIncidentsByCompany] = useState<Record<string, CorporatePackageIncident[]>>({});
+  const allCorporateIncidents = useMemo(() => Object.values(incidentsByCompany).flat(), [incidentsByCompany]);
   const [domains, setDomains] = useState<FreeDomain[]>([]);
   const [referrals, setReferrals] = useState<ReferralRecord[]>([]);
   const [referralCodes, setReferralCodes] = useState<ReferralCode[]>([]);
@@ -179,6 +183,18 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
       unsubs.forEach(u => u());
     };
   }, []);
+
+  useEffect(() => {
+    const unsubs = companies.filter(company => company.active).map(company =>
+      onSnapshot(collection(db, 'corporate_companies', company.domain, 'incidents'), snap => {
+        setIncidentsByCompany(previous => ({
+          ...previous,
+          [company.domain]: snap.docs.map(item => item.data() as CorporatePackageIncident)
+        }));
+      }, err => handleFirestoreError(err, OperationType.LIST, `corporate_companies/${company.domain}/incidents`))
+    );
+    return () => unsubs.forEach(unsubscribe => unsubscribe());
+  }, [companies]);
 
   const stats = useMemo(() => {
     const totalUsers = users.length;
@@ -681,6 +697,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             {(
               [
                 { id: 'overview', label: 'Resumo & Acessos' },
+                { id: 'analytics', label: 'Análise de Ocorrências' },
                 {
                   id: 'users',
                   label: stats.pendingUsers > 0 ? `Usuários (${stats.pendingUsers} pendentes)` : 'Usuários'
@@ -962,6 +979,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {subTab === 'analytics' && (
+        <AdminIncidentAnalytics
+          incidents={allCorporateIncidents}
+          companies={companies}
+          onOpenCompanyPanel={onOpenCompanyPanel}
+        />
       )}
 
       {/* ================================================================= */}

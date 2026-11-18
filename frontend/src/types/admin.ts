@@ -154,6 +154,28 @@ export interface CorporatePackageIncident {
   createdByName: string;
   createdAt?: any;
   updatedAt?: any;
+  legacyCreatedAt?: string;
+}
+
+export type IncidentAuditAction = 'created' | 'status_changed' | 'station_toggled' | 'history_added' | 'updated' | 'deleted';
+
+export interface IncidentAuditLog {
+  id: string;
+  companyDomain: string;
+  incidentId: string;
+  trackingCode: string;
+  boNumber: string;
+  delegaciaName: string;
+  action: IncidentAuditAction;
+  previousStatus: string;
+  newStatus: string;
+  previousAtStation: boolean;
+  newAtStation: boolean;
+  actorUid: string;
+  actorName: string;
+  actorEmail: string;
+  summary: string;
+  createdAt?: any;
 }
 
 export interface PlanConfig {
