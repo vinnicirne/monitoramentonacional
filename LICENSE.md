@@ -1,7 +1,7 @@
 # LICENÇA DE PROPRIEDADE INTELECTUAL E USO DE SOFTWARE
 
 **PRODUTO:** Painel de Monitoramento Territorial (GIS & Governança Policial — RJ · MG · ES)  
-**TITULAR DOS DIREITOS:** Agência Ícone Digital  
+**TITULAR DOS DIREITOS SOBRE O SOFTWARE E COMPONENTES ORIGINAIS:** Agência Ícone Digital
 **AUTOR E RESPONSÁVEL TÉCNICO:** Vinicius Cirne  
 **IDENTIFICADOR REGISTRADO:** `AID-VC-GIS-2026-BR-RJ`  
 **ANO DE HOMOLOGAÇÃO:** 2026  

@@ -13,6 +13,8 @@
 - Esclarecido que bases oriundas de fontes como ISP Dados e Fogo Cruzado não são propriedade da Agência; acesso e reutilização devem respeitar as condições de cada fonte, inclusive eventuais requisitos de autorização de API.
 - Incluída disposição esclarecendo que esta licença não reivindica como propriedade da Agência as ocorrências e informações registradas pelo cliente ou por seus usuários.
 - Atualizado `LICENSE.md` com referências às fontes citadas.
+- Corrigidos o certificado exibido no aplicativo e os textos de titularidade da seção **Metodologia & Fontes**, que ainda descreviam dados cartográficos públicos como propriedade exclusiva da agência.
+- Sincronizada a licença resumida em `frontend/LICENSE.md` com o esclarecimento sobre dados públicos.
 
 ---
 

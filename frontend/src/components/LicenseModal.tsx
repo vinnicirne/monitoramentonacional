@@ -30,7 +30,7 @@ export const LicenseModal: React.FC<LicenseModalProps> = ({ isOpen, onClose }) =
             </div>
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
-                Licença de Propriedade Intelectual & Uso Vinculado
+                Licença de Uso do Software e Direitos Autorais
               </h3>
               <p className="text-xs text-slate-400">
                 Certificação de Titularidade Oficial e Governança Tecnológica
@@ -54,7 +54,7 @@ export const LicenseModal: React.FC<LicenseModalProps> = ({ isOpen, onClose }) =
             <div className="p-3.5 rounded-xl bg-slate-950/80 border border-blue-500/30 space-y-1">
               <div className="flex items-center gap-2 text-blue-400 font-semibold text-[11px] uppercase tracking-wider">
                 <Building className="w-4 h-4" />
-                <span>Titular dos Direitos Patrimoniais</span>
+                <span>Titular do Software e Componentes Originais</span>
               </div>
               <div className="text-sm font-bold text-white">Agência Ícone Digital</div>
               <div className="text-[11px] text-slate-400">
@@ -101,22 +101,27 @@ export const LicenseModal: React.FC<LicenseModalProps> = ({ isOpen, onClose }) =
 
             <div className="space-y-2.5 text-slate-300 text-[11px]">
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
-                <strong className="text-slate-100 block mb-0.5">1. Titularidade e Reserva de Direitos:</strong>
-                Todo o software, interfaces visuais, estrutura de dados cartográficos (CISPs, AISPs, RISPs, SIG MG/ES), algoritmos de cruzamento espacial e relatórios técnicos constituem propriedade intelectual exclusiva da <strong>Agência Ícone Digital</strong>, sob autoria de <strong>Vinicius Cirne</strong>.
+                <strong className="text-slate-100 block mb-0.5">1. Software e componentes originais:</strong>
+                Os direitos sobre o código, as interfaces e os componentes originais desenvolvidos para a plataforma são atribuídos à <strong>Agência Ícone Digital</strong>, sob autoria de <strong>Vinicius Cirne</strong>, respeitados os direitos de terceiros. Esta atribuição não inclui dados públicos nem bases de outros portais.
               </div>
 
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
-                <strong className="text-slate-100 block mb-0.5">2. Licença Vinculada de Uso:</strong>
+                <strong className="text-slate-100 block mb-0.5">2. Dados públicos e fontes externas:</strong>
+                Dados do ISP, Fogo Cruzado e de outras fontes permanecem vinculados às respectivas fontes e às condições de acesso e reutilização por elas estabelecidas. A integração ou exibição desses dados no sistema não os torna propriedade da Agência Ícone Digital.
+              </div>
+
+              <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
+                <strong className="text-slate-100 block mb-0.5">3. Licença Vinculada de Uso:</strong>
                 A utilização desta plataforma é concedida sob modalidade vinculada e intransferível, destinada a operações de governança territorial, inteligência geográfica, visualização de dinâmicas de segurança e apoio à tomada de decisão.
               </div>
 
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
-                <strong className="text-slate-100 block mb-0.5">3. Preservação de Atribuição e Rodapé:</strong>
+                <strong className="text-slate-100 block mb-0.5">4. Preservação de Atribuição e Rodapé:</strong>
                 É obrigatória a manutenção perpétua da assinatura, rodapé e créditos vinculados à <strong>Agência Ícone Digital by Vinicius Cirne</strong> em todas as instâncias visuais, telas de consulta, impressões em PDF e materiais derivados.
               </div>
 
               <div className="p-2.5 bg-slate-950/50 rounded-lg border border-slate-800">
-                <strong className="text-slate-100 block mb-0.5">4. Marco Legal Vigente:</strong>
+                <strong className="text-slate-100 block mb-0.5">5. Marco Legal:</strong>
                 Este software e sua propriedade industrial encontram-se respaldados pela legislação brasileira sobre proteção de propriedade intelectual de programa de computador (Lei Federal nº 9.609/1998) e pela Lei de Direitos Autorais (Lei Federal nº 9.610/1998).
               </div>
             </div>
@@ -126,7 +131,7 @@ export const LicenseModal: React.FC<LicenseModalProps> = ({ isOpen, onClose }) =
         {/* Footer */}
         <div className="p-4 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between">
           <span className="text-[10px] text-slate-500">
-            © 2026 Agência Ícone Digital by Vinicius Cirne · Todos os direitos reservados.
+            © 2026 Agência Ícone Digital by Vinicius Cirne · Direitos reservados sobre o software próprio.
           </span>
           <button
             onClick={onClose}
