@@ -732,6 +732,12 @@ function App() {
         onOpenLicense={() => setShowLicenseModal(true)}
         onOpenCompanyRegister={() => setShowCompanyRegisterModal(true)}
         onOpenNavigation={() => setIsNavigationOpen(true)}
+        isFactionPanelOpen={isFactionPanelOpen}
+        onToggleFactions={() => {
+          setSidebarSection(null);
+          setIsNavigationOpen(false);
+          setIsFactionPanelOpen(prev => !prev);
+        }}
       />
 
       {/* Main Workspace */}
@@ -950,20 +956,8 @@ function App() {
 
               {/* Floating map controls */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto z-20 flex items-center justify-center gap-2 pointer-events-none">
-                {/* Quadro das Facções (desktop button; mobile uses dedicated bottom tab) */}
+                {/* Painel de Facções aberto pelo cabeçalho principal */}
                 <div className="relative pointer-events-auto">
-                  <button
-                    onClick={() => setIsFactionPanelOpen(!isFactionPanelOpen)}
-                    className={`hidden md:flex px-3 py-1.5 rounded-2xl border text-xs font-semibold items-center gap-2 shadow-lg backdrop-blur-md transition-all cursor-pointer whitespace-nowrap ${
-                      isFactionPanelOpen
-                        ? 'bg-red-600 border-red-700 text-white shadow-sm'
-                        : 'bg-white/95 hover:bg-slate-50 border-slate-200 text-slate-800 hover:text-[#2D3277]'
-                    }`}
-                  >
-                    <Flame className={`w-3.5 h-3.5 ${isFactionPanelOpen ? 'text-white' : 'text-red-600'}`} />
-                    <span>Facções (1.695)</span>
-                  </button>
-
                   {isFactionPanelOpen && (
                     <>
                       <div
@@ -1166,23 +1160,6 @@ function App() {
         >
           <Shield className="w-5 h-5" />
           <span className="text-[10px] font-semibold tracking-tight">Camadas</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab('map');
-            setSidebarSection(null);
-            setIsNavigationOpen(false);
-            setIsFactionPanelOpen(prev => !prev);
-          }}
-          className={`flex flex-col items-center justify-center h-full gap-0.5 cursor-pointer transition-colors ${
-            activeTab === 'map' && isFactionPanelOpen
-              ? 'text-red-600'
-              : 'text-slate-500 hover:text-[#2D3277]'
-          }`}
-        >
-          <Flame className="w-5 h-5" />
-          <span className="text-[10px] font-semibold tracking-tight">Facções</span>
         </button>
 
         <button

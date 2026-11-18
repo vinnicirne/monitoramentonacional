@@ -21,6 +21,10 @@
 - Removida a barra inferior de seleção e reprodução de anos ISP (2020–2025), que ocupava espaço sem necessidade no mapa.
 - Mantida a visualização temática do mapa usando 2025, ano mais recente disponível nos dados exibidos.
 
+### 20. Acesso ao Painel de Facções pelo Cabeçalho Principal
+- Movido o botão **Facções** do rodapé do mapa para o cabeçalho superior do aplicativo.
+- Removido o atalho duplicado da navegação inferior mobile; o painel existente continua sendo aberto e fechado pelo novo botão do cabeçalho.
+
 ---
 
 ## [18/11/2026] — Acesso às Ocorrências Corporativas, Permissões e Isolamento por Empresa

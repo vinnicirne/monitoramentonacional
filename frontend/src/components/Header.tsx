@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Shield,
   Layers,
+  Flame,
   Building2,
   LogIn,
   Crown,
@@ -21,6 +22,8 @@ interface HeaderProps {
   onOpenLicense?: () => void;
   onOpenCompanyRegister?: () => void;
   onOpenNavigation?: () => void;
+  isFactionPanelOpen?: boolean;
+  onToggleFactions?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -30,7 +33,9 @@ export const Header: React.FC<HeaderProps> = ({
   setEstadoScope,
   onOpenLicense,
   onOpenCompanyRegister,
-  onOpenNavigation
+  onOpenNavigation,
+  isFactionPanelOpen = false,
+  onToggleFactions
 }) => {
   const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal } = useAuth();
 
@@ -87,6 +92,23 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* 3. Direct Quick Actions & Account Controls */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {activeTab === 'map' && onToggleFactions && (
+          <button
+            onClick={onToggleFactions}
+            aria-label={isFactionPanelOpen ? 'Fechar painel de Facções' : 'Abrir painel de Facções'}
+            aria-pressed={isFactionPanelOpen}
+            title={isFactionPanelOpen ? 'Fechar painel de Facções' : 'Abrir painel de Facções'}
+            className={`flex items-center justify-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer whitespace-nowrap border shrink-0 shadow-xs ${
+              isFactionPanelOpen
+                ? 'bg-red-600 text-white border-red-700'
+                : 'bg-white/95 text-[#2D3277] border-[#2D3277]/25 hover:bg-white'
+            }`}
+          >
+            <Flame className={`w-4 h-4 shrink-0 ${isFactionPanelOpen ? 'text-white' : 'text-red-600'}`} />
+            <span className="hidden sm:inline">Facções</span>
+          </button>
+        )}
+
         {/* Botão Rápido de Retorno ao Mapa (visível quando em outras abas) */}
         {activeTab !== 'map' && (
           <button
