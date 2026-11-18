@@ -59,7 +59,6 @@ interface MapContainerProps {
   mapRefOut: React.MutableRefObject<Map | null>;
   choroplethMetric: ChoroplethMetric;
   layerOpacity: number;
-  selectedYear: number;
   selectedFactionFilter: string;
   visiblePreciseFactions: Record<CodigoFaccaoPrecisa, boolean>;
   mgEsDivisao: DivisaoTerritorialRow[];
@@ -125,7 +124,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   mapRefOut,
   choroplethMetric,
   layerOpacity,
-  selectedYear,
   selectedFactionFilter,
   visiblePreciseFactions,
   mgEsDivisao,
@@ -157,7 +155,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   const selectedDelegaciaIdRef = useRef<string | null>(selectedDelegaciaMgEsId);
   const choroplethMetricRef = useRef(choroplethMetric);
   const layerOpacityRef = useRef(layerOpacity);
-  const selectedYearRef = useRef(selectedYear);
   const registryRef = useRef(registry);
   const selectedFactionFilterRef = useRef(selectedFactionFilter);
   const estadoScopeRef = useRef(estadoScope);
@@ -190,11 +187,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     layerOpacityRef.current = layerOpacity;
     if (cispVectorRef.current) cispVectorRef.current.changed();
   }, [layerOpacity]);
-
-  useEffect(() => {
-    selectedYearRef.current = selectedYear;
-    if (cispVectorRef.current) cispVectorRef.current.changed();
-  }, [selectedYear]);
 
   useEffect(() => {
     registryRef.current = registry;
@@ -430,7 +422,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         const isSelected = selectedCispIdRef.current === cispNum;
         const opacity = layerOpacityRef.current;
         const metric = choroplethMetricRef.current;
-        const year = selectedYearRef.current;
+        const year = 2025;
         const reg = registryRef.current;
 
         let fillColor = isSelected

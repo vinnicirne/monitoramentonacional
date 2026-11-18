@@ -50,9 +50,6 @@ import {
 } from './data/mgEsData';
 import {
   Shield,
-  Play,
-  Pause,
-  Clock,
   Flame,
   Layers,
   Building2,
@@ -172,11 +169,9 @@ function App() {
     NEU: true
   });
 
-  // Thematic Choropleth, Opacity, Timeline & Factions Panel
+  // Thematic Choropleth, Opacity & Factions Panel
   const [choroplethMetric, setChoroplethMetric] = useState<ChoroplethMetric>('none');
   const [layerOpacity, setLayerOpacity] = useState<number>(0.18);
-  const [selectedYear, setSelectedYear] = useState<number>(2025);
-  const [isPlayingTimeline, setIsPlayingTimeline] = useState<boolean>(false);
   const [isFactionPanelOpen, setIsFactionPanelOpen] = useState<boolean>(false);
   const [sidebarSection, setSidebarSection] = useState<SidebarSection | null>(null);
   const [isNavigationOpen, setIsNavigationOpen] = useState<boolean>(false);
@@ -412,19 +407,6 @@ function App() {
       unsub();
     };
   }, [effectiveCompanyDomain, canViewCompanyIncidents, userProfile?.uid]);
-
-  // Timeline Auto-Play effect
-  useEffect(() => {
-    if (!isPlayingTimeline) return;
-    const years = [2020, 2021, 2022, 2023, 2024, 2025];
-    const timer = setInterval(() => {
-      setSelectedYear(prev => {
-        const idx = years.indexOf(prev);
-        return years[(idx + 1) % years.length];
-      });
-    }, 1500);
-    return () => clearInterval(timer);
-  }, [isPlayingTimeline]);
 
   // Select a CISP programmatically (toggle: unselect if already active)
   const handleSelectCISP = (cispId: number) => {
@@ -947,7 +929,6 @@ function App() {
                 mapRefOut={mapRef}
                 choroplethMetric={choroplethMetric}
                 layerOpacity={layerOpacity}
-                selectedYear={selectedYear}
                 selectedFactionFilter={selectedFactionFilter}
                 visiblePreciseFactions={visiblePreciseFactions}
                 mgEsDivisao={divisaoRows}
@@ -967,49 +948,9 @@ function App() {
                 onResetView={handleResetView}
               />
 
-              {/* Floating Bottom Command Bar: Timeline ISP + Quadro das Facções */}
+              {/* Floating map controls */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto z-20 flex items-center justify-center gap-2 pointer-events-none">
-                {/* 1. Timeline ISP Bar */}
-                <div className="pointer-events-auto bg-white/95 border border-slate-200 rounded-2xl px-2.5 py-1.5 md:px-3.5 shadow-lg backdrop-blur-md flex items-center gap-1.5 md:gap-2 text-xs max-w-full overflow-x-auto no-scrollbar">
-                  <div className="flex items-center gap-1.5 text-[#2D3277] font-bold pr-1.5 md:pr-2 border-r border-slate-200 shrink-0">
-                    <Clock className="w-3.5 h-3.5 text-[#3483FA]" />
-                    <span className="hidden sm:inline">Ano ISP:</span>
-                  </div>
-
-                  <button
-                    onClick={() => setIsPlayingTimeline(!isPlayingTimeline)}
-                    title={isPlayingTimeline ? 'Pausar Linha do Tempo' : 'Reproduzir Evolução Temporal'}
-                    className={`p-1.5 rounded-lg border transition-all cursor-pointer shrink-0 ${
-                      isPlayingTimeline
-                        ? 'bg-[#FFE600] text-[#2D3277] border-[#E6CF00] animate-pulse'
-                        : 'bg-slate-100 hover:bg-slate-200 text-[#2D3277] border-slate-200'
-                    }`}
-                  >
-                    {isPlayingTimeline ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                  </button>
-
-                  <div className="flex items-center gap-0.5 sm:gap-1">
-                    {[2020, 2021, 2022, 2023, 2024, 2025].map(y => (
-                      <button
-                        key={y}
-                        onClick={() => {
-                          setSelectedYear(y);
-                          setIsPlayingTimeline(false);
-                        }}
-                        className={`px-2 py-1 md:py-0.5 rounded-lg font-mono font-bold text-xs transition-all cursor-pointer shrink-0 ${
-                          selectedYear === y
-                            ? 'bg-[#3483FA] text-white shadow-sm'
-                            : 'text-slate-600 hover:text-[#2D3277] hover:bg-slate-100'
-                        }`}
-                      >
-                        <span className="sm:hidden">&apos;{String(y).slice(2)}</span>
-                        <span className="hidden sm:inline">{y}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2. Quadro das Facções (desktop button; mobile uses dedicated bottom tab) */}
+                {/* Quadro das Facções (desktop button; mobile uses dedicated bottom tab) */}
                 <div className="relative pointer-events-auto">
                   <button
                     onClick={() => setIsFactionPanelOpen(!isFactionPanelOpen)}

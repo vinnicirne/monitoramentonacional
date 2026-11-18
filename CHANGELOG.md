@@ -17,6 +17,10 @@
 - Sincronizada a licença resumida em `frontend/LICENSE.md` com o esclarecimento sobre dados públicos.
 - Reforçado que o painel reproduz e apresenta dados publicados pelos portais, aos quais cabe a responsabilidade pelo conteúdo original, critérios, atualização e correções.
 
+### 19. Remoção da Barra de Linha do Tempo ISP no Mapa
+- Removida a barra inferior de seleção e reprodução de anos ISP (2020–2025), que ocupava espaço sem necessidade no mapa.
+- Mantida a visualização temática do mapa usando 2025, ano mais recente disponível nos dados exibidos.
+
 ---
 
 ## [18/11/2026] — Acesso às Ocorrências Corporativas, Permissões e Isolamento por Empresa
