@@ -4,6 +4,10 @@
 > **Licença Registrada:** `AID-VC-GIS-2026-BR-RJ` • Todos os direitos reservados.  
 > **Instrução contínua:** A cada nova atualização aplicada ao sistema, acrescentar uma nova seção cronológica no topo deste arquivo preservando o histórico anterior.
 
+## Correção da lista após excluir ocorrência
+- A exclusão agora remove a ocorrência do Firestore em lote e grava um marcador de exclusão permanente para impedir que um cache antigo do navegador recupere o registro.
+- O cache local do dispositivo que excluiu a ocorrência também é atualizado imediatamente.
+
 ## Correção de exclusão de ocorrências
 - Alinhada a autorização de SuperAdmin do Firestore ao perfil `users/{uid}.role == 'admin'`, que já é reconhecido pela interface. Isso evita que a conta administradora tenha o botão de exclusão sem que as regras correspondentes permitam a operação.
 - Melhorada a mensagem exibida quando o Firebase rejeita uma exclusão por permissão.

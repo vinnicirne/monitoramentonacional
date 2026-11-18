@@ -36,7 +36,6 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import {
   collection,
   deleteField,
-  deleteDoc,
   doc,
   getDocs,
   onSnapshot,
@@ -1240,7 +1239,23 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
     const incident = incidents.find(item => item.id === incId);
     if (!window.confirm(`Excluir definitivamente a ocorrência ${incident?.trackingCode || incId}?`)) return;
     try {
-      await deleteDoc(doc(db, 'corporate_companies', activeDomain, 'incidents', incId));
+      const incidentRef = doc(db, 'corporate_companies', activeDomain, 'incidents', incId);
+      const deletionRef = doc(db, 'corporate_companies', activeDomain, 'deleted_incidents', incId);
+      const cacheKey = `PMT_CORP_INCIDENTS_${activeDomain}`;
+      const cachedRaw = localStorage.getItem(cacheKey);
+      const cachedItems = cachedRaw ? JSON.parse(cachedRaw) : [];
+      const cachedList: CorporatePackageIncident[] = Array.isArray(cachedItems) ? cachedItems : [];
+      localStorage.setItem(cacheKey, JSON.stringify(cachedList.filter(item => item.id !== incId)));
+
+      const batch = writeBatch(db);
+      batch.delete(incidentRef);
+      batch.set(deletionRef, {
+        id: incId,
+        companyDomain: activeDomain,
+        deletedByUid: firebaseUser?.uid || currentAdmin?.uid || '',
+        deletedAt: serverTimestamp()
+      });
+      await batch.commit();
       if (incident) await recordIncidentAuditLog({ companyDomain: activeDomain, incidentId: incId, trackingCode: incident.trackingCode, boNumber: incident.boNumber, delegaciaName: incident.delegaciaName, action: 'deleted', previousStatus: incident.custodyStatus, previousAtStation: incident.packageAtStation, actorUid: currentAdmin?.uid, actorName: currentAdmin?.displayName, actorEmail: firebaseUser?.email || currentAdmin?.email, summary: 'Ocorrência removida.' });
       setIncidentError(null);
       setIncidentSuccess('Ocorrência excluída com sucesso.');

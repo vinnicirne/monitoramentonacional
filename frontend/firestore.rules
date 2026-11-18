@@ -766,6 +766,23 @@ service cloud.firestore {
       }
     }
 
+      // Tombstones prevent legacy browser caches from recreating deleted incidents.
+      match /deleted_incidents/{incidentId} {
+        allow get: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
+        allow list: if isValidDomainId(domainId) &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId));
+        allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          isSignedIn() &&
+          (isAdmin() || isCompanyAdmin(domainId) || isCompanyMember(domainId)) &&
+          incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&
+          incoming().id == incidentId &&
+          incoming().companyDomain == domainId &&
+          incoming().deletedByUid == request.auth.uid &&
+          incoming().deletedAt == request.time;
+        allow update, delete: if false;
+      }
+
     // /plans/{planId}
     match /plans/{planId} {
       allow get: if isValidId(planId) && isSignedIn();

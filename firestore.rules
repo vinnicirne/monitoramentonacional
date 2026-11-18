@@ -938,6 +938,27 @@ service cloud.firestore {
         );
       }
 
+      // Tombstones prevent legacy browser caches from recreating deleted incidents.
+      match /deleted_incidents/{incidentId} {
+        allow get: if isValidDomainId(domainId) && isValidId(incidentId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && (isCompanyAdmin(domainId) || isCompanyMember(domainId)))
+        );
+        allow list: if isValidDomainId(domainId) && (
+          isAdmin() ||
+          (isCorporateCompanyActive(domainId) && (isCompanyAdmin(domainId) || isCompanyMember(domainId)))
+        );
+        allow create: if isValidDomainId(domainId) && isValidId(incidentId) &&
+          isSignedIn() &&
+          (isAdmin() || (isCorporateCompanyActive(domainId) && canEditCompanyIncidents(domainId))) &&
+          incoming().keys().hasOnly(['id', 'companyDomain', 'deletedByUid', 'deletedAt']) &&
+          incoming().id == incidentId &&
+          incoming().companyDomain == domainId &&
+          incoming().deletedByUid == request.auth.uid &&
+          incoming().deletedAt == request.time;
+        allow update, delete: if false;
+      }
+
       // /corporate_companies/{domainId}/incident_audit_logs/{logId}
       match /incident_audit_logs/{logId} {
         allow get: if isValidDomainId(domainId) && isValidId(logId) && (

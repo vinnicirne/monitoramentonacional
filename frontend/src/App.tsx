@@ -29,7 +29,7 @@ const CorporateIncidentDossier = React.lazy(() => import('./components/Corporate
 import { AuthGateModal } from './components/AuthGateModal';
 import { useAuth } from './contexts/AuthContext';
 import { CorporateCompany, CorporatePackageIncident } from './types/admin';
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocFromServer, onSnapshot, orderBy, query, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import {
   FAC_CATALOG,
@@ -408,6 +408,20 @@ function App() {
         );
         localOnly.forEach(item => {
           migratingIncidentIdsRef.current.add(item.id);
+          const migrateLegacyIncident = async () => {
+          const deletedSnapshot = await getDocFromServer(doc(
+            db,
+            'corporate_companies',
+            effectiveCompanyDomain,
+            'deleted_incidents',
+            item.id
+          ));
+          if (deletedSnapshot.exists()) {
+            const storageKey = `PMT_CORP_INCIDENTS_${effectiveCompanyDomain}`;
+            const remaining = readLocalIncidents(effectiveCompanyDomain).filter(local => local.id !== item.id);
+            localStorage.setItem(storageKey, JSON.stringify(remaining));
+            return;
+          }
           const cloudRecord = {
             id: item.id,
             companyDomain: effectiveCompanyDomain,
@@ -440,6 +454,9 @@ function App() {
           };
           setDoc(doc(db, 'corporate_companies', effectiveCompanyDomain, 'incidents', item.id), cloudRecord)
             .catch(error => console.error(`Falha ao recuperar ocorrência local ${item.id} no Firebase:`, error))
+          };
+          migrateLegacyIncident()
+            .catch(error => console.error(`Falha ao conferir ocorrência removida ${item.id}:`, error))
             .finally(() => migratingIncidentIdsRef.current.delete(item.id));
         });
       },
