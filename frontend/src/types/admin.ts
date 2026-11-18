@@ -2,6 +2,7 @@ export type UserRole = 'user' | 'admin';
 export type UserStatus = 'approved' | 'pending' | 'blocked';
 export type LicenseStatus = 'active' | 'none' | 'suspended';
 export type CompanyRole = 'member' | 'company_admin';
+export type IncidentAccess = 'read' | 'edit';
 export type PlanBillingModel = 'fixed' | 'per_user';
 export type AutoApprovalSource =
   | 'admin_bootstrap'
@@ -29,6 +30,7 @@ export interface UserProfile {
   companyDomain?: string;
   licenseStatus?: LicenseStatus;
   companyRole?: CompanyRole;
+  incidentAccess?: IncidentAccess;
   accessCount: number;
   notes: string;
   createdAt?: any;
@@ -95,6 +97,7 @@ export interface CorporateUserLicense {
   licenseKey: string;
   status: 'active' | 'suspended';
   companyRole: CompanyRole;
+  incidentAccess?: IncidentAccess;
   assignedUid: string;
   invitedByUid: string;
   createdAt?: any;

@@ -27,7 +27,7 @@ import {
 } from '../types';
 import { DivisaoTerritorialRow, EstadoScope, UnidadePolicialRow } from '../types/sigBase';
 import { CorporatePackageIncident } from '../types/admin';
-import { INCIDENT_TYPE_META } from './CorporateIncidentModal';
+import { INCIDENT_TYPE_META } from '../utils/corporateIncidentMetadata';
 import {
   FAC_CATALOG,
   FACCAO_PRECISA_GEOJSON,

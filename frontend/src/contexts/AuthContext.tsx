@@ -420,6 +420,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let assignedLicenseId = '';
         let assignedLicenseKey = '';
         let assignedCompanyRole: 'member' | 'company_admin' = 'member';
+        let assignedIncidentAccess: 'read' | 'edit' = 'read';
         let hasCorporateLicense = false;
         let corporatePlanId = 'corp_licenca';
         try {
@@ -441,6 +442,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   assignedLicenseKey = String(lData.licenseKey || '');
                   assignedCompanyRole =
                     lData.companyRole === 'company_admin' ? 'company_admin' : 'member';
+                  assignedIncidentAccess = lData.incidentAccess === 'edit' ? 'edit' : 'read';
                   if (lData.planId) corporatePlanId = String(lData.planId);
                 }
               }
@@ -462,6 +464,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let companyDomain = '';
         let licenseStatus: 'active' | 'none' | 'suspended' = 'none';
         let companyRole: 'member' | 'company_admin' = 'member';
+        let incidentAccess: 'read' | 'edit' = 'read';
 
         if (isBootstrapAdmin) {
           role = 'admin';
@@ -479,6 +482,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           licenseStatus = 'active';
           licenseKey = assignedLicenseKey || generateCorporateLicenseKey(domain, uid);
           companyRole = assignedCompanyRole;
+          incidentAccess = assignedIncidentAccess;
         } else if (isVerified && hasCorporateLicense) {
           status = 'approved';
           autoApprovedBy = 'corporate_license';
@@ -514,6 +518,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             companyDomain,
             licenseStatus,
             companyRole,
+            incidentAccess,
             accessCount: 0,
             notes: '',
             createdAt: serverTimestamp(),
@@ -600,6 +605,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let assignedLicIdNow = '';
         let assignedLicKeyNow = '';
         let assignedCompRoleNow: 'member' | 'company_admin' = 'member';
+        let assignedIncidentAccessNow: 'read' | 'edit' = 'read';
         let hasCorporateLicenseNow = false;
         let corporatePlanIdNow = 'corp_licenca';
         if (isVerified && data.status === 'pending') {
@@ -633,6 +639,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     assignedLicKeyNow = String(lData.licenseKey || '');
                     assignedCompRoleNow =
                       lData.companyRole === 'company_admin' ? 'company_admin' : 'member';
+                    assignedIncidentAccessNow = lData.incidentAccess === 'edit' ? 'edit' : 'read';
                     if (lData.planId) corporatePlanIdNow = String(lData.planId);
                   }
                 }
@@ -702,6 +709,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               licenseStatus: 'active',
               licenseKey: assignedLicKeyNow,
               companyRole: assignedCompRoleNow,
+              incidentAccess: assignedIncidentAccessNow,
               displayName,
               photoURL,
               lastLoginAt: serverTimestamp(),

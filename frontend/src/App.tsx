@@ -25,10 +25,11 @@ import { NavigationDrawer } from './components/NavigationDrawer';
 import { AdminDashboardView } from './components/AdminDashboardView';
 import { CompanyAdminView } from './components/CompanyAdminView';
 import { CorporateIncidentModal } from './components/CorporateIncidentModal';
+import { CorporateIncidentDossier } from './components/CorporateIncidentDossier';
 import { AuthGateModal } from './components/AuthGateModal';
 import { useAuth } from './contexts/AuthContext';
 import { CorporateCompany, CorporatePackageIncident } from './types/admin';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { collection, doc, onSnapshot, orderBy, query, setDoc, Timestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import {
   FAC_CATALOG,
@@ -69,6 +70,9 @@ import {
 
 function App() {
   const { userProfile, hasFullAccess, isAdmin, isCompanyAdmin, openAuthModal, logLocationAccess } = useAuth();
+  const canEditCompanyIncidents = Boolean(
+    isAdmin || isCompanyAdmin || userProfile?.incidentAccess === 'edit'
+  );
   const [registry, setRegistry] = useState<TerritorialRegistry | null>(null);
   const [estadoScope, setEstadoScope] = useState<EstadoScope>('RJ');
   const [activeTab, setActiveTab] = useState<MainActiveTab>('map');
@@ -84,6 +88,7 @@ function App() {
   const [selectedCorporateIncident, setSelectedCorporateIncident] = useState<CorporatePackageIncident | null>(null);
   const [incidentInitialCoords, setIncidentInitialCoords] = useState<{ lat: number; lng: number } | undefined>(undefined);
   const [availableCompanies, setAvailableCompanies] = useState<CorporateCompany[]>([]);
+  const migratingIncidentIdsRef = useRef(new Set<string>());
 
   // Sincronizar lista de empresas corporativas cadastradas
   useEffect(() => {
@@ -237,6 +242,46 @@ function App() {
     openAuthModal(reason, action);
   };
 
+  const openCorporateIncidentDossier = (incident: CorporatePackageIncident) => {
+    setSelectedCorporateIncident(incident);
+    setIncidentInitialCoords(undefined);
+    setSelectedData(null);
+    setSelectedCispId(null);
+    setSelectedCommunityName(null);
+    setSelectedUf(null);
+    setIsIncidentModalOpen(false);
+    setIsDossierOpen(true);
+  };
+
+  const closeDossier = () => {
+    setIsDossierOpen(false);
+    setSelectedCorporateIncident(null);
+  };
+
+  const centerOnCorporateIncident = () => {
+    const lat = Number(selectedCorporateIncident?.lat);
+    const lng = Number(selectedCorporateIncident?.lng);
+    if (!mapRef.current || !Number.isFinite(lat) || !Number.isFinite(lng) || lat === 0 || lng === 0) return;
+
+    mapRef.current.getView().animate({
+      center: fromLonLat([lng, lat]),
+      zoom: 15,
+      duration: 450
+    });
+  };
+
+  const editCorporateIncident = () => {
+    if (!canEditCompanyIncidents || !selectedCorporateIncident) return;
+    setIsDossierOpen(false);
+    setIsIncidentModalOpen(true);
+  };
+
+  const viewCorporateIncidentFromCompanyPanel = (incident: CorporatePackageIncident) => {
+    setCompanyAdminDomainOverride(incident.companyDomain);
+    setActiveTab('map');
+    openCorporateIncidentDossier(incident);
+  };
+
   // Load main territorial registry JSON from repository's /data/territorial_registry.json
   useEffect(() => {
     fetch('/data/territorial_registry.json')
@@ -265,11 +310,6 @@ function App() {
       }
     };
 
-    const initialLocal = readLocalIncidents(effectiveCompanyDomain);
-    if (initialLocal.length > 0) {
-      setCompanyIncidents(initialLocal);
-    }
-
     const sortIncidentsDesc = (items: CorporatePackageIncident[]) => {
       return [...items].sort((a, b) => {
         const tA = (a.createdAt as any)?.toMillis
@@ -295,42 +335,60 @@ function App() {
           ...d.data(),
           id: d.id
         } as CorporatePackageIncident));
+        setCompanyIncidents(sortIncidentsDesc(remoteList));
 
-        const localList = readLocalIncidents(effectiveCompanyDomain);
-        const dict: Record<string, CorporatePackageIncident> = {};
-        localList.forEach(item => { dict[item.id] = item; });
-        remoteList.forEach(item => { dict[item.id] = item; });
-        const merged = sortIncidentsDesc(Object.values(dict));
-
-        setCompanyIncidents(merged);
+        // Recover legacy browser-only records, but only when they belong to
+        // the signed-in user and do not already exist in Firestore.
+        const localOnly = readLocalIncidents(effectiveCompanyDomain).filter(item =>
+          item.createdByUid === userProfile?.uid &&
+          !snapshot.docs.some(remote => remote.id === item.id) &&
+          !migratingIncidentIdsRef.current.has(item.id)
+        );
+        localOnly.forEach(item => {
+          migratingIncidentIdsRef.current.add(item.id);
+          const toTimestamp = (value: any) => {
+            const date = value?.toDate ? value.toDate() : new Date(value || Date.now());
+            return Timestamp.fromDate(Number.isNaN(date.getTime()) ? new Date() : date);
+          };
+          const cloudRecord = {
+            id: item.id,
+            companyDomain: effectiveCompanyDomain,
+            trackingCode: item.trackingCode,
+            incidentType: item.incidentType,
+            boNumber: item.boNumber || '',
+            delegaciaId: item.delegaciaId,
+            delegaciaName: item.delegaciaName,
+            delegaciaUf: item.delegaciaUf,
+            delegaciaMunicipio: item.delegaciaMunicipio || '',
+            packageAtStation: Boolean(item.packageAtStation),
+            custodyStatus: item.custodyStatus,
+            estimatedValue: Number(item.estimatedValue) || 0,
+            notes: item.notes || '',
+            ...(typeof item.lat === 'number' ? { lat: item.lat } : {}),
+            ...(typeof item.lng === 'number' ? { lng: item.lng } : {}),
+            ...(item.address ? { address: item.address } : {}),
+            ...(item.bairro ? { bairro: item.bairro } : {}),
+            history: Array.isArray(item.history) ? item.history : [],
+            createdByUid: item.createdByUid,
+            createdByName: item.createdByName || 'Usuário',
+            createdAt: toTimestamp(item.createdAt),
+            updatedAt: toTimestamp(item.updatedAt)
+          };
+          setDoc(doc(db, 'corporate_companies', effectiveCompanyDomain, 'incidents', item.id), cloudRecord)
+            .catch(error => console.error(`Falha ao recuperar ocorrência local ${item.id} no Firebase:`, error))
+            .finally(() => migratingIncidentIdsRef.current.delete(item.id));
+        });
       },
       error => {
-        console.warn('Ocorrências corporativas Firestore offline ou aguardando regras (mantendo painel local):', error);
-        const fallbackLocal = sortIncidentsDesc(readLocalIncidents(effectiveCompanyDomain));
-        setCompanyIncidents(fallbackLocal);
+        console.error('Não foi possível carregar ocorrências do Firebase:', error);
+        setCompanyIncidents([]);
       }
     );
 
-    const handleLocalIncidentEvent = (e: any) => {
-      const evtDomain = e?.detail?.domain;
-      if (!evtDomain || evtDomain === effectiveCompanyDomain) {
-        const currentLocal = readLocalIncidents(effectiveCompanyDomain);
-        setCompanyIncidents(prev => {
-          const dict: Record<string, CorporatePackageIncident> = {};
-          prev.forEach(item => { dict[item.id] = item; });
-          currentLocal.forEach(item => { dict[item.id] = item; });
-          return sortIncidentsDesc(Object.values(dict));
-        });
-      }
-    };
-
-    window.addEventListener('pmt_incidents_updated', handleLocalIncidentEvent);
-
     return () => {
       unsub();
-      window.removeEventListener('pmt_incidents_updated', handleLocalIncidentEvent);
     };
-  }, [effectiveCompanyDomain, hasFullAccess]);
+  }, [effectiveCompanyDomain, hasFullAccess, userProfile?.uid]);
 
   // Timeline Auto-Play effect
   useEffect(() => {
@@ -706,11 +764,11 @@ function App() {
               companyDomain={effectiveCompanyDomain}
               totalCompanyIncidents={companyIncidents.length}
               totalCompanyRoubos={companyIncidents.filter(i => i.incidentType === 'roubo_carga' || i.incidentType === 'roubo' || i.incidentType === 'furto').length}
-              onOpenIncidentModal={() => {
+              onOpenIncidentModal={canEditCompanyIncidents ? () => {
                 setIncidentInitialCoords(undefined);
                 setSelectedCorporateIncident(null);
                 setIsIncidentModalOpen(true);
-              }}
+              } : undefined}
               onOpenNavigation={() => setIsNavigationOpen(true)}
               onActiveSectionChange={next => {
                 setSidebarSection(next);
@@ -734,16 +792,12 @@ function App() {
                 canViewDetails={hasFullAccess}
                 companyIncidents={companyIncidents}
                 companyDomain={effectiveCompanyDomain}
-                onSelectCorporateIncident={inc => {
-                  setSelectedCorporateIncident(inc);
-                  setIncidentInitialCoords(undefined);
-                  setIsIncidentModalOpen(true);
-                }}
-                onRequestRegisterIncident={coords => {
+                onSelectCorporateIncident={openCorporateIncidentDossier}
+                onRequestRegisterIncident={canEditCompanyIncidents ? coords => {
                   setIncidentInitialCoords(coords);
                   setSelectedCorporateIncident(null);
                   setIsIncidentModalOpen(true);
-                }}
+                } : undefined}
                 onSelectFeature={feat => {
                   if (!feat) {
                     setSelectedCispId(null);
@@ -754,16 +808,10 @@ function App() {
                     return;
                   }
 
-                  // Clique em ocorrência corporativa -> abre modal com histórico completo
+                  // Clique em ocorrência corporativa -> abre o dossier com o registro completo
                   if (feat.tipo === 'CORPORATE_INCIDENT') {
-                    if (feat.corporateIncident) {
-                      setSelectedCorporateIncident(feat.corporateIncident);
-                    } else {
-                      const found = companyIncidents.find(i => String(i.id) === String(feat.id));
-                      setSelectedCorporateIncident(found || null);
-                    }
-                    setIncidentInitialCoords(undefined);
-                    setIsIncidentModalOpen(true);
+                    const incident = feat.corporateIncident || companyIncidents.find(i => String(i.id) === String(feat.id));
+                    if (incident) openCorporateIncidentDossier(incident);
                     return;
                   }
 
@@ -1030,15 +1078,24 @@ function App() {
             </div>
 
             {/* Right: 4-Tab Territorial Dossier */}
-            <RightDossier
-              data={selectedData}
-              isOpen={isDossierOpen}
-              onClose={() => setIsDossierOpen(false)}
-              onPrintDossier={() => setShowPrintModal(true)}
-              onCenterOnMap={handleCenterOnSelected}
-              onSelectEstadoScope={sc => setEstadoScope(sc)}
-              onOpenImport={() => setShowImporter(true)}
-            />
+            {selectedCorporateIncident ? (
+              <CorporateIncidentDossier
+                incident={selectedCorporateIncident}
+                onClose={closeDossier}
+                onCenterOnMap={centerOnCorporateIncident}
+                onEdit={canEditCompanyIncidents ? editCorporateIncident : undefined}
+              />
+            ) : (
+              <RightDossier
+                data={selectedData}
+                isOpen={isDossierOpen}
+                onClose={closeDossier}
+                onPrintDossier={() => setShowPrintModal(true)}
+                onCenterOnMap={handleCenterOnSelected}
+                onSelectEstadoScope={sc => setEstadoScope(sc)}
+                onOpenImport={() => setShowImporter(true)}
+              />
+            )}
           </div>
         )}
 
@@ -1102,6 +1159,7 @@ function App() {
               setIncidentInitialCoords(undefined);
               setIsIncidentModalOpen(true);
             }}
+            onViewIncidentDossier={viewCorporateIncidentFromCompanyPanel}
             onLocateOnMap={(lat, lng) => {
               setActiveTab('map');
               setFocusTarget({ lat, lng, zoom: 16, ts: Date.now() });

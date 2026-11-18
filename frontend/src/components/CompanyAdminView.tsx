@@ -42,7 +42,8 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
-  where
+  where,
+  writeBatch
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError } from '../firebase';
 import {
@@ -50,6 +51,7 @@ import {
   CorporateCompany,
   CorporatePackageIncident,
   CorporateUserLicense,
+  IncidentAccess,
   IncidentHistoryEntry,
   OperationType,
   PackageCustodyStatus,
@@ -71,6 +73,7 @@ interface CompanyAdminViewProps {
   onGoToAdminCompanies?: () => void;
   onOpenCompanyRegister?: () => void;
   onOpenIncidentModal?: (incident?: CorporatePackageIncident | null) => void;
+  onViewIncidentDossier?: (incident: CorporatePackageIncident) => void;
   onLocateOnMap?: (lat: number, lng: number) => void;
 }
 
@@ -83,6 +86,7 @@ interface UnifiedCompanyMember {
   licenseKey: string;
   licenseStatus: 'active' | 'suspended' | 'none';
   companyRole: CompanyRole;
+  incidentAccess: IncidentAccess;
   accessCount: number;
   isConnected: boolean;
 }
@@ -140,6 +144,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   onGoToAdminCompanies,
   onOpenCompanyRegister,
   onOpenIncidentModal,
+  onViewIncidentDossier,
   onLocateOnMap
 }) => {
   const { userProfile: currentAdmin, firebaseUser, isAdmin } = useAuth();
@@ -191,6 +196,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
   const [empName, setEmpName] = useState('');
   const [empEmailUser, setEmpEmailUser] = useState('');
   const [empRole, setEmpRole] = useState<CompanyRole>('member');
+  const [empIncidentAccess, setEmpIncidentAccess] = useState<IncidentAccess>('read');
   const [searchTerm, setSearchTerm] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
@@ -313,22 +319,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       )
     );
 
-    const readLocalIncidents = (domain: string): CorporatePackageIncident[] => {
-      try {
-        const raw = localStorage.getItem(`PMT_CORP_INCIDENTS_${domain}`);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    };
-
-    const initialLocal = readLocalIncidents(activeDomain);
-    if (initialLocal.length > 0) {
-      setIncidents(initialLocal);
-    }
-
     unsubs.push(
       onSnapshot(
         collection(db, 'corporate_companies', activeDomain, 'incidents'),
@@ -338,13 +328,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
             id: d.id
           } as CorporatePackageIncident));
 
-          const localList = readLocalIncidents(activeDomain);
-          const dict: Record<string, CorporatePackageIncident> = {};
-          localList.forEach(item => { dict[item.id] = item; });
-          remoteList.forEach(item => { dict[item.id] = item; });
-          const list = Object.values(dict);
-
-          list.sort((a, b) => {
+          remoteList.sort((a, b) => {
             const tA = (a.createdAt as any)?.toMillis
               ? (a.createdAt as any).toMillis()
               : a.createdAt
@@ -357,12 +341,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
               : 0;
             return tB - tA;
           });
-          setIncidents(list);
+          setIncidents(remoteList);
         },
         err => {
-          console.warn(`corporate_companies/${activeDomain}/incidents listener fallback:`, err);
-          const fallbackLocal = readLocalIncidents(activeDomain);
-          setIncidents(fallbackLocal);
+          console.error(`Falha ao carregar corporate_companies/${activeDomain}/incidents no Firebase:`, err);
+          setIncidents([]);
         }
       )
     );
@@ -438,6 +421,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         licenseKey: lic.licenseKey,
         licenseStatus: lic.status,
         companyRole: lic.companyRole || 'member',
+        incidentAccess: lic.incidentAccess || 'read',
         accessCount: 0,
         isConnected: Boolean(lic.assignedUid)
       });
@@ -460,6 +444,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
               ? 'suspended'
               : 'none'),
           companyRole: u.companyRole || existing.companyRole || 'member',
+          incidentAccess: u.incidentAccess || existing.incidentAccess || 'read',
           accessCount: u.accessCount || 0,
           isConnected: true
         });
@@ -477,6 +462,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
               ? 'suspended'
               : 'none',
           companyRole: u.companyRole || 'member',
+          incidentAccess: u.incidentAccess || 'read',
           accessCount: u.accessCount || 0,
           isConnected: true
         });
@@ -601,6 +587,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       matchedUser?.licenseKey ||
       generateCorporateLicenseKey(activeDomain, `${cleanLocal}${Date.now().toString(36).slice(-3)}`);
     const planId = company?.planId || 'corp_licenca';
+    const incidentAccess: IncidentAccess = empRole === 'company_admin' ? 'edit' : empIncidentAccess;
 
     setIsSaving(true);
     try {
@@ -611,6 +598,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           licenseKey,
           status: 'active',
           companyRole: empRole,
+          incidentAccess,
           assignedUid: matchedUser?.uid || existingLicense.assignedUid || '',
           updatedAt: serverTimestamp()
         });
@@ -624,6 +612,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           licenseKey,
           status: 'active',
           companyRole: empRole,
+          incidentAccess,
           assignedUid: matchedUser?.uid || '',
           invitedByUid: currentAdmin.uid,
           createdAt: serverTimestamp(),
@@ -640,6 +629,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           licenseStatus: 'active',
           licenseKey,
           companyRole: empRole,
+          incidentAccess,
           updatedAt: serverTimestamp()
         });
       }
@@ -647,6 +637,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       setEmpName('');
       setEmpEmailUser('');
       setEmpRole('member');
+      setEmpIncidentAccess('read');
       setFormSuccess(
         `Usuário ${fullEmail} adicionado com a licença ${licenseKey}. ${
           matchedUser
@@ -777,6 +768,33 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
         err,
         OperationType.UPDATE,
         `corporate_companies/${activeDomain}/licenses/${licId}`
+      );
+    }
+  };
+
+  const handleIncidentAccessChange = async (member: UnifiedCompanyMember, incidentAccess: IncidentAccess) => {
+    if (!activeDomain || member.user?.uid === currentAdmin?.uid || member.companyRole === 'company_admin') return;
+    const licId = member.license?.id || emailToLicenseId(member.email);
+    try {
+      const batch = writeBatch(db);
+      if (member.license) {
+        batch.update(doc(db, 'corporate_companies', activeDomain, 'licenses', licId), {
+          incidentAccess,
+          updatedAt: serverTimestamp()
+        });
+      }
+      if (member.user) {
+        batch.update(doc(db, 'users', member.user.uid), {
+          incidentAccess,
+          updatedAt: serverTimestamp()
+        });
+      }
+      await batch.commit();
+    } catch (err) {
+      handleFirestoreError(
+        err,
+        OperationType.UPDATE,
+        member.user ? `users/${member.user.uid}` : `corporate_companies/${activeDomain}/licenses/${licId}`
       );
     }
   };
@@ -938,31 +956,6 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       updatedAt: new Date().toISOString()
     };
 
-    try {
-      const storageKey = `PMT_CORP_INCIDENTS_${activeDomain}`;
-      const raw = localStorage.getItem(storageKey);
-      let localList: CorporatePackageIncident[] = [];
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) localList = parsed;
-        } catch {}
-      }
-      const existingIdx = localList.findIndex(i => i.id === incId);
-      if (existingIdx >= 0) {
-        localList[existingIdx] = localIncidentRecord;
-      } else {
-        localList.unshift(localIncidentRecord);
-      }
-      localStorage.setItem(storageKey, JSON.stringify(localList));
-      setIncidents([...localList]);
-      window.dispatchEvent(
-        new CustomEvent('pmt_incidents_updated', {
-          detail: { domain: activeDomain, incident: localIncidentRecord }
-        })
-      );
-    } catch {}
-
     setIsSavingIncident(true);
     try {
       if (editingIncidentId) {
@@ -1012,11 +1005,26 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
           }).`
         );
       }
+      try {
+        const storageKey = `PMT_CORP_INCIDENTS_${activeDomain}`;
+        const raw = localStorage.getItem(storageKey);
+        const parsed = raw ? JSON.parse(raw) : [];
+        const localList: CorporatePackageIncident[] = Array.isArray(parsed) ? parsed : [];
+        const existingIdx = localList.findIndex(item => item.id === incId);
+        if (existingIdx >= 0) localList[existingIdx] = localIncidentRecord;
+        else localList.unshift(localIncidentRecord);
+        localStorage.setItem(storageKey, JSON.stringify(localList));
+        window.dispatchEvent(new CustomEvent('pmt_incidents_updated', {
+          detail: { domain: activeDomain, incident: localIncidentRecord }
+        }));
+      } catch (cacheError) {
+        console.warn('Não foi possível atualizar o cache local da ocorrência:', cacheError);
+      }
       resetIncidentForm();
     } catch (err: any) {
-      console.warn('Aviso de gravação Firestore (incidente mantido no painel local):', err);
-      setIncidentSuccess(`Pacote ${cleanCode} salvo e registrado no painel com sucesso!`);
-      resetIncidentForm();
+      console.error('Falha ao gravar ocorrência no Firebase:', err);
+      const errorCode = typeof err?.code === 'string' ? ` (${err.code})` : '';
+      setIncidentError(`Não foi possível gravar a ocorrência no Firebase${errorCode}. Verifique sua conexão e suas permissões; o registro não foi confirmado.`);
     } finally {
       setIsSavingIncident(false);
     }
@@ -1579,6 +1587,20 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                   </select>
                 </div>
 
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Permissão de Ocorrências</label>
+                  <select
+                    value={empRole === 'company_admin' ? 'edit' : empIncidentAccess}
+                    onChange={e => setEmpIncidentAccess(e.target.value as IncidentAccess)}
+                    disabled={empRole === 'company_admin'}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-[#3483FA] disabled:opacity-60"
+                  >
+                    <option value="read">Somente leitura</option>
+                    <option value="edit">Ler, registrar e editar</option>
+                  </select>
+                  {empRole === 'company_admin' && <p className="text-[10px] text-slate-500 mt-1">Administradores da empresa mantêm acesso de edição.</p>}
+                </div>
+
                 <button
                   type="submit"
                   disabled={isSaving || (company !== null && !company.active)}
@@ -1710,6 +1732,20 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                                   >
                                     {m.companyRole === 'company_admin' ? 'Remover ADM' : 'Tornar ADM'}
                                   </button>
+
+                                  <label className="flex items-center gap-1 text-[10px] text-slate-600">
+                                    Ocorrências
+                                    <select
+                                      value={m.companyRole === 'company_admin' ? 'edit' : m.incidentAccess}
+                                      disabled={m.companyRole === 'company_admin'}
+                                      onChange={e => handleIncidentAccessChange(m, e.target.value as IncidentAccess)}
+                                      className="px-1.5 py-1 rounded-lg border border-slate-300 bg-white text-slate-700 disabled:bg-slate-100"
+                                      aria-label={`Permissão de ocorrências para ${m.displayName}`}
+                                    >
+                                      <option value="read">Ler</option>
+                                      <option value="edit">Editar</option>
+                                    </select>
+                                  </label>
 
                                   {m.license && (
                                     <button
@@ -2207,15 +2243,15 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
                               </button>
                             )}
 
-                            {onOpenIncidentModal && (
+                            {onViewIncidentDossier && (
                               <button
                                 type="button"
-                                onClick={() => onOpenIncidentModal(inc)}
-                                title="Ver Histórico Completo e Atualizar Ocorrência"
+                                onClick={() => onViewIncidentDossier(inc)}
+                                title="Abrir dossiê da ocorrência"
                                 className="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
                               >
                                 <History className="w-3.5 h-3.5 text-blue-600" />
-                                <span>Histórico ({inc.history?.length || 0})</span>
+                                <span>Ver detalhes</span>
                               </button>
                             )}
 

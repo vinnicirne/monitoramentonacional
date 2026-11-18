@@ -36,6 +36,7 @@ import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
 import { useAuth } from '../contexts/AuthContext';
 import { searchAddressesFree } from '../utils/geocoding';
 import { findResponsibleDelegacia, DelegaciaMatchResult } from '../utils/delegaciaMatcher';
+import { CUSTODY_LABELS, INCIDENT_TYPE_META } from '../utils/corporateIncidentMetadata';
 
 interface CorporateIncidentModalProps {
   isOpen: boolean;
@@ -50,82 +51,6 @@ interface CorporateIncidentModalProps {
   onIncidentSaved?: (incidentId: string) => void;
   onSaved?: (incidentId: string) => void;
 }
-
-export const INCIDENT_TYPE_META: Record<
-  PackageIncidentType,
-  { label: string; badgeClass: string; isRoubo: boolean; description: string }
-> = {
-  roubo_carga: {
-    label: 'Roubo de Carga',
-    badgeClass: 'bg-red-100 text-red-900 border-red-300',
-    isRoubo: true,
-    description: 'Subtração de veículo ou mercadoria mediante violência ou grave ameaça.'
-  },
-  roubo: {
-    label: 'Roubo / Assalto',
-    badgeClass: 'bg-red-100 text-red-900 border-red-300',
-    isRoubo: true,
-    description: 'Assalto à mão armada, abordagem a entregador ou motorista.'
-  },
-  furto: {
-    label: 'Furto',
-    badgeClass: 'bg-amber-100 text-amber-900 border-amber-300',
-    isRoubo: false,
-    description: 'Subtração de carga ou pertence sem violência física direta.'
-  },
-  fraude: {
-    label: 'Fraude / Golpe',
-    badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
-    isRoubo: false,
-    description: 'Apropriação indébita, documento falso, entrega desviada ou estelionato.'
-  },
-  extravio: {
-    label: 'Extravio de Carga/Pacote',
-    badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
-    isRoubo: false,
-    description: 'Pacote não localizado no fluxo operacional de transporte ou transferência.'
-  },
-  apreensao: {
-    label: 'Apreensão Policial',
-    badgeClass: 'bg-[#2D3277]/10 text-[#2D3277] border-[#2D3277]/20',
-    isRoubo: false,
-    description: 'Carga ou veículo retido por autoridade policial para averiguação ou perícia.'
-  },
-  outros: {
-    label: 'Outros Incidentes',
-    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
-    isRoubo: false,
-    description: 'Outras ocorrências operacionais relevantes para a empresa.'
-  }
-};
-
-const CUSTODY_LABELS: Record<PackageCustodyStatus, { label: string; short: string; badge: string }> = {
-  em_ocorrencia_delegacia: {
-    label: 'Na delegacia — em ocorrência policial',
-    short: 'Em Ocorrência na DP',
-    badge: 'bg-rose-100 text-rose-800'
-  },
-  aguardando_pericia: {
-    label: 'Na delegacia — aguardando perícia',
-    short: 'Aguardando Perícia',
-    badge: 'bg-amber-100 text-amber-800'
-  },
-  liberado_retirada: {
-    label: 'Liberado pela delegacia para retirada',
-    short: 'Liberado p/ Retirada',
-    badge: 'bg-[#3483FA]/15 text-[#2968C8]'
-  },
-  devolvido_empresa: {
-    label: 'Devolvido / recuperado pela empresa',
-    short: 'Devolvido à Empresa',
-    badge: 'bg-[#00A650]/15 text-[#008744]'
-  },
-  extraviado_nao_localizado: {
-    label: 'Extraviado / não localizado',
-    short: 'Não Localizado',
-    badge: 'bg-slate-200 text-slate-700'
-  }
-};
 
 export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   isOpen,
@@ -544,33 +469,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
       updatedAt: new Date().toISOString()
     };
 
-    // 1. Optimistic Local Persistence (guarantees incident appears immediately on Map & List)
-    try {
-      const storageKey = `PMT_CORP_INCIDENTS_${domainToUse}`;
-      const raw = localStorage.getItem(storageKey);
-      let localList: CorporatePackageIncident[] = [];
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) localList = parsed;
-        } catch {}
-      }
-      const existingIdx = localList.findIndex(i => i.id === incId);
-      if (existingIdx >= 0) {
-        localList[existingIdx] = localIncidentRecord;
-      } else {
-        localList.unshift(localIncidentRecord);
-      }
-      localStorage.setItem(storageKey, JSON.stringify(localList));
-      window.dispatchEvent(
-        new CustomEvent('pmt_incidents_updated', {
-          detail: { domain: domainToUse, incident: localIncidentRecord }
-        })
-      );
-    } catch (errLocal) {
-      console.warn('Local incident storage cache notice:', errLocal);
-    }
-
     setIsSaving(true);
     try {
       if (activeIncident) {
@@ -622,6 +520,24 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         setSuccessMessage(`Ocorrência ${cleanCode} registrada com sucesso e integrada ao Mapa de Calor de @${domainToUse}!`);
       }
 
+      // Cache only after Firebase confirms the write, so a local-only record is
+      // never presented as a successfully registered occurrence.
+      try {
+        const storageKey = `PMT_CORP_INCIDENTS_${domainToUse}`;
+        const raw = localStorage.getItem(storageKey);
+        const localList: CorporatePackageIncident[] = raw ? JSON.parse(raw) : [];
+        const safeList = Array.isArray(localList) ? localList : [];
+        const existingIdx = safeList.findIndex(item => item.id === incId);
+        if (existingIdx >= 0) safeList[existingIdx] = localIncidentRecord;
+        else safeList.unshift(localIncidentRecord);
+        localStorage.setItem(storageKey, JSON.stringify(safeList));
+        window.dispatchEvent(new CustomEvent('pmt_incidents_updated', {
+          detail: { domain: domainToUse, incident: localIncidentRecord }
+        }));
+      } catch (errLocal) {
+        console.warn('Não foi possível atualizar o cache local da ocorrência:', errLocal);
+      }
+
       onSelectCompanyDomain?.(domainToUse);
 
       if (notifySaved) {
@@ -632,15 +548,9 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         onClose();
       }, 1200);
     } catch (err: any) {
-      console.warn('Aviso de gravação em nuvem (ocorrência salva localmente no painel):', err);
-      setSuccessMessage(`Ocorrência ${cleanCode} salva com sucesso no painel e integrada ao Mapa de Calor!`);
-      onSelectCompanyDomain?.(domainToUse);
-      if (notifySaved) {
-        notifySaved(incId);
-      }
-      setTimeout(() => {
-        onClose();
-      }, 1400);
+      console.error('Falha ao gravar ocorrência no Firebase:', err);
+      const errorCode = typeof err?.code === 'string' ? ` (${err.code})` : '';
+      setErrorMessage(`Não foi possível gravar a ocorrência no Firebase${errorCode}. Verifique sua conexão e suas permissões; o registro não foi confirmado.`);
     } finally {
       setIsSaving(false);
     }
@@ -682,27 +592,6 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
 
     const nextHistory = [newEntry, ...historyEntries];
 
-    // Local cache update
-    try {
-      const storageKey = `PMT_CORP_INCIDENTS_${domainToUse}`;
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const localList: CorporatePackageIncident[] = JSON.parse(raw);
-        const idx = localList.findIndex(i => i.id === activeIncident.id);
-        if (idx >= 0) {
-          localList[idx].custodyStatus = newHistoryStatus;
-          localList[idx].history = nextHistory;
-          localList[idx].updatedAt = new Date().toISOString();
-          localStorage.setItem(storageKey, JSON.stringify(localList));
-          window.dispatchEvent(
-            new CustomEvent('pmt_incidents_updated', {
-              detail: { domain: domainToUse, incident: localList[idx] }
-            })
-          );
-        }
-      }
-    } catch {}
-
     try {
       await updateDoc(doc(db, 'corporate_companies', domainToUse, 'incidents', activeIncident.id), {
         custodyStatus: newHistoryStatus,
@@ -710,18 +599,33 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
         updatedAt: serverTimestamp()
       });
 
+      try {
+        const storageKey = `PMT_CORP_INCIDENTS_${domainToUse}`;
+        const raw = localStorage.getItem(storageKey);
+        const localList: CorporatePackageIncident[] = raw ? JSON.parse(raw) : [];
+        const idx = Array.isArray(localList) ? localList.findIndex(i => i.id === activeIncident.id) : -1;
+        if (idx >= 0) {
+          localList[idx].custodyStatus = newHistoryStatus;
+          localList[idx].history = nextHistory;
+          localList[idx].updatedAt = new Date().toISOString();
+          localStorage.setItem(storageKey, JSON.stringify(localList));
+          window.dispatchEvent(new CustomEvent('pmt_incidents_updated', {
+            detail: { domain: domainToUse, incident: localList[idx] }
+          }));
+        }
+      } catch (cacheError) {
+        console.warn('Não foi possível atualizar o cache local do histórico:', cacheError);
+      }
+
       setHistoryEntries(nextHistory);
       setCustodyStatus(newHistoryStatus);
       setNewHistoryTitle('');
       setNewHistoryDesc('');
       setSuccessMessage('Andamento adicionado ao histórico da ocorrência com sucesso!');
     } catch (err: any) {
-      console.warn('Aviso ao sincronizar histórico em nuvem (mantido salvo localmente):', err);
-      setHistoryEntries(nextHistory);
-      setCustodyStatus(newHistoryStatus);
-      setNewHistoryTitle('');
-      setNewHistoryDesc('');
-      setSuccessMessage('Andamento salvo no histórico da ocorrência com sucesso!');
+      console.error('Falha ao gravar histórico da ocorrência no Firebase:', err);
+      const errorCode = typeof err?.code === 'string' ? ` (${err.code})` : '';
+      setErrorMessage(`Não foi possível gravar o andamento no Firebase${errorCode}. O histórico não foi alterado.`);
     } finally {
       setIsAddingHistory(false);
     }
