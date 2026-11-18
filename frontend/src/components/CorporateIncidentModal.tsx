@@ -642,17 +642,17 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-3xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-3 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+      <div className="w-full max-w-3xl bg-white border border-slate-200 rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[96dvh] md:max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="p-4 md:p-5 bg-gradient-to-r from-[#2D3277] to-[#1E2355] text-white flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
+        <div className="p-3 sm:p-4 md:p-5 bg-gradient-to-r from-[#2D3277] to-[#1E2355] text-white flex items-start md:items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 text-[#FFE600] shrink-0">
               <ShieldAlert className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base font-extrabold text-white">
+                <h3 className="text-sm sm:text-base font-extrabold text-white">
                   {activeIncident ? 'Editar Ocorrência Corporativa' : 'Registrar Ocorrência da Empresa'}
                 </h3>
                 {availableCompanies && availableCompanies.length > 1 && isAdmin ? (
@@ -662,7 +662,7 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
                       setTargetDomain(e.target.value);
                       onSelectCompanyDomain?.(e.target.value);
                     }}
-                    className="px-2 py-0.5 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-[11px] outline-none cursor-pointer border border-[#2D3277]/20"
+                    className="max-w-[60vw] md:max-w-none px-2 py-1 rounded bg-[#FFE600] text-[#2D3277] font-mono font-bold text-[11px] outline-none cursor-pointer border border-[#2D3277]/20"
                     title="Selecione a empresa da ocorrência"
                   >
                     {availableCompanies.map(c => (
@@ -687,8 +687,10 @@ export const CorporateIncidentModal: React.FC<CorporateIncidentModalProps> = ({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            aria-label="Fechar formulário de ocorrência"
+            className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>

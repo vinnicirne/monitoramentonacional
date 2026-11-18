@@ -19,7 +19,8 @@ import {
   MapPin,
   Flame,
   CheckCircle2,
-  ExternalLink
+  ExternalLink,
+  Download
 } from 'lucide-react';
 import { MainActiveTab } from './Header';
 import { EstadoScope } from '../types/sigBase';
@@ -35,6 +36,8 @@ interface NavigationDrawerProps {
   onOpenImport: () => void;
   onOpenCompanyRegister?: () => void;
   onOpenLicense?: () => void;
+  canInstall?: boolean;
+  onInstall?: () => void;
 }
 
 interface NavItem {
@@ -67,7 +70,9 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   setEstadoScope,
   onOpenImport,
   onOpenCompanyRegister,
-  onOpenLicense
+  onOpenLicense,
+  canInstall = false,
+  onInstall
 }) => {
   const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal, signOutUser } = useAuth();
 
@@ -262,10 +267,12 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 
       {/* Drawer Lateral Deslizante */}
       <aside
+        role="dialog"
         className={`fixed inset-y-0 left-0 z-50 w-full sm:w-[380px] md:w-[410px] max-w-[90vw] bg-white shadow-2xl flex flex-col border-r border-slate-200 transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         aria-label="Menu Lateral de Navegação e Módulos"
+        aria-modal="true"
       >
         {/* 1. Header do Menu Lateral */}
         <div className="p-4 bg-[#FFE600] border-b border-[#E6CF00] flex items-center justify-between shrink-0 shadow-xs">
@@ -287,6 +294,8 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 
           <button
             onClick={onClose}
+            type="button"
+            aria-label="Fechar menu de navegação"
             className="w-8 h-8 rounded-lg bg-black/5 hover:bg-black/10 flex items-center justify-center text-[#2D3277] transition-colors cursor-pointer"
             title="Fechar menu lateral (Esc)"
           >
@@ -337,7 +346,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
         </div>
 
         {/* 3. Corpo Rolável com Menus e Submenus Organizados por Assuntos Relacionados */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-4 text-slate-800">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-3 space-y-4 text-slate-800">
           {menuGroups.map(group => {
             const isExpanded = Boolean(openGroups[group.id]);
             const GroupIcon = group.icon;
@@ -455,6 +464,16 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 
         {/* 4. Rodapé do Menu Lateral: Perfil, Login e Licença */}
         <div className="p-3 bg-slate-50 border-t border-slate-200 shrink-0 space-y-2.5">
+          {canInstall && (
+            <button
+              type="button"
+              onClick={onInstall}
+              className="w-full py-2.5 px-3 rounded-xl bg-[#2D3277] hover:bg-[#22265f] text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Instalar aplicativo</span>
+            </button>
+          )}
           {/* Card do Usuário Autenticado ou Botão de Login */}
           {!firebaseUser ? (
             <button

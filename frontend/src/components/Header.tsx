@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { firebaseUser, userProfile, isAdmin, isCompanyAdmin, openAuthModal } = useAuth();
 
   return (
-    <header className="h-[52px] md:h-16 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
+    <header className="h-[calc(52px+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] md:h-16 md:pt-0 bg-[#FFE600] border-b border-[#E6CF00] px-2.5 sm:px-4 lg:px-5 flex items-center justify-between gap-2 md:gap-3 z-30 shrink-0 shadow-sm">
       {/* 1. Brand Identity — Monitoramento em cima e Territorial embaixo */}
       <div
         className="flex items-center gap-2 shrink-0 cursor-pointer select-none"

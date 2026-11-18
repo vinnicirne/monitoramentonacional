@@ -13,19 +13,19 @@ import { Header, MainActiveTab } from './components/Header';
 import { LeftSidebar, SidebarSection } from './components/LeftSidebar';
 import { MapContainer } from './components/MapContainer';
 import { RightDossier } from './components/RightDossier';
-import { InconsistencyAuditView } from './components/InconsistencyAuditView';
-import { StatisticsRankingView } from './components/StatisticsRankingView';
-import { AboutMethodologyView } from './components/AboutMethodologyView';
-import { DataImporterModal } from './components/DataImporterModal';
-import { PrintableDossierModal } from './components/PrintableDossierModal';
-import { SigBaseMgEsPanel } from './components/SigBaseMgEsPanel';
+const InconsistencyAuditView = React.lazy(() => import('./components/InconsistencyAuditView').then(module => ({ default: module.InconsistencyAuditView })));
+const StatisticsRankingView = React.lazy(() => import('./components/StatisticsRankingView').then(module => ({ default: module.StatisticsRankingView })));
+const AboutMethodologyView = React.lazy(() => import('./components/AboutMethodologyView').then(module => ({ default: module.AboutMethodologyView })));
+const DataImporterModal = React.lazy(() => import('./components/DataImporterModal').then(module => ({ default: module.DataImporterModal })));
+const PrintableDossierModal = React.lazy(() => import('./components/PrintableDossierModal').then(module => ({ default: module.PrintableDossierModal })));
+const SigBaseMgEsPanel = React.lazy(() => import('./components/SigBaseMgEsPanel').then(module => ({ default: module.SigBaseMgEsPanel })));
 import { LicenseModal } from './components/LicenseModal';
 import { CompanyRegisterModal } from './components/CompanyRegisterModal';
 import { NavigationDrawer } from './components/NavigationDrawer';
-import { AdminDashboardView } from './components/AdminDashboardView';
-import { CompanyAdminView } from './components/CompanyAdminView';
-import { CorporateIncidentModal } from './components/CorporateIncidentModal';
-import { CorporateIncidentDossier } from './components/CorporateIncidentDossier';
+const AdminDashboardView = React.lazy(() => import('./components/AdminDashboardView').then(module => ({ default: module.AdminDashboardView })));
+const CompanyAdminView = React.lazy(() => import('./components/CompanyAdminView').then(module => ({ default: module.CompanyAdminView })));
+const CorporateIncidentModal = React.lazy(() => import('./components/CorporateIncidentModal').then(module => ({ default: module.CorporateIncidentModal })));
+const CorporateIncidentDossier = React.lazy(() => import('./components/CorporateIncidentDossier').then(module => ({ default: module.CorporateIncidentDossier })));
 import { AuthGateModal } from './components/AuthGateModal';
 import { useAuth } from './contexts/AuthContext';
 import { CorporateCompany, CorporatePackageIncident } from './types/admin';
@@ -64,6 +64,11 @@ import {
   ShieldCheck,
   Award
 } from 'lucide-react';
+
+interface InstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 function App() {
   const { userProfile, hasFullAccess, isAdmin, isCompanyAdmin, openAuthModal, logLocationAccess } = useAuth();
@@ -175,6 +180,42 @@ function App() {
   const [isFactionPanelOpen, setIsFactionPanelOpen] = useState<boolean>(false);
   const [sidebarSection, setSidebarSection] = useState<SidebarSection | null>(null);
   const [isNavigationOpen, setIsNavigationOpen] = useState<boolean>(false);
+  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
+  const [isOnline, setIsOnline] = useState(typeof navigator === 'undefined' ? true : navigator.onLine);
+
+  useEffect(() => {
+    if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(error => {
+        console.warn('Não foi possível ativar o modo PWA:', error);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine);
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as InstallPromptEvent);
+    };
+    const onInstalled = () => setInstallPrompt(null);
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus);
+      window.removeEventListener('offline', updateOnlineStatus);
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice.outcome === 'accepted') setInstallPrompt(null);
+  };
 
   // Map layers and basemap
   const [basemap, setBasemap] = useState<BasemapType>('osm');
@@ -696,6 +737,14 @@ function App() {
 
   return (
     <div className="flex flex-col h-[100dvh] w-screen bg-[#F5F5F5] text-slate-900 overflow-hidden font-sans">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-[#2D3277] focus:px-4 focus:py-3 focus:rounded-lg">
+        Pular para o conteúdo principal
+      </a>
+      {!isOnline && (
+        <div role="status" className="fixed z-[60] bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.5rem)] left-3 right-3 md:bottom-4 md:left-auto md:right-4 md:w-auto rounded-xl bg-slate-900 text-white px-4 py-3 text-xs shadow-xl">
+          Sem conexão. O mapa base, busca e sincronização de ocorrências precisam de internet.
+        </div>
+      )}
       {/* Universal Header */}
       <Header
         activeTab={activeTab}
@@ -741,7 +790,8 @@ function App() {
       />
 
       {/* Main Workspace */}
-      <main className="flex-1 flex flex-col overflow-hidden min-h-0 relative">
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden min-h-0 relative">
+        <React.Suspense fallback={<div className="flex-1 grid place-items-center text-sm text-slate-500" role="status">Carregando painel…</div>}>
         {activeTab === 'map' && (
           <div className="flex-1 flex w-full h-full overflow-hidden relative">
             {/* Left: Slim Vertical Rail (Desktop) + Responsive Bottom Sheet / Flyout Drawer */}
@@ -1124,10 +1174,11 @@ function App() {
             }}
           />
         )}
+        </React.Suspense>
       </main>
 
       {/* Mobile Thumb-Zone Bottom Tab Bar (< 768px) */}
-      <nav className="md:hidden h-14 bg-white/95 backdrop-blur-md border-t border-slate-200 grid grid-cols-5 items-center z-40 shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      <nav aria-label="Navegação principal" className="md:hidden h-[calc(3.5rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-white/95 backdrop-blur-md border-t border-slate-200 grid grid-cols-4 items-center z-40 shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <button
           onClick={() => {
             setActiveTab('map');
@@ -1205,7 +1256,7 @@ function App() {
       </nav>
 
       {/* Global Footer — Agência Ícone Digital by Vinicius Cirne & Licença Vinculada */}
-      <footer className="bg-white border-t border-slate-200 px-3 md:px-4 py-1.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-2 text-[10px] md:text-[11px] text-slate-600 shrink-0 z-30 print:hidden shadow-xs select-none">
+      <footer className="hidden md:flex bg-white border-t border-slate-200 px-3 md:px-4 py-1.5 flex-wrap md:flex-nowrap items-center justify-between gap-2 text-[10px] md:text-[11px] text-slate-600 shrink-0 z-30 print:hidden shadow-xs select-none">
         <div className="flex items-center gap-2 truncate">
           <span className="hidden md:inline font-semibold text-[#2D3277]">
             Monitoramento Territorial
@@ -1250,6 +1301,7 @@ function App() {
         </div>
       </footer>
 
+      <React.Suspense fallback={null}>
       {showImporter && <DataImporterModal registry={registry} onClose={() => setShowImporter(false)} />}
       {showPrintModal && <PrintableDossierModal data={selectedData} onClose={() => setShowPrintModal(false)} />}
       {showLicenseModal && <LicenseModal isOpen={showLicenseModal} onClose={() => setShowLicenseModal(false)} />}
@@ -1280,6 +1332,7 @@ function App() {
           }}
         />
       )}
+      </React.Suspense>
       <AuthGateModal
         onOpenAdmin={() => setActiveTab('admin')}
         onOpenCompanyAdmin={() => setActiveTab('company_admin')}
@@ -1337,6 +1390,8 @@ function App() {
           setIsNavigationOpen(false);
           setShowLicenseModal(true);
         }}
+        canInstall={Boolean(installPrompt)}
+        onInstall={handleInstallApp}
       />
     </div>
   );

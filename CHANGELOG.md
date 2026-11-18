@@ -6,6 +6,18 @@
 
 ---
 
+## [18/11/2026] — Experiência Mobile e Aplicativo PWA
+
+### 21. Ajustes Mobile, Acessibilidade e Instalação do Aplicativo
+- Corrigida a sobreposição do painel inferior de camadas no celular e respeitada a área segura do aparelho.
+- Corrigida a grade da navegação inferior para quatro atalhos e liberado espaço vertical ocultando o rodapé institucional em telas pequenas.
+- Ajustado o cabeçalho do formulário de ocorrência para telas estreitas, com fechamento acessível e rolagem contida.
+- Criado PWA instalável com manifesto, ícones próprios e service worker para carregar o app shell e as bases territoriais públicas offline.
+- Adicionado aviso de conectividade e atalho para instalação no menu quando o navegador oferece suporte.
+- Relatórios, administração e formulários pesados passaram a ser carregados sob demanda para reduzir o download inicial no celular.
+- O cache offline não inclui dados corporativos do Firebase, tiles de mapas nem requisições a serviços externos; sincronização de ocorrências, busca e mapas base continuam exigindo internet.
+- Removido o CSS externo duplicado do OpenLayers; mantida a folha já incluída no bundle do aplicativo.
+
 ## [18/11/2026] — Esclarecimento da Cláusula de Dados e Licenciamento
 
 ### 18. Separação entre Software, Dados Públicos e Dados do Cliente

@@ -161,7 +161,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   };
 
   return (
-    <div className="relative flex h-full z-20 shrink-0">
+      <div className={`relative flex h-full shrink-0 ${activeSection ? 'z-40 md:z-20' : 'z-20'}`}>
       {/* 1. Desktop Slim Vertical Rail (hidden on mobile to maximize map viewport) */}
       <nav className="hidden md:flex w-14 bg-white border-r border-slate-200 flex-col items-center py-3 gap-3 justify-between shadow-sm">
         <div className="flex flex-col items-center gap-2">
@@ -281,7 +281,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
       {/* 3. Drawer Panel: Desktop Side Flyout / Mobile Bottom Sheet */}
       {activeSection && (
-        <aside className="fixed inset-x-0 bottom-14 z-40 max-h-[76dvh] rounded-t-3xl border-t border-slate-200 bg-white flex flex-col shadow-2xl md:static md:inset-auto md:max-h-none md:w-80 md:h-full md:rounded-none md:border-t-0 md:border-r md:border-slate-200">
+        <aside className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 max-h-[76dvh] overscroll-contain rounded-t-3xl border-t border-slate-200 bg-white flex flex-col shadow-2xl md:static md:inset-auto md:max-h-none md:w-80 md:h-full md:rounded-none md:border-t-0 md:border-r md:border-slate-200">
           {/* Mobile Sheet Grab Handle */}
           <div className="w-10 h-1 rounded-full bg-slate-300 mx-auto mt-2.5 mb-0.5 md:hidden shrink-0" />
 
