@@ -9,6 +9,7 @@ import type { CodigoFaccaoPrecisa } from '../../../data/faccoesPrecisas';
 import { FAC_CATALOG, findCispForCoords, getPolygonCentroid } from '../../../data/faccoesPrecisas';
 import { BRASIL_UFS_INFO } from '../../../data/brasilEstadosData';
 import type { MapFeaturePopupData } from '../components/MapFeaturePopup';
+import type { CorporateIncidentGroup } from './corporateIncidentFeatures';
 
 interface MapFeatureClickOptions {
   selectedDelegaciaIdRef: MutableRefObject<string | null>;
@@ -96,13 +97,20 @@ export function bindMapFeatureClick(map: Map, {
           return true;
         }
 
-        if (tipo === 'CORPORATE_INCIDENT') {
+        if (tipo === 'CORPORATE_INCIDENT' || tipo === 'CORPORATE_INCIDENT_GROUP') {
+          if (!canViewDetailsRef.current || !onSelectCorporateIncidentRef.current) return false;
           featureFound = true;
-          const inc = props.incident as CorporatePackageIncident;
-          if (onSelectCorporateIncidentRef.current) {
-            onSelectCorporateIncidentRef.current(inc);
+          const group = props.group as CorporateIncidentGroup | undefined;
+          if (group && group.incidents.length > 1) {
+            setMapPopup({ visible: true, incidentGroup: group });
+            popupOverlayRef.current?.setPosition(evt.coordinate);
             return true;
           }
+          setMapPopup(null);
+          popupOverlayRef.current?.setPosition(undefined);
+          const incident = group?.incidents[0] ?? (props.incident as CorporatePackageIncident);
+          onSelectCorporateIncidentRef.current(incident);
+          return true;
         }
 
         if (tipo === 'FACCAO_PRECISA') {

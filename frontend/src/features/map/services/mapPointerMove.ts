@@ -12,6 +12,7 @@ import { BRASIL_UFS_INFO } from '../../../data/brasilEstadosData';
 import { INCIDENT_TYPE_META } from '../../../utils/corporateIncidentMetadata';
 import { getFactionStyle } from '../factionStyles';
 import type { MapHoverTooltipData } from '../components/MapHoverTooltip';
+import type { CorporateIncidentGroup } from './corporateIncidentFeatures';
 
 interface MapHoverOptions {
   mapElement: MutableRefObject<HTMLDivElement | null>;
@@ -116,6 +117,20 @@ export function bindMapPointerMove(map: Map, {
             sub: info.subtitulo,
             type: 'SIG MG·ES',
             source: info.divisao?.Fonte_Legal || info.unidade?.Fonte_Legal || 'SEJUSP-MG / SESP-ES'
+          });
+          return true;
+        }
+
+        if (tipo === 'CORPORATE_INCIDENT_GROUP') {
+          hit = true;
+          const { areaName, incidents } = props.group as CorporateIncidentGroup;
+          setTooltip({
+            visible: true,
+            x: safeX,
+            y: safeY,
+            title: areaName,
+            sub: incidents.length === 1 ? '1 ocorrência na área' : `${incidents.length} ocorrências na área`,
+            type: 'OCORRÊNCIAS'
           });
           return true;
         }

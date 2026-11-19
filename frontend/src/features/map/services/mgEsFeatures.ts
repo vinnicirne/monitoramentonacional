@@ -16,7 +16,8 @@ interface MgEsFeaturesOptions {
 }
 
 function isInScope(uf: string, estadoScope: EstadoScope) {
-  return estadoScope === 'TODOS' || estadoScope === 'RJ' || estadoScope === uf;
+  return estadoScope === 'TODOS' || estadoScope === uf ||
+    (estadoScope === 'MG_ES' && (uf === 'MG' || uf === 'ES'));
 }
 
 export function createMgEsFeatures({ estadoScope, divisao, unidades, selectedDelegaciaId }: MgEsFeaturesOptions): Feature[] {

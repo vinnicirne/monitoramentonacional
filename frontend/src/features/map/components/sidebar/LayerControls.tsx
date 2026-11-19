@@ -118,7 +118,7 @@ export function LayerControls({
                   }
                   className="rounded border-slate-300 text-orange-600 focus:ring-0"
                 />
-                <span className="text-slate-800 font-bold text-xs">Pontos de Ocorrências ({totalCompanyIncidents})</span>
+                <span className="text-slate-800 font-bold text-xs">Ocorrências por área de DP ({totalCompanyIncidents})</span>
               </div>
               <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shrink-0" />
             </label>

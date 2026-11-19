@@ -1,4 +1,6 @@
 import { useEffect, type MutableRefObject } from 'react';
+import { unByKey } from 'ol/Observable';
+import { get as getProjection } from 'ol/proj';
 import type VectorLayer from 'ol/layer/Vector';
 import type VectorSource from 'ol/source/Vector';
 import type { CorporatePackageIncident } from '../../../types/admin';
@@ -10,7 +12,7 @@ import { syncCorporateLayerVisibility, syncTerritorialLayerVisibility } from '..
 import { createBrazilStateFeatures } from '../services/brazilStateFeatures';
 import { populatePreciseFactionLayer } from '../services/preciseFactionLayer';
 import { createMgEsFeatures } from '../services/mgEsFeatures';
-import { createCorporateIncidentFeatures } from '../services/corporateIncidentFeatures';
+import { createCorporateIncidentFeatures, createCorporateIncidentMarkers } from '../services/corporateIncidentFeatures';
 import { getFactionStyle } from '../factionStyles';
 
 interface MapLayerSynchronizationOptions {
@@ -68,6 +70,8 @@ export function useMapLayerSynchronization({
   selectedCommunityRef,
   selectedDelegaciaIdRef
 }: MapLayerSynchronizationOptions) {
+  const showCorporateMarkers = layers.corporateIncidents !== false;
+
   useEffect(() => {
     syncTerritorialLayerVisibility(layers, estadoScope, {
       brasil: brasilLayerRef.current,
@@ -116,11 +120,35 @@ export function useMapLayerSynchronization({
   }, [corporateIncidentSource, companyIncidents]);
 
   useEffect(() => {
+    const cispSource = cispLayerRef.current?.getSource();
+    const markerSource = corporatePinsRef.current?.getSource();
+    if (!cispSource || !markerSource) return;
+
+    const points = corporateIncidentSource.getFeatures();
+    markerSource.clear(true);
+    if (!showCorporateMarkers || points.length === 0) return;
+
+    const updateMarkers = () => {
+      markerSource.clear(true);
+      markerSource.addFeatures(createCorporateIncidentMarkers(points, cispSource, mgEsSource));
+    };
+    const listener = cispSource.on('featuresloadend', updateMarkers);
+    updateMarkers();
+
+    const projection = getProjection('EPSG:3857');
+    if (projection) cispSource.loadFeatures(projection.getExtent(), 1, projection);
+    return () => unByKey(listener);
+  }, [
+    cispLayerRef, corporatePinsRef, corporateIncidentSource, companyIncidents,
+    mgEsSource, estadoScope, mgEsDivisao, mgEsUnidades, showCorporateMarkers
+  ]);
+
+  useEffect(() => {
     syncCorporateLayerVisibility(
       corporateHeatmapRef.current,
       corporatePinsRef.current,
       layers.corporateHeatmap !== false,
-      layers.corporateIncidents !== false
+      showCorporateMarkers
     );
-  }, [layers.corporateHeatmap, layers.corporateIncidents]);
+  }, [layers.corporateHeatmap, showCorporateMarkers]);
 }

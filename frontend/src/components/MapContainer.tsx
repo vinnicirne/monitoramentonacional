@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Map from 'ol/Map';
 import Overlay from 'ol/Overlay';
 import TileLayer from 'ol/layer/Tile';
@@ -371,6 +371,13 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     return { lat, lng };
   }, []);
 
+  const visibleMapPopup = useMemo(() => {
+    if (!mapPopup || !('incidentGroup' in mapPopup)) return mapPopup;
+    if (!canViewDetails || layers.corporateIncidents === false) return null;
+    const visibleIncidents = new Set(companyIncidents);
+    return mapPopup.incidentGroup.incidents.every(incident => visibleIncidents.has(incident)) ? mapPopup : null;
+  }, [canViewDetails, companyIncidents, layers.corporateIncidents, mapPopup]);
+
   return (
     <div className="relative w-full h-full bg-[#E8ECF1] overflow-hidden">
       <div ref={mapElement} className="w-full h-full" />
@@ -407,7 +414,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
       {/* Popup ancorado no overlay de OpenLayers, com DOM gerenciado por portal React. */}
       <MapFeaturePopup
         container={overlayContainerRef.current}
-        popup={mapPopup}
+        popup={visibleMapPopup}
+        onSelectIncident={onSelectCorporateIncident}
         onClose={() => {
           setMapPopup(null);
           popupOverlayRef.current?.setPosition(undefined);

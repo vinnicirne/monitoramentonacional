@@ -8,7 +8,7 @@ import XYZ from 'ol/source/XYZ';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import type { BasemapType, ChoroplethMetric, LayerVisibility, TerritorialRegistry } from '../../../types';
-import type { CodigoFaccaoPrecisa } from '../../../data/faccoesPrecisas';
+import type { CorporateIncidentGroup } from './corporateIncidentFeatures';
 
 interface MapLayerFactoryOptions {
   basemap: BasemapType;
@@ -333,27 +333,38 @@ export function createMapLayerBundle({
       zIndex: 9
     });
 
-    // 12. Corporate Incidents Pin Markers Layer
+    // 12. Corporate incident counts by district
+    const countStyles = new Map<string, Style>();
+    const isRobbery = (type: string) => type === 'roubo_carga' || type === 'roubo';
     const corporatePinsLayer = new VectorLayer({
-      source: sources.corporateIncidents,
+      source: new VectorSource(),
       visible: layers.corporateIncidents !== false,
       zIndex: 9.5,
       style: feature => {
-        const incType = feature.get('incidentType');
-        const isRoubo = incType === 'roubo_carga' || incType === 'roubo';
-        return new Style({
+        const group = feature.get('group') as CorporateIncidentGroup | undefined;
+        const count = String(group?.incidents.length ?? 1);
+        const hasRobbery = group
+          ? group.incidents.some(incident => isRobbery(incident.incidentType))
+          : isRobbery(feature.get('incidentType'));
+        const color = hasRobbery ? '#dc2626' : '#ea580c';
+        const key = color + count;
+        const cached = countStyles.get(key);
+        if (cached) return cached;
+        const style = new Style({
           image: new CircleStyle({
-            radius: 8.5,
-            fill: new Fill({ color: isRoubo ? '#dc2626' : '#ea580c' }),
+            radius: Math.max(10, 5 + count.length * 3.5),
+            fill: new Fill({ color }),
             stroke: new Stroke({ color: '#ffffff', width: 2.5 })
           }),
           text: new Text({
-            text: isRoubo ? '!' : '●',
-            font: 'bold 11px Arial, sans-serif',
+            text: count,
+            font: 'bold 12px Arial, sans-serif',
             fill: new Fill({ color: '#ffffff' }),
             offsetY: 1
           })
         });
+        countStyles.set(key, style);
+        return style;
       }
     });
 
