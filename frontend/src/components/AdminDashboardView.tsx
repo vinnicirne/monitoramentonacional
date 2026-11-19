@@ -174,72 +174,61 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
     }
   };
 
+  const tabs: { id: AdminSubTab; label: string }[] = [
+    { id: 'overview', label: 'Resumo & Acessos' },
+    { id: 'analytics', label: 'Análise de Ocorrências' },
+    { id: 'users', label: stats.pendingUsers > 0 ? `Usuários (${stats.pendingUsers} pendentes)` : 'Usuários' },
+    { id: 'companies', label: stats.activeCompanies > 0 ? `Empresas & Licenças (${stats.activeCompanies})` : 'Empresas & Licenças' },
+    { id: 'plans', label: 'Planos' },
+    { id: 'domains', label: 'Domínios Free' },
+    { id: 'referrals', label: 'Indicações' }
+  ];
+
   return (
-    <div className="flex-1 h-full bg-[#F5F5F5] overflow-y-auto p-3.5 md:p-6 space-y-5">
+    <div className="flex-1 h-full min-w-0 bg-[#F5F5F5] overflow-y-auto p-3.5 md:p-6 space-y-5">
       {/* Header Banner */}
-      <div className="p-4 md:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-xl bg-[#FFE600] text-[#2D3277] border border-[#E6CF00] shadow-xs shrink-0">
-            <Crown className="w-5 h-5" />
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="shrink-0 rounded-xl border border-[#E6CF00] bg-[#FFE600] p-2.5 text-[#2D3277] shadow-xs">
+              <Crown aria-hidden="true" className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-lg font-extrabold text-[#2D3277]">Painel Administrativo</h1>
+              <p className="mt-0.5 max-w-2xl text-xs text-slate-600">
+                Gerencie liberações de acesso externo, domínios free (<code className="font-mono font-bold text-[#2D3277]">@mercadolivre.com</code>), planos, afiliados sem comissão e histórico de localizações acessadas.
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-extrabold text-[#2D3277]">
-              Painel Administrativo — Usuários, Planos, Domínios & Indicações
-            </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Gerencie liberações de acesso externo, domínios free (<code className="font-mono font-bold text-[#2D3277]">@mercadolivre.com</code>), planos, afiliados sem comissão e histórico de localizações acessadas.
-            </p>
-          </div>
-        </div>
-
-        {/* Subtabs + Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
-            {(
-              [
-                { id: 'overview', label: 'Resumo & Acessos' },
-                { id: 'analytics', label: 'Análise de Ocorrências' },
-                {
-                  id: 'users',
-                  label: stats.pendingUsers > 0 ? `Usuários (${stats.pendingUsers} pendentes)` : 'Usuários'
-                },
-                {
-                  id: 'companies',
-                  label:
-                    stats.activeCompanies > 0
-                      ? `Empresas & Licenças (${stats.activeCompanies})`
-                      : 'Empresas & Licenças'
-                },
-                { id: 'plans', label: 'Planos' },
-                { id: 'domains', label: 'Domínios Free' },
-                { id: 'referrals', label: 'Indicações' }
-              ] as const
-            ).map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setSubTab(tab.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  subTab === tab.id
-                    ? 'bg-[#FFE600] text-[#2D3277] font-bold shadow-xs'
-                    : 'text-slate-600 hover:text-[#2D3277] hover:bg-white'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
           {onOpenCompanyRegister && (
             <button
               type="button"
               onClick={onOpenCompanyRegister}
-              className="px-3.5 py-2 rounded-xl bg-[#2D3277] hover:bg-[#1E2258] text-[#FFE600] font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors border border-[#1E2258]"
+              className="flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[#1E2258] bg-[#2D3277] px-3.5 py-2 text-xs font-extrabold text-[#FFE600] shadow-xs transition-colors hover:bg-[#1E2258] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3483FA] sm:self-start"
             >
-              <Building2 className="w-4 h-4 text-[#FFE600]" />
-              <span>+ Criar Conta Corporativa</span>
+              <Building2 aria-hidden="true" className="h-4 w-4 shrink-0" />
+              <span>Criar conta corporativa</span>
             </button>
           )}
         </div>
+
+        <nav aria-label="Seções do Painel Administrativo" className="grid grid-cols-2 gap-1.5 rounded-xl border border-slate-200 bg-slate-100 p-1.5 sm:flex sm:flex-wrap">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              aria-pressed={subTab === tab.id}
+              onClick={() => setSubTab(tab.id)}
+              className={`min-h-11 min-w-0 cursor-pointer rounded-lg px-2 py-2 text-xs font-semibold leading-snug transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3483FA] sm:px-3 ${
+                subTab === tab.id
+                  ? 'bg-[#FFE600] text-[#2D3277] font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-[#2D3277] hover:bg-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
       </div>
 
       {loadError && <p role="alert" className="text-sm text-rose-700">{loadError}</p>}
