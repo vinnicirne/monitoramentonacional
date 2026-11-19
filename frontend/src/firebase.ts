@@ -1,14 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { connectAuthEmulator, getAuth, GoogleAuthProvider } from 'firebase/auth';
 import {
   getFirestore,
   initializeFirestore,
-  doc,
-  getDocFromServer,
-  Firestore
+  connectFirestoreEmulator,
+  type Firestore
 } from 'firebase/firestore';
 import defaultFirebaseConfig from '../firebase-applet-config.json';
-import { FirestoreErrorInfo, OperationType } from './types/admin';
+import type { OperationType } from './types/admin';
+import { errorCode, recordDiagnostic } from './shared/diagnostics';
 
 // Load config from environment variables (Vercel deployment) with fallback to local applet json
 export const firebaseConfig = {
@@ -37,43 +37,37 @@ try {
 
 export const db = dbInstance;
 export const auth = getAuth(app);
+if (import.meta.env.DEV && firebaseConfig.projectId.startsWith('demo-')) {
+  const emulatorHost = import.meta.env.VITE_FIRESTORE_EMULATOR_HOST as string | undefined;
+  const authEmulator = import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_URL as string | undefined;
+  if (emulatorHost) {
+    const [host, port] = emulatorHost.split(':');
+    connectFirestoreEmulator(db, host, Number(port));
+  }
+  if (authEmulator) connectAuthEmulator(auth, authEmulator, { disableWarnings: true });
+}
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+export function reportFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const segments = path?.split('/') ?? [];
+  const target = segments.filter((_, index) => index % 2 === 0).join('/') || 'firestore';
+  const code = errorCode(error);
+  recordDiagnostic({ kind: 'firestore', target, operation: operationType, errorCode: code });
+  console.error('Falha na operação do Firestore.', {
+    path, operation: operationType, code, message: error instanceof Error ? error.message : String(error)
+  });
+}
 
 export function handleFirestoreError(
   error: unknown,
   operationType: OperationType,
   path: string | null
 ): never {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
-      providerInfo:
-        auth.currentUser?.providerData?.map(provider => ({
-          providerId: provider.providerId,
-          email: provider.email
-        })) || []
-    },
-    operationType,
-    path
-  };
-  console.error('Firestore Error:', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+  reportFirestoreError(error, operationType, path);
+  const code = errorCode(error);
+  const message = code === 'permission-denied'
+    ? 'O Firestore recusou o acesso aos dados da conta.'
+    : 'Não foi possível sincronizar os dados da conta.';
+  throw Object.assign(new Error(message, { cause: error }), { code });
 }
-
-async function testConnection() {
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error('Please check your Firebase configuration.');
-    }
-  }
-}
-
-testConnection();

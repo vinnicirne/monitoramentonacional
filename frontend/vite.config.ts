@@ -24,9 +24,16 @@ function appServiceWorker() {
     name: 'app-service-worker',
     apply: 'build' as const,
     generateBundle(this: { emitFile: (file: { type: 'asset'; fileName: string; source: string }) => void }, _options: unknown, bundle: OutputBundle) {
-      const initialAssets = Object.entries(bundle)
-        .filter(([file, output]) => file !== 'sw.js' && (file.endsWith('.css') || (output.type === 'chunk' && output.isEntry)))
-        .map(([file]) => `/${file}`);
+      const initialAssets = new Set<string>();
+      const includeStaticChunk = (file: string) => {
+        const output = bundle[file];
+        if (!output || initialAssets.has(`/${file}`)) return;
+        initialAssets.add(`/${file}`);
+        if (output.type === 'chunk') output.imports.forEach(includeStaticChunk);
+      };
+      for (const [file, output] of Object.entries(bundle)) {
+        if (file.endsWith('.css') || (output.type === 'chunk' && output.isEntry)) includeStaticChunk(file);
+      }
       const precache = [...new Set(['/index.html', ...publicFiles, ...initialAssets])];
       const publicRevision = publicFiles.map(file => {
         const stats = fs.statSync(path.join(publicDirectory, file.slice(1)));
@@ -37,17 +44,35 @@ function appServiceWorker() {
 const PRECACHE = ${JSON.stringify(precache)};
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(PRECACHE)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('monitoramento-') && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
+async function fetchAndCache(cache, request, key = request) {
+  const response = await fetch(request);
+  const write = response.ok ? cache.put(key, response.clone()).catch(() => undefined) : undefined;
+  return { response, write };
+}
+function respond(event, result) {
+  event.respondWith(result.then(({ response }) => response));
+  event.waitUntil(result.then(({ write }) => write).catch(() => undefined));
+}
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).then(response => { if (response.ok) caches.open(CACHE).then(cache => cache.put('/index.html', response.clone())); return response; }).catch(async () => (await caches.match(request)) || (await caches.match('/index.html'))));
+    respond(event, caches.open(CACHE).then(async cache => {
+      try {
+        return await fetchAndCache(cache, request, '/index.html');
+      } catch {
+        return { response: (await cache.match('/index.html')) || Response.error() };
+      }
+    }));
     return;
   }
   if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/data/') || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.webmanifest') {
-    event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => { if (response.ok) caches.open(CACHE).then(cache => cache.put(request, response.clone())); return response; })));
+    respond(event, caches.open(CACHE).then(async cache => {
+      const cached = await cache.match(request);
+      return cached ? { response: cached } : fetchAndCache(cache, request);
+    }));
   }
 });`;
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: worker });

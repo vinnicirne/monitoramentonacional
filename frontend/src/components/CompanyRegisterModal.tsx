@@ -13,15 +13,8 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
-import {
-  doc,
-  setDoc,
-  collection,
-  getDocs,
-  serverTimestamp
-} from 'firebase/firestore';
-import { db, handleFirestoreError } from '../firebase';
-import { CorporateCompany, OperationType, PlanConfig } from '../types/admin';
+import { createAdminCompany, getActiveAdminPlans } from '../features/admin/services/adminRepository';
+import { CorporateCompany, PlanConfig } from '../types/admin';
 import { useAuth } from '../contexts/AuthContext';
 
 interface CompanyRegisterModalProps {
@@ -62,9 +55,8 @@ export const CompanyRegisterModal: React.FC<CompanyRegisterModalProps> = ({
     setCreatedDomain(null);
 
     // Fetch existing plans from Firestore
-    getDocs(collection(db, 'plans'))
-      .then(snap => {
-        const list = snap.docs.map(d => d.data() as PlanConfig).filter(p => p.active);
+    getActiveAdminPlans()
+      .then(list => {
         if (list.length > 0) {
           setAvailablePlans(list);
           const defaultPlan = list.find(p => p.billingModel === 'per_user') || list[0];
@@ -126,16 +118,13 @@ export const CompanyRegisterModal: React.FC<CompanyRegisterModalProps> = ({
     try {
       if (isAdmin) {
         // Direct creation by Administrator strictly matching firestore.rules
-        await setDoc(doc(db, 'corporate_companies', cleanDomain), {
-          domain: cleanDomain,
+        await createAdminCompany(cleanDomain, {
           companyName: cleanName,
           planId: planId || 'corp_licenca',
           pricePerLicense: priceNum,
           licensedSeats: seatsNum,
           autoApprove: autoApprove,
-          active: true,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          active: true
         });
 
         setCreatedDomain(cleanDomain);
@@ -146,18 +135,14 @@ export const CompanyRegisterModal: React.FC<CompanyRegisterModalProps> = ({
       } else {
         // For non-admin enterprise requests:
         // Record corporate intent or create self-serve company if rules allow
-        const requestDoc = doc(db, 'corporate_companies', cleanDomain);
         try {
-          await setDoc(requestDoc, {
-            domain: cleanDomain,
+          await createAdminCompany(cleanDomain, {
             companyName: cleanName,
             planId: planId || 'corp_licenca',
             pricePerLicense: priceNum,
             licensedSeats: seatsNum,
             autoApprove: autoApprove,
-            active: true,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            active: true
           });
           setCreatedDomain(cleanDomain);
           setSuccessMessage(`Empresa "${cleanName}" cadastrada com sucesso!`);

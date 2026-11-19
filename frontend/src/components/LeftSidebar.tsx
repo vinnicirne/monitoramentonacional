@@ -1,35 +1,20 @@
 import React, { useState } from 'react';
-import {
-  Layers,
-  Filter,
-  Building2,
-  Flame,
-  Compass,
-  ChevronRight,
-  ShieldAlert,
-  Globe,
-  X,
-  Sliders,
-  MapPin,
-  Lock,
-  Plus,
-  Menu
-} from 'lucide-react';
+import { Layers, Filter, Building2, Flame, Compass, Globe, X, Menu } from 'lucide-react';
 import { BasemapType, ChoroplethMetric, LayerVisibility, TerritorialRegistry } from '../types';
 import { EstadoScope } from '../types/sigBase';
-import {
-  FAC_CATALOG,
-  FAC_ORDER,
-  FACCAO_COUNTS,
-  CodigoFaccaoPrecisa
-} from '../data/faccoesPrecisas';
+import { CodigoFaccaoPrecisa } from '../data/faccoesPrecisas';
 import { BRASIL_UFS_LIST, UfMetadataInfo } from '../data/brasilEstadosData';
 import { DELEGACIAS_MG_ES_DATA } from '../data/delegaciasMgEsData';
 import { DelegaciaTerritorialMgEs } from '../types/delegaciaTerritorial';
+import { LayerControls } from '../features/map/components/sidebar/LayerControls';
+import { StateControls } from '../features/map/components/sidebar/StateControls';
+import { TerritorialFilters } from '../features/map/components/sidebar/TerritorialFilters';
+import { StationDirectory } from '../features/map/components/sidebar/StationDirectory';
+import { FactionLegend } from '../features/map/components/sidebar/FactionLegend';
 
 export type SidebarSection = 'layers' | 'filters' | 'cisps' | 'legend' | 'states';
 
-interface LeftSidebarProps {
+export interface LeftSidebarProps {
   registry: TerritorialRegistry | null;
   estadoScope: EstadoScope;
   setEstadoScope: (scope: EstadoScope) => void;
@@ -337,478 +322,71 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
           <div className="flex-1 overflow-y-auto p-3.5 space-y-4 text-xs">
             {/* --- SEÇÃO CAMADAS & MAPAS BASE --- */}
             {activeSection === 'layers' && (
-              <>
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-                    Mapa Base (OpenLayers v9.2.4)
-                  </span>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {(
-                      [
-                        { id: 'osm', label: 'OSM Padrão' },
-                        { id: 'voyager', label: 'Voyager Color' },
-                        { id: 'satellite', label: 'Satélite HD' },
-                        { id: 'streets', label: 'Ruas & Vias' }
-                      ] as const
-                    ).map(bm => (
-                      <button
-                        key={bm.id}
-                        onClick={() => setBasemap(bm.id)}
-                        className={`px-2.5 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
-                          basemap === bm.id
-                            ? 'bg-[#3483FA]/10 border-[#3483FA] text-[#2968C8] font-bold'
-                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
-                        }`}
-                      >
-                        {bm.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-                    Camadas Vetoriais
-                  </span>
-                  {(
-                    [
-                      { key: 'faccoesPrecisas', label: 'Facções Precisas (1.695 áreas)', dot: '#E0342C' },
-                      { key: 'cisp', label: 'Circunscrições CISP (137 DPs)', dot: '#3483FA' },
-                      { key: 'aisp', label: 'Áreas Integradas AISP (41 BPMs)', dot: '#D97706' },
-                      { key: 'risp', label: 'Regiões RISP (7 CPAs)', dot: '#00A650' },
-                      { key: 'delegacias', label: 'Sedes das Delegacias (PCERJ)', dot: '#2D3277' },
-                      { key: 'batalhoes', label: 'Sedes dos Batalhões (PMERJ)', dot: '#0891b2' },
-                      { key: 'focos', label: 'Focos Especiais KML (8)', dot: '#ef4444' },
-                      { key: 'mgEs', label: 'Sedes RISP / Regionais (MG·ES)', dot: '#00A650' },
-                      { key: 'brasilEstados', label: 'Limites Estaduais (RJ · MG · ES)', dot: '#64748b' }
-                    ] as const
-                  ).map(item => (
-                    <label
-                      key={item.key}
-                      className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={layers[item.key]}
-                          onChange={() => toggleLayer(item.key)}
-                          className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
-                        />
-                        <span className="text-slate-800 font-medium">{item.label}</span>
-                      </div>
-                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.dot }} />
-                    </label>
-                  ))}
-
-                  {companyDomain && (
-                    <div className="p-3 rounded-2xl bg-[#2D3277]/5 border border-[#2D3277]/20 space-y-2 mt-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-[11px] text-[#2D3277] flex items-center gap-1.5 uppercase">
-                          <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-                          <span>Ocorrências (@{companyDomain})</span>
-                        </span>
-                        {totalCompanyRoubos > 0 && (
-                          <span className="px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">
-                            {totalCompanyRoubos} {totalCompanyRoubos === 1 ? 'roubo' : 'roubos'}
-                          </span>
-                        )}
-                      </div>
-
-                      <label className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={layers.corporateHeatmap !== false}
-                            onChange={() =>
-                              setLayers(prev => ({
-                                ...prev,
-                                corporateHeatmap: prev.corporateHeatmap === false ? true : false
-                              }))
-                            }
-                            className="rounded border-slate-300 text-red-600 focus:ring-0"
-                          />
-                          <span className="text-slate-800 font-bold text-xs">Mapa de Calor da Empresa</span>
-                        </div>
-                        <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0" />
-                      </label>
-
-                      <label className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={layers.corporateIncidents !== false}
-                            onChange={() =>
-                              setLayers(prev => ({
-                                ...prev,
-                                corporateIncidents: prev.corporateIncidents === false ? true : false
-                              }))
-                            }
-                            className="rounded border-slate-300 text-orange-600 focus:ring-0"
-                          />
-                          <span className="text-slate-800 font-bold text-xs">Pontos de Ocorrências ({totalCompanyIncidents})</span>
-                        </div>
-                        <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shrink-0" />
-                      </label>
-
-                      {onOpenIncidentModal && (
-                        <button
-                          type="button"
-                          onClick={onOpenIncidentModal}
-                          className="w-full py-2 rounded-xl bg-[#2D3277] hover:bg-[#1E2355] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5 text-[#FFE600]" />
-                          <span>+ Registrar Ocorrência</span>
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-1.5 pt-2 border-t border-slate-200">
-                  <div className="flex items-center justify-between text-slate-700">
-                    <span className="flex items-center gap-1.5 font-semibold text-[11px] uppercase tracking-wider text-slate-500">
-                      <Sliders className="w-3.5 h-3.5 text-[#3483FA]" />
-                      Opacidade Polígonos CISP
-                    </span>
-                    <span className="font-mono font-bold text-[#3483FA]">{Math.round(layerOpacity * 100)}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0.1}
-                    max={0.85}
-                    step={0.05}
-                    value={layerOpacity}
-                    onChange={e => setLayerOpacity(parseFloat(e.target.value))}
-                    className="w-full accent-[#3483FA] cursor-pointer"
-                  />
-                </div>
-              </>
+              <LayerControls
+                layers={layers}
+                setLayers={setLayers}
+                basemap={basemap}
+                setBasemap={setBasemap}
+                layerOpacity={layerOpacity}
+                setLayerOpacity={setLayerOpacity}
+                companyDomain={companyDomain}
+                totalCompanyIncidents={totalCompanyIncidents}
+                totalCompanyRoubos={totalCompanyRoubos}
+                onOpenIncidentModal={onOpenIncidentModal}
+                toggleLayer={toggleLayer}
+              />
             )}
 
             {/* --- SEÇÃO ESTADOS INTEGRADOS (RJ, MG, ES) --- */}
             {activeSection === 'states' && (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-1.5">
-                  {(
-                    [
-                      { id: 'TODOS', label: 'Todos (RJ+MG+ES)' },
-                      { id: 'RJ', label: 'Rio de Janeiro' },
-                      { id: 'MG', label: 'Minas Gerais' },
-                      { id: 'ES', label: 'Espírito Santo' },
-                      { id: 'MG_ES', label: 'MG + ES' }
-                    ] as const
-                  ).map(sc => (
-                    <button
-                      key={sc.id}
-                      onClick={() => setEstadoScope(sc.id)}
-                      className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
-                        estadoScope === sc.id
-                          ? 'bg-[#00A650]/10 border-[#00A650] text-[#008744]'
-                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
-                      }`}
-                    >
-                      {sc.label}
-                    </button>
-                  ))}
-                </div>
-
-                <input
-                  type="text"
-                  value={ufSearch}
-                  onChange={e => setUfSearch(e.target.value)}
-                  placeholder="Filtrar estado com dados (RJ, MG, ES)..."
-                  className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#3483FA]"
-                />
-
-                <div className="space-y-1 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1">
-                  {filteredUfs.map(u => {
-                    const isIntegrado = u.statusSig !== 'MALHA_IBGE_DISPONIVEL';
-                    return (
-                      <button
-                        key={u.uf}
-                        onClick={() => {
-                          onSelectUf(u);
-                          closeIfMobile();
-                        }}
-                        className="w-full text-left p-2.5 md:p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-between gap-2 transition-colors cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className={`w-7 h-7 rounded font-mono font-bold text-[11px] flex items-center justify-center shrink-0 ${
-                              u.uf === 'RJ'
-                                ? 'bg-[#3483FA]/15 text-[#2968C8] border border-[#3483FA]/30'
-                                : isIntegrado
-                                ? 'bg-[#00A650]/15 text-[#008744] border border-[#00A650]/30'
-                                : 'bg-slate-200 text-slate-700 border border-slate-300'
-                            }`}
-                          >
-                            {u.uf}
-                          </span>
-                          <div className="min-w-0">
-                            <div className="font-semibold text-slate-900 truncate">{u.nome}</div>
-                            <div className="text-[10px] text-slate-600 truncate">
-                              {u.regiao} · {u.orgaoPC} / {u.orgaoPM}
-                            </div>
-                          </div>
-                        </div>
-                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              <StateControls
+                estadoScope={estadoScope}
+                setEstadoScope={setEstadoScope}
+                onSelectUf={onSelectUf}
+                filteredUfs={filteredUfs}
+                ufSearch={ufSearch}
+                setUfSearch={setUfSearch}
+                closeIfMobile={closeIfMobile}
+              />
             )}
 
             {/* --- SEÇÃO FILTROS & COROPLÉTICO --- */}
             {activeSection === 'filters' && (
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                    Mapa Temático (Coroplético CISP)
-                  </label>
-                  <select
-                    value={choroplethMetric}
-                    onChange={e => setChoroplethMetric(e.target.value as ChoroplethMetric)}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
-                  >
-                    <option value="none">Delimitação Padrão (CISP)</option>
-                    <option value="faccao">Dinâmica Territorial / Facção</option>
-                    <option value="letalidade_violenta">Letalidade Violenta (ISP-RJ)</option>
-                    <option value="roubo_rua">Roubo de Rua (ISP-RJ)</option>
-                    <option value="roubo_veiculo">Roubo de Veículo (ISP-RJ)</option>
-                    <option value="roubo_carga">Roubo de Carga (ISP-RJ)</option>
-                    <option value="fuzis_apreendidos">Fuzis Apreendidos (ISP-RJ)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                    Região Integrada (RISP)
-                  </label>
-                  <select
-                    value={selectedRispFilter}
-                    onChange={e => setSelectedRispFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
-                  >
-                    <option value="all">Todas as 7 RISPs</option>
-                    {[1, 2, 3, 4, 5, 6, 7].map(r => (
-                      <option key={r} value={r}>
-                        RISP {r} {registry?.risps[r] ? `· ${registry.risps[r].regiao}` : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                    Município (RJ)
-                  </label>
-                  <select
-                    value={selectedMunicipioFilter}
-                    onChange={e => setSelectedMunicipioFilter(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
-                  >
-                    <option value="">Todos os 92 Municípios</option>
-                    {municipios.map(m => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
-                    Dinâmica Armada / Facção
-                  </label>
-                  <select
-                    value={selectedFactionFilter}
-                    onChange={e => setSelectedFactionFilter(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-[#3483FA]"
-                  >
-                    <option value="">Todas as Situações</option>
-                    <option value="CV">Comando Vermelho (CV)</option>
-                    <option value="TCP">Terceiro Comando Puro (TCP)</option>
-                    <option value="ADA">Amigos dos Amigos (ADA)</option>
-                    <option value="MIL">Milícia</option>
-                    <option value="LJ">Liga da Justiça (CL220)</option>
-                    <option value="MNI">Milícia de Nova Iguaçu</option>
-                    <option value="NEU">Área Neutra</option>
-                    <option value="Disputa">Área em Disputa Bélica</option>
-                    <option value="Controle">Controle Institucional</option>
-                  </select>
-                </div>
-
-                {(selectedRispFilter !== 'all' || selectedMunicipioFilter || selectedFactionFilter) && (
-                  <button
-                    onClick={() => {
-                      setSelectedRispFilter('all');
-                      setSelectedMunicipioFilter('');
-                      setSelectedFactionFilter('');
-                    }}
-                    className="w-full py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-semibold transition-colors cursor-pointer"
-                  >
-                    Limpar Todos os Filtros
-                  </button>
-                )}
-
-                <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[11px] space-y-1 text-slate-600">
-                  <div className="font-semibold text-slate-900">Filtro Ativo:</div>
-                  <div>
-                    • {filteredCisps.length} de {registry ? Object.keys(registry.cisps).length : 137} circunscrições
-                  </div>
-                  <div>• {new Set(filteredCisps.map(c => c.aisp)).size} batalhões abrangidos</div>
-                </div>
-              </div>
+              <TerritorialFilters
+                selectedRispFilter={selectedRispFilter}
+                setSelectedRispFilter={setSelectedRispFilter}
+                selectedMunicipioFilter={selectedMunicipioFilter}
+                setSelectedMunicipioFilter={setSelectedMunicipioFilter}
+                selectedFactionFilter={selectedFactionFilter}
+                setSelectedFactionFilter={setSelectedFactionFilter}
+                registry={registry}
+                choroplethMetric={choroplethMetric}
+                setChoroplethMetric={setChoroplethMetric}
+                municipios={municipios}
+                filteredCisps={filteredCisps}
+              />
             )}
 
             {/* --- SEÇÃO DELEGACIAS (RJ, MG ou ES conforme escopo) --- */}
             {activeSection === 'cisps' && (
-              <div className="space-y-1.5">
-                {(estadoScope === 'MG' || estadoScope === 'ES' || estadoScope === 'MG_ES') && (
-                  <div className="space-y-1.5">
-                    <div className="px-2 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-1 mb-1">
-                      <span>Delegacias {estadoScope === 'ES' ? 'PCES' : estadoScope === 'MG' ? 'PCMG' : 'MG & ES'}</span>
-                      <span className="font-mono text-[#008744] font-bold">{filteredDelegaciasMgEs.length} unidades</span>
-                    </div>
-
-                    {filteredDelegaciasMgEs.map(del => (
-                      <button
-                        key={del.id}
-                        onClick={() => {
-                          onSelectDelegaciaMgEs?.(del);
-                          closeIfMobile();
-                        }}
-                        className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer group ${
-                          selectedDelegaciaMgEsId === del.id
-                            ? 'bg-[#FFE600]/30 border-[#2D3277] text-slate-900 shadow-sm'
-                            : 'border-slate-200 bg-slate-50/70 hover:bg-slate-100 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${
-                                del.uf === 'ES'
-                                  ? 'bg-[#00A650]/10 text-[#008744] border-[#00A650]/30'
-                                  : 'bg-[#3483FA]/10 text-[#2968C8] border-[#3483FA]/30'
-                              }`}
-                            >
-                              {del.orgao}
-                            </span>
-                            <span className="font-bold text-xs text-slate-900 truncate group-hover:text-[#2D3277]">
-                              {del.nomeCurto}
-                            </span>
-                          </div>
-                          <div className="text-[10px] text-slate-600 truncate mt-0.5">
-                            {del.municipio} - {del.uf} • {del.regional}
-                          </div>
-                          <div className="text-[9.5px] text-slate-500 truncate mt-0.5">
-                            Jurisdição: {del.bairros.slice(0, 3).join(', ')}
-                            {del.bairros.length > 3 ? ` (+${del.bairros.length - 3} bairros)` : ''}
-                          </div>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-1 group-hover:text-[#2D3277]" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {(estadoScope === 'RJ' || estadoScope === 'TODOS') && (
-                  <div className="space-y-1.5">
-                    {estadoScope === 'TODOS' && (
-                      <div className="px-2 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-1 mt-3 mb-1">
-                        <span>Rio de Janeiro (PCERJ)</span>
-                        <span className="font-mono text-[#3483FA] font-bold">{filteredCisps.length} CISPs</span>
-                      </div>
-                    )}
-                    {filteredCisps.map(cisp => (
-                      <button
-                        key={cisp.cisp}
-                        onClick={() => {
-                          onSelectCISP(cisp.cisp);
-                          closeIfMobile();
-                        }}
-                        className={`w-full text-left p-2.5 md:p-2 rounded-lg border flex items-center justify-between transition-all cursor-pointer ${
-                          selectedCispId === cisp.cisp
-                            ? 'bg-[#FFE600]/30 border-[#2D3277] text-slate-900 shadow-sm'
-                            : 'bg-slate-50/70 border-slate-200 text-slate-800 hover:bg-slate-100 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-[#2D3277]">{cisp.cisp_formatado}</span>
-                            <span className="text-[11px] text-slate-900 font-medium truncate">
-                              {cisp.nome_oficial.replace(`${cisp.cisp_formatado} - `, '')}
-                            </span>
-                          </div>
-                          <div className="text-[10px] text-slate-600 truncate">
-                            {cisp.municipio} • {cisp.batalhao}
-                          </div>
-                          {cisp.bairros && cisp.bairros.length > 0 && (
-                            <div className="text-[9.5px] text-slate-500 truncate mt-0.5">
-                              Atende: {cisp.bairros.slice(0, 3).join(', ')}
-                              {cisp.bairros.length > 3 ? ` (+${cisp.bairros.length - 3})` : ''}
-                            </div>
-                          )}
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 ml-1" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <StationDirectory
+                estadoScope={estadoScope}
+                onSelectDelegaciaMgEs={onSelectDelegaciaMgEs}
+                selectedDelegaciaMgEsId={selectedDelegaciaMgEsId}
+                onSelectCISP={onSelectCISP}
+                selectedCispId={selectedCispId}
+                filteredCisps={filteredCisps}
+                filteredDelegaciasMgEs={filteredDelegaciasMgEs}
+                closeIfMobile={closeIfMobile}
+              />
             )}
 
             {/* --- SEÇÃO LEGENDA & FACÇÕES PRECISAS --- */}
             {activeSection === 'legend' && (
-              <div className="space-y-3">
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5">
-                      <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-                      Dados de Riscos (ago/2026)
-                    </span>
-                    <span className="font-mono text-[#2D3277] font-bold">1.695 áreas</span>
-                  </span>
-
-                  <div className="space-y-1.5 text-[11px]">
-                    {FAC_ORDER.map(code => {
-                      const meta = FAC_CATALOG[code];
-                      const isOn = visiblePreciseFactions[code];
-                      return (
-                        <label
-                          key={code}
-                          className={`flex items-center justify-between p-1.5 rounded bg-white border border-slate-200 cursor-pointer transition-opacity ${
-                            isOn ? 'opacity-100' : 'opacity-50'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <input
-                              type="checkbox"
-                              checked={isOn}
-                              onChange={e =>
-                                setVisiblePreciseFactions(prev => ({
-                                  ...prev,
-                                  [code]: e.target.checked
-                                }))
-                              }
-                              className="rounded border-slate-300 text-[#3483FA] focus:ring-0"
-                            />
-                            <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: meta.color }} />
-                            <span className="text-slate-800 font-medium truncate">{meta.label}</span>
-                          </div>
-                          <span className="font-mono text-[10px] text-slate-600 shrink-0">{FACCAO_COUNTS[code]}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-600 leading-relaxed">
-                  <strong className="text-slate-900">Fontes Públicas Consolidadas:</strong> Dados de Riscos (base ago/2026 — 1.695 polígonos por comunidade), Observatório GENI-UFF, Instituto Fogo Cruzado, MP-RJ (GAECO) e ISP-RJ.
-                </div>
-              </div>
+              <FactionLegend
+                visiblePreciseFactions={visiblePreciseFactions}
+                setVisiblePreciseFactions={setVisiblePreciseFactions}
+              />
             )}
           </div>
         </aside>

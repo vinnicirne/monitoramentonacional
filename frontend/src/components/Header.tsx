@@ -11,8 +11,9 @@ import {
 } from 'lucide-react';
 import { EstadoScope } from '../types/sigBase';
 import { useAuth } from '../contexts/AuthContext';
+import type { MainActiveTab } from '../app/routes';
 
-export type MainActiveTab = 'map' | 'sig_mges' | 'stats' | 'audit' | 'import' | 'about' | 'admin' | 'company_admin';
+export type { MainActiveTab } from '../app/routes';
 
 interface HeaderProps {
   activeTab: MainActiveTab;

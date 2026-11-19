@@ -1,6 +1,7 @@
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { auth, db, handleFirestoreError } from '../firebase';
-import { IncidentAuditAction, OperationType } from '../types/admin';
+import { serverTimestamp, type DocumentData, type DocumentReference } from 'firebase/firestore';
+import { auth } from '../../../firebase';
+import type { IncidentAuditAction } from '../../../types/admin';
+import { firestoreRefs } from '../../../shared/firebase/firestoreRefs';
 
 export interface RecordIncidentAuditParams {
   companyDomain: string;
@@ -19,18 +20,18 @@ export interface RecordIncidentAuditParams {
   summary: string;
 }
 
-export async function recordIncidentAuditLog(params: RecordIncidentAuditParams): Promise<void> {
-  const domain = (params.companyDomain || '').trim().toLowerCase();
-  if (!domain) return;
-
+export function addIncidentAuditLog(
+  write: { set(reference: DocumentReference<DocumentData>, data: DocumentData): unknown },
+  params: RecordIncidentAuditParams
+) {
+  const domain = params.companyDomain;
   const fbUser = auth.currentUser;
   const actorUid = (fbUser?.uid || params.actorUid || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 128);
   const actorEmail = (fbUser?.email || params.actorEmail || '').trim().toLowerCase().slice(0, 160);
-  if (!actorUid || !actorEmail) return;
+  if (!actorUid || !actorEmail) throw new Error('Sessão inválida para registrar a auditoria da ocorrência.');
 
   const logId = `aud_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-  const safeIncidentId = (params.incidentId || 'inc_unknown').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 128);
-  const safeTracking = (params.trackingCode || 'SEM-CODIGO').trim().slice(0, 80);
+  const safeTracking = params.trackingCode.trim().slice(0, 80) || 'SEM-CODIGO';
   const safeBo = (params.boNumber || '').trim().slice(0, 64);
   const safeDelegacia = (params.delegaciaName || '').trim().slice(0, 160);
   const safeActorName = (
@@ -45,7 +46,7 @@ export async function recordIncidentAuditLog(params: RecordIncidentAuditParams):
   const payload = {
     id: logId,
     companyDomain: domain,
-    incidentId: safeIncidentId,
+    incidentId: params.incidentId,
     trackingCode: safeTracking,
     boNumber: safeBo,
     delegaciaName: safeDelegacia,
@@ -61,17 +62,5 @@ export async function recordIncidentAuditLog(params: RecordIncidentAuditParams):
     createdAt: serverTimestamp()
   };
 
-  try {
-    await setDoc(doc(db, 'corporate_companies', domain, 'incident_audit_logs', logId), payload);
-  } catch (err) {
-    try {
-      handleFirestoreError(
-        err,
-        OperationType.CREATE,
-        `corporate_companies/${domain}/incident_audit_logs/${logId}`
-      );
-    } catch (formattedError) {
-      console.error('Não foi possível gravar log de auditoria da ocorrência:', formattedError);
-    }
-  }
+  write.set(firestoreRefs.companyIncidentAuditLog(domain, logId), payload);
 }
