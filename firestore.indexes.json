@@ -1,4 +1,93 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "companyDomain", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "domain", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "licenseStatus", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "planId", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "referrals",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "autoApproved", "order": "ASCENDING" },
+        { "fieldPath": "__name__", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "incident_audit_logs",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "access_logs",
+      "queryScope": "COLLECTION",
+      "apiScope": "ANY_API",
+      "density": "DENSE",
+      "multikey": false,
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
