@@ -218,6 +218,19 @@ export function bindMapPointerMove(map: Map, {
           }
         }
 
+        if (tipo === 'DELEGACIA') {
+          hit = true;
+          setTooltip({
+            visible: true,
+            x: safeX,
+            y: safeY,
+            title: props.nome,
+            sub: props.endereco,
+            type: 'SEDE DA DP'
+          });
+          return true;
+        }
+
         if (props.nome || props.cisp_formatado) {
           hit = true;
           const cispNum = props.cisp as number | undefined;

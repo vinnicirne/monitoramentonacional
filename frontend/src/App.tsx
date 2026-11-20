@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import type Map from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
+import { getSedeDelegacia } from './data/delegaciaSedes';
 import type {
   BasemapType,
   ChoroplethMetric,
@@ -362,11 +363,13 @@ function App() {
       });
       return;
     }
-    if (selectedData.cisp && registry?.cisps[selectedData.cisp]?.centroide) {
-      const coord = registry.cisps[selectedData.cisp].centroide;
+    if (selectedData.cisp) {
+      const station = selectedData.tipo === 'DELEGACIA' ? getSedeDelegacia(selectedData.cisp)?.coordenadas : undefined;
+      const coord = station ?? registry?.cisps[selectedData.cisp]?.centroide;
+      if (!coord) return;
       mapRef.current.getView().animate({
         center: fromLonLat(coord),
-        zoom: 13,
+        zoom: station ? 16 : 13,
         duration: 700
       });
     }

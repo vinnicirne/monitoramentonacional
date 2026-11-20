@@ -35,7 +35,7 @@ export function createCorporateIncidentFeatures(incidents: CorporatePackageIncid
   });
 }
 
-export function createCorporateIncidentMarkers(
+export function createCorporateIncidentCountMarkers(
   points: Feature[],
   cispSource: VectorSource,
   mgEsSource: VectorSource
@@ -62,10 +62,7 @@ export function createCorporateIncidentMarkers(
     ];
     const district = districts.find(candidate => candidate.id === incident.delegaciaId)
       ?? districts.sort((first, second) => first.id.localeCompare(second.id))[0];
-    if (!district) {
-      markers.push(point);
-      continue;
-    }
+    if (!district) continue;
 
     const existing = groups.get(district.id);
     if (existing) {

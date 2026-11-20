@@ -244,7 +244,15 @@ export function createMapLayerBundle({
 
     // 6. Delegacias Points
     const delegaciasLayer = new VectorLayer({
-      source: new VectorSource({ url: '/data/delegacias.geojson', format: new GeoJSON() }),
+      source: new VectorSource({
+        url: '/data/delegacias.geojson',
+        format: new GeoJSON(),
+        attributions: [
+          '<a href="https://www.policiacivil.rj.gov.br/localizeUmaDelegacia" target="_blank" rel="noopener noreferrer">PCERJ</a>',
+          '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>',
+          '<a href="https://overturemaps.org/" target="_blank" rel="noopener noreferrer">Overture Maps Foundation</a>'
+        ]
+      }),
       visible: layers.delegacias,
       zIndex: 6,
       style: feature => {
@@ -333,37 +341,55 @@ export function createMapLayerBundle({
       zIndex: 9
     });
 
-    // 12. Corporate incident counts by district
-    const countStyles = new Map<string, Style>();
-    const isRobbery = (type: string) => type === 'roubo_carga' || type === 'roubo';
+    // 12. Individual incident pins and counts by district
+    const createIncidentStyle = (color: string) => new Style({
+      image: new CircleStyle({
+        radius: 8.5,
+        fill: new Fill({ color }),
+        stroke: new Stroke({ color: '#ffffff', width: 2.5 })
+      }),
+      text: new Text({
+        text: '!',
+        font: 'bold 11px Arial, sans-serif',
+        fill: new Fill({ color: '#ffffff' })
+      })
+    });
+    const robberyStyle = createIncidentStyle('#dc2626');
+    const otherIncidentStyle = createIncidentStyle('#ea580c');
+    const countStyles = new Map<number, Style>();
     const corporatePinsLayer = new VectorLayer({
       source: new VectorSource(),
       visible: layers.corporateIncidents !== false,
       zIndex: 9.5,
       style: feature => {
         const group = feature.get('group') as CorporateIncidentGroup | undefined;
-        const count = String(group?.incidents.length ?? 1);
-        const hasRobbery = group
-          ? group.incidents.some(incident => isRobbery(incident.incidentType))
-          : isRobbery(feature.get('incidentType'));
-        const color = hasRobbery ? '#dc2626' : '#ea580c';
-        const key = color + count;
-        const cached = countStyles.get(key);
+        if (!group) {
+          const type = feature.get('incidentType');
+          return type === 'roubo_carga' || type === 'roubo' ? robberyStyle : otherIncidentStyle;
+        }
+
+        const count = group.incidents.length;
+        const cached = countStyles.get(count);
         if (cached) return cached;
+        const label = String(count);
+        const radius = Math.max(10, 5 + label.length * 3.5);
+        // Keep the count and the incident clickable when their positions coincide.
+        const offset = radius + 13;
         const style = new Style({
           image: new CircleStyle({
-            radius: Math.max(10, 5 + count.length * 3.5),
-            fill: new Fill({ color }),
-            stroke: new Stroke({ color: '#ffffff', width: 2.5 })
+            radius,
+            displacement: [0, offset],
+            fill: new Fill({ color: '#FFE600' }),
+            stroke: new Stroke({ color: '#2D3277', width: 2 })
           }),
           text: new Text({
-            text: count,
+            text: label,
             font: 'bold 12px Arial, sans-serif',
-            fill: new Fill({ color: '#ffffff' }),
-            offsetY: 1
+            fill: new Fill({ color: '#2D3277' }),
+            offsetY: -offset
           })
         });
-        countStyles.set(key, style);
+        countStyles.set(count, style);
         return style;
       }
     });

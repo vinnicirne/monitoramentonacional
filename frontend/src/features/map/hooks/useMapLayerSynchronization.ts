@@ -12,7 +12,7 @@ import { syncCorporateLayerVisibility, syncTerritorialLayerVisibility } from '..
 import { createBrazilStateFeatures } from '../services/brazilStateFeatures';
 import { populatePreciseFactionLayer } from '../services/preciseFactionLayer';
 import { createMgEsFeatures } from '../services/mgEsFeatures';
-import { createCorporateIncidentFeatures, createCorporateIncidentMarkers } from '../services/corporateIncidentFeatures';
+import { createCorporateIncidentCountMarkers, createCorporateIncidentFeatures } from '../services/corporateIncidentFeatures';
 import { getFactionStyle } from '../factionStyles';
 
 interface MapLayerSynchronizationOptions {
@@ -130,7 +130,8 @@ export function useMapLayerSynchronization({
 
     const updateMarkers = () => {
       markerSource.clear(true);
-      markerSource.addFeatures(createCorporateIncidentMarkers(points, cispSource, mgEsSource));
+      const counts = createCorporateIncidentCountMarkers(points, cispSource, mgEsSource);
+      markerSource.addFeatures([...points, ...counts]);
     };
     const listener = cispSource.on('featuresloadend', updateMarkers);
     updateMarkers();

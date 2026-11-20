@@ -338,6 +338,8 @@ def get_faction_data(cisp_num, risp_num):
 
 def build():
     print("=== Processing KML Geometries ===")
+    with open('frontend/src/data/delegaciaSedesRj.json', encoding='utf-8') as f:
+        station_sites = json.load(f)
     
     # 1. Parse RISP KML
     risp_tree = ET.parse('Documentação/extracted/risp.kml')
@@ -507,23 +509,26 @@ def build():
             }
         })
         
-        cisp_points.append({
-            "type": "Feature",
-            "id": f"dp-point-{cisp_num}",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [round(centroid.x, 6), round(centroid.y, 6)]
-            },
-            "properties": {
-                "tipo": "DELEGACIA",
-                "cisp": cisp_num,
-                "nome": dp_info["name"],
-                "batalhao": aisp_name,
-                "municipio": dp_info["municipio"],
-                "endereco": dp_info["endereco"],
-                "telefone": dp_info["telefone"]
-            }
-        })
+        station = station_sites.get(str(cisp_num), {})
+        if station.get("coordenadas"):
+            cisp_points.append({
+                "type": "Feature",
+                "id": f"dp-point-{cisp_num}",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": station["coordenadas"]
+                },
+                "properties": {
+                    "tipo": "DELEGACIA",
+                    "cisp": cisp_num,
+                    "nome": dp_info["name"],
+                    "batalhao": aisp_name,
+                    "municipio": dp_info["municipio"],
+                    "endereco": station["endereco"],
+                    "telefone": dp_info["telefone"],
+                    "fonteCoordenadas": station["fonteCoordenadas"]
+                }
+            })
 
     cisp_geojson = {
         "type": "FeatureCollection",

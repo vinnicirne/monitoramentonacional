@@ -3,6 +3,7 @@ import type { SelectedFeatureData, TerritorialRegistry } from '../../../types';
 import type { UfMetadataInfo } from '../../../data/brasilEstadosData';
 import type { FaccaoSearchEntry } from '../../../data/faccoesPrecisas';
 import type { DelegaciaTerritorialMgEs } from '../../../types/delegaciaTerritorial';
+import { getSedeDelegacia } from '../../../data/delegaciaSedes';
 import type { AddressSearchResult } from '../../../utils/geocoding';
 import type { EstadoScope } from '../../../types/sigBase';
 import type { AccessTargetInput } from '../../auth/authUtils';
@@ -49,6 +50,15 @@ export function useTerritorialSelection({
   logLocationAccess,
   onResetView
 }: TerritorialSelectionOptions) {
+  const focusStation = (cisp: number) => {
+    const station = getSedeDelegacia(cisp)?.coordenadas;
+    const coordinates = station ?? registry?.cisps[cisp]?.centroide;
+    if (coordinates) {
+      const [lng, lat] = coordinates;
+      setFocusTarget({ lat, lng, zoom: station ? 16 : 12.6, ts: Date.now() });
+    }
+  };
+
   const handleSelectCISP = (cispId: number) => {
     if (selectedCispId === cispId) {
       setSelectedCispId(null);
@@ -66,10 +76,11 @@ export function useTerritorialSelection({
         setSelectedCispId(cispId);
         setSelectedCommunityName(null);
         setSelectedUf(null);
+        focusStation(cispId);
         const record = registry?.cisps[cispId];
         if (record) {
           setSelectedData({
-            tipo: 'CISP', id: record.cisp, cisp: record.cisp, nome: record.nome_oficial,
+            tipo: 'DELEGACIA', id: record.cisp, cisp: record.cisp, nome: record.nome_oficial,
             aisp: record.aisp, risp: record.risp, batalhao: record.batalhao,
             comando: record.comando_regional, municipio: record.municipio,
             bairros: record.bairros, telefone: record.telefone, endereco: record.endereco,
@@ -290,6 +301,7 @@ export function useTerritorialSelection({
 
         setSelectedCommunityName(feat.tipo === 'FACCAO_COMUNIDADE' ? feat.nome : null);
         setSelectedUf(feat.tipo === 'ESTADO_UF' && feat.ufInfo ? feat.ufInfo : null);
+        if (feat.tipo === 'DELEGACIA' && cispId) focusStation(cispId);
         if (cispId && registry && registry.cisps[cispId]) {
           const rec = registry.cisps[cispId];
           setSelectedData({

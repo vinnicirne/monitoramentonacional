@@ -8,6 +8,7 @@ import {
   Search,
   Crosshair,
   Building,
+  ExternalLink,
   X,
   Globe
 } from 'lucide-react';
@@ -23,6 +24,7 @@ import {
 import { SelectedFeatureData } from '../types';
 import { EstadoScope } from '../types/sigBase';
 import { CISP_FACCAO_STATS, FAC_CATALOG, FAC_ORDER } from '../data/faccoesPrecisas';
+import { getSedeDelegacia } from '../data/delegaciaSedes';
 
 interface RightDossierProps {
   data: SelectedFeatureData | null;
@@ -391,6 +393,11 @@ export const RightDossier: React.FC<RightDossierProps> = ({
 
   const ind2025 = data.indicadores?.atual_2025;
   const cispFaccaoSummary = data.cisp ? CISP_FACCAO_STATS[data.cisp] : undefined;
+  const sedeDelegacia = getSedeDelegacia(data.cisp);
+  const endereco = sedeDelegacia?.endereco || data.endereco;
+  const centerLabel = data.tipo === 'DELEGACIA' && sedeDelegacia?.coordenadas
+    ? 'Centralizar na sede da delegacia'
+    : data.cisp ? 'Centralizar na circunscrição' : 'Centralizar no mapa';
 
   return (
     <>
@@ -410,7 +417,8 @@ export const RightDossier: React.FC<RightDossierProps> = ({
             <div className="flex items-center gap-1.5">
               <button
                 onClick={onCenterOnMap}
-                title="Centralizar no Mapa"
+                title={centerLabel}
+                aria-label={centerLabel}
                 className="p-2 md:p-1 rounded-lg md:rounded bg-white hover:bg-slate-100 text-[#3483FA] border border-slate-200 transition-colors cursor-pointer"
               >
                 <Crosshair className="w-4 h-4 md:w-3.5 md:h-3.5" />
@@ -443,6 +451,17 @@ export const RightDossier: React.FC<RightDossierProps> = ({
               </>
             )}
           </div>
+          {sedeDelegacia && (
+            <a
+              href={sedeDelegacia.mapaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1.5 rounded text-[11px] font-semibold text-[#2968C8] hover:underline focus-visible:outline-2 focus-visible:outline-[#3483FA]"
+            >
+              <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+              Ver sede no mapa
+            </a>
+          )}
         </div>
 
         {/* Tabs */}
@@ -560,12 +579,12 @@ export const RightDossier: React.FC<RightDossierProps> = ({
                   )}
                 </div>
 
-                {(data.endereco || data.telefone) && (
+                {(endereco || data.telefone) && (
                   <div className="pt-2 border-t border-slate-200 space-y-1 text-[11px]">
-                    {data.endereco && (
+                    {endereco && (
                       <div className="flex items-start gap-1.5 text-slate-700">
                         <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
-                        <span>{data.endereco}</span>
+                        <span>{endereco}</span>
                       </div>
                     )}
                     {data.telefone && (

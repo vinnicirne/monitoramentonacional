@@ -49,7 +49,7 @@ export function LayerControls({
             { key: 'cisp', label: 'Circunscrições CISP (137 DPs)', dot: '#3483FA' },
             { key: 'aisp', label: 'Áreas Integradas AISP (41 BPMs)', dot: '#D97706' },
             { key: 'risp', label: 'Regiões RISP (7 CPAs)', dot: '#00A650' },
-            { key: 'delegacias', label: 'Sedes das Delegacias (PCERJ)', dot: '#2D3277' },
+            { key: 'delegacias', label: 'Sedes georreferenciadas das DPs (RJ)', dot: '#2D3277' },
             { key: 'batalhoes', label: 'Sedes dos Batalhões (PMERJ)', dot: '#0891b2' },
             { key: 'focos', label: 'Focos Especiais KML (8)', dot: '#ef4444' },
             { key: 'mgEs', label: 'Sedes RISP / Regionais (MG·ES)', dot: '#00A650' },
@@ -118,7 +118,7 @@ export function LayerControls({
                   }
                   className="rounded border-slate-300 text-orange-600 focus:ring-0"
                 />
-                <span className="text-slate-800 font-bold text-xs">Ocorrências por área de DP ({totalCompanyIncidents})</span>
+                <span className="text-slate-800 font-bold text-xs">Ocorrências e contagem por DP ({totalCompanyIncidents})</span>
               </div>
               <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shrink-0" />
             </label>
