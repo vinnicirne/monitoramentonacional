@@ -63,19 +63,19 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
   const domain = mapProps.companyDomain ?? '';
   const { positions } = useCompanyDriverPositions(fleetUser, domain);
   const [selection, setSelection] = useState<{ uid: string; domain: string; user: string }>();
+  const [vehicleFocus, setVehicleFocus] = useState<{ extent: number[]; domain: string; user: string }>();
   const driver = selection?.domain === domain && selection?.user === fleetUser?.uid
     ? positions.find(vehicle => vehicle.uid === selection.uid) : undefined;
   function selectDriver(uid: string) {
     if (fleetUser) setSelection({ uid, domain, user: fleetUser.uid });
   }
   function showVehicles() {
-    const map = mapProps.mapRefOut.current;
-    if (!map || !positions.length) return;
+    if (!fleetUser || !positions.length) return;
     const extent = positions.map(vehicle => fromLonLat(vehicle.position)).reduce<number[]>(
       ([west,south,east,north],[x,y]) => [Math.min(west,x), Math.min(south,y), Math.max(east,x), Math.max(north,y)],
       [Infinity, Infinity, -Infinity, -Infinity]
     );
-    map.getView().fit(extent, { padding: [70, 60, 70, 60], maxZoom: 15, duration: 300 });
+    setVehicleFocus({ extent, domain, user: fleetUser.uid });
   }
 
   return (
@@ -84,7 +84,8 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
 
     <div className="flex-1 h-full relative overflow-hidden">
       <Suspense fallback={<div className="absolute inset-0 grid place-items-center text-xs text-slate-500" role="status">Carregando mapa…</div>}>
-        <MapContainer {...mapProps} vehicles={positions} onSelectDriver={selectDriver} />
+        <MapContainer {...mapProps} vehicles={positions} onSelectDriver={selectDriver}
+          vehicleExtent={vehicleFocus?.domain === domain && vehicleFocus.user === fleetUser?.uid ? vehicleFocus.extent : undefined} />
       </Suspense>
 
       <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto z-20 flex items-center justify-center gap-2 pointer-events-none">

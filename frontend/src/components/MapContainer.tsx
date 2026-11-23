@@ -78,6 +78,7 @@ interface MapContainerProps {
   onRequestRegisterIncident?: (coords?: { lat: number; lng: number }) => void;
   vehicles?: DriverPosition[];
   onSelectDriver?: (uid: string) => void;
+  vehicleExtent?: number[];
 }
 
 export const MapContainer: React.FC<MapContainerProps> = ({
@@ -115,7 +116,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onSelectCorporateIncident,
   onRequestRegisterIncident,
   vehicles = noVehicles,
-  onSelectDriver
+  onSelectDriver,
+  vehicleExtent
 }) => {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
@@ -319,6 +321,12 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   });
 
   useCompanyVehicleLayer(mapInstance, vehicles, onSelectDriver);
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map || !vehicleExtent) return;
+    map.updateSize();
+    map.getView().fit(vehicleExtent, { padding: [55, 45, 55, 45], maxZoom: 15, duration: 300 });
+  }, [vehicleExtent]);
 
   // Update Basemaps
   useEffect(() => {
