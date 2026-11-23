@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3 } from 'lucide-react';
+import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3, Truck } from 'lucide-react';
 import { CompanyIncidentSummary } from '../features/company-admin/components/CompanyIncidentSummary';
 import { CompanyIncidentForm } from '../features/company-admin/components/CompanyIncidentForm';
 import { IncidentRoster } from '../features/company-admin/components/IncidentRoster';
@@ -12,8 +12,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCompanyMembers } from '../features/company-admin/hooks/useCompanyMembers';
 import { useCompanyIncidentActions } from '../features/company-admin/hooks/useCompanyIncidentActions';
 
-type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers';
 const CarrierAnalyticsTab = lazy(() => import('../features/company-admin/components/CarrierAnalyticsTab').then(module => ({ default: module.CarrierAnalyticsTab })));
+const CompanyDriversTab = lazy(() => import('../features/company-admin/components/CompanyDriversTab'));
 
 interface CompanyAdminViewProps {
   registry?: TerritorialRegistry | null;
@@ -303,6 +304,18 @@ function CompanyWorkspace({
             <span>Transportadoras</span>
           </button>
 
+          {(isAdmin || isCompanyAdmin) && firebaseUser && (
+            <button
+              type="button"
+              aria-pressed={subTab === 'drivers'}
+              onClick={() => setSubTab('drivers')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${subTab === 'drivers' ? 'bg-[#2D3277] text-[#FFE600] shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+            >
+              <Truck className="w-4 h-4" aria-hidden="true" />
+              <span>Motoristas</span>
+            </button>
+          )}
+
           {(isAdmin || currentAdmin?.companyRole === 'company_admin') && (
             <button
               type="button"
@@ -320,6 +333,11 @@ function CompanyWorkspace({
       {/* SUBTAB 1: USUÁRIOS & LICENÇAS                                       */}
       {/* =================================================================== */}
       {loadError && <p role="alert" className="text-sm text-rose-700">Parte dos dados da empresa não pôde ser carregada.</p>}
+      {subTab === 'drivers' && (isAdmin || isCompanyAdmin) && firebaseUser && (
+        <Suspense fallback={<p role="status" className="text-sm text-slate-600">Carregando gestão de motoristas…</p>}>
+          <CompanyDriversTab key={firebaseUser.uid} domain={activeDomain} user={firebaseUser} />
+        </Suspense>
+      )}
       {subTab === 'users' && (
         <CompanyMembersTab
           activeDomain={activeDomain}
