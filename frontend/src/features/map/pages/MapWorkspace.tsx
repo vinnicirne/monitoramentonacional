@@ -1,6 +1,8 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import type { ComponentProps, Dispatch, SetStateAction } from 'react';
-import { Shield } from 'lucide-react';
+import { CarFront, Shield } from 'lucide-react';
+import type { User } from 'firebase/auth';
+import { fromLonLat } from 'ol/proj';
 import type { SelectedFeatureData } from '../../../types';
 import type { CodigoFaccaoPrecisa } from '../../../data/faccoesPrecisas';
 import { LeftSidebar } from '../../../components/LeftSidebar';
@@ -8,6 +10,8 @@ import { RightDossier } from '../../../components/RightDossier';
 import { FactionVisibilityControl } from '../components/FactionVisibilityControl';
 import type { MapContainer as MapContainerComponent } from '../../../components/MapContainer';
 import type { CorporatePackageIncident } from '../../../types/admin';
+import { useCompanyDriverPositions } from '../../company-admin/hooks/useCompanyDriverPositions';
+import DriverDetails from '../../company-admin/components/DriverDetails';
 
 const MapContainer = lazy(() => import('../../../components/MapContainer').then(module => ({ default: module.MapContainer })));
 const CorporateIncidentDossier = lazy(() => import('../../../components/CorporateIncidentDossier').then(module => ({ default: module.CorporateIncidentDossier })));
@@ -33,6 +37,7 @@ interface MapWorkspaceProps {
   onCenterOnSelected: () => void;
   onSelectEstadoScope: (scope: SidebarProps['estadoScope']) => void;
   onOpenImport: () => void;
+  fleetUser?: User;
 }
 
 export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
@@ -52,14 +57,34 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
   onPrintDossier,
   onCenterOnSelected,
   onSelectEstadoScope,
-  onOpenImport
-}) => (
+  onOpenImport,
+  fleetUser
+}) => {
+  const domain = mapProps.companyDomain ?? '';
+  const { positions } = useCompanyDriverPositions(fleetUser, domain);
+  const [selection, setSelection] = useState<{ uid: string; domain: string; user: string }>();
+  const driver = selection?.domain === domain && selection?.user === fleetUser?.uid
+    ? positions.find(vehicle => vehicle.uid === selection.uid) : undefined;
+  function selectDriver(uid: string) {
+    if (fleetUser) setSelection({ uid, domain, user: fleetUser.uid });
+  }
+  function showVehicles() {
+    const map = mapProps.mapRefOut.current;
+    if (!map || !positions.length) return;
+    const extent = positions.map(vehicle => fromLonLat(vehicle.position)).reduce<number[]>(
+      ([west,south,east,north],[x,y]) => [Math.min(west,x), Math.min(south,y), Math.max(east,x), Math.max(north,y)],
+      [Infinity, Infinity, -Infinity, -Infinity]
+    );
+    map.getView().fit(extent, { padding: [70, 60, 70, 60], maxZoom: 15, duration: 300 });
+  }
+
+  return (
   <div className="flex-1 flex w-full h-full overflow-hidden relative">
     <LeftSidebar {...sidebarProps} />
 
     <div className="flex-1 h-full relative overflow-hidden">
       <Suspense fallback={<div className="absolute inset-0 grid place-items-center text-xs text-slate-500" role="status">Carregando mapa…</div>}>
-        <MapContainer {...mapProps} />
+        <MapContainer {...mapProps} vehicles={positions} onSelectDriver={selectDriver} />
       </Suspense>
 
       <div className="absolute bottom-2.5 left-2.5 right-2.5 md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:right-auto z-20 flex items-center justify-center gap-2 pointer-events-none">
@@ -70,6 +95,10 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
           setVisibleFactions={setVisiblePreciseFactions}
         />
       </div>
+      {positions.length > 0 && <button type="button" onClick={showVehicles}
+        className="absolute bottom-14 left-3 z-20 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#2D3277] shadow-lg">
+        <CarFront className="h-4 w-4" aria-hidden="true" /> Ver veículos ({positions.length})
+      </button>}
 
       {!isDossierOpen && selectedData && (
         <button type="button" onClick={() => setIsDossierOpen(true)}
@@ -81,7 +110,9 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
     </div>
 
     <Suspense fallback={null}>
-      {selectedCorporateIncident ? (
+      {driver ? (
+        <div className="absolute inset-x-0 bottom-0 z-30 md:static md:z-auto"><DriverDetails driver={driver} onClose={() => setSelection(undefined)} /></div>
+      ) : selectedCorporateIncident ? (
         <CorporateIncidentDossier
           incident={selectedCorporateIncident}
           onClose={onCloseDossier}
@@ -101,4 +132,5 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
       )}
     </Suspense>
   </div>
-);
+  );
+};

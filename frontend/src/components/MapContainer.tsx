@@ -37,6 +37,10 @@ import { useMapCameraNavigation } from '../features/map/hooks/useMapCameraNaviga
 import { useSearchedAddressLayer } from '../features/map/hooks/useSearchedAddressLayer';
 import { useOpenLayersMap } from '../features/map/hooks/useOpenLayersMap';
 import { DelegaciaTerritorialMgEs } from '../types/delegaciaTerritorial';
+import { useCompanyVehicleLayer } from '../features/company-admin/hooks/useCompanyVehicleLayer';
+import type { DriverPosition } from '../features/company-admin/services/driveCompanyApi';
+
+const noVehicles: DriverPosition[] = [];
 
 interface MapContainerProps {
   registry: TerritorialRegistry | null;
@@ -72,6 +76,8 @@ interface MapContainerProps {
   companyDomain?: string;
   onSelectCorporateIncident?: (incident: CorporatePackageIncident) => void;
   onRequestRegisterIncident?: (coords?: { lat: number; lng: number }) => void;
+  vehicles?: DriverPosition[];
+  onSelectDriver?: (uid: string) => void;
 }
 
 export const MapContainer: React.FC<MapContainerProps> = ({
@@ -107,7 +113,9 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   companyIncidents = [],
   companyDomain = '',
   onSelectCorporateIncident,
-  onRequestRegisterIncident
+  onRequestRegisterIncident,
+  vehicles = noVehicles,
+  onSelectDriver
 }) => {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<Map | null>(null);
@@ -309,6 +317,8 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     setMapPopup,
     setTooltip
   });
+
+  useCompanyVehicleLayer(mapInstance, vehicles, onSelectDriver);
 
   // Update Basemaps
   useEffect(() => {

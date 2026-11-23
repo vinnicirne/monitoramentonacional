@@ -1,43 +1,25 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { User } from 'firebase/auth';
 import { Copy, RefreshCw, Truck } from 'lucide-react';
+import CompanyTrackingMap from './CompanyTrackingMap';
+import { driveOrigin, requestDrive as request } from '../services/driveCompanyApi';
 
 const labels = { pending: 'Pendente', approved: 'Aprovado', rejected: 'Recusado', revoked: 'Revogado' };
 type Status = keyof typeof labels;
 type Decision = Exclude<Status, 'pending'>;
-type Member = { uid: string; email: string; status: Status };
+type Member = { uid: string; email: string; status: Status; driverName?: string; driverPhone?: string };
 type Directory = { joinCode: string; members: Member[] };
-
-const driveOrigin = (() => {
-  try {
-    const url = new URL(import.meta.env.VITE_MAPSBRASIL_DRIVE_URL || '');
-    return url.protocol === 'https:' && !url.username && !url.password ? url.origin : null;
-  } catch {
-    return null;
-  }
-})();
 
 const button = 'rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#2D3277] hover:bg-slate-100 disabled:opacity-60';
 const primary = 'rounded-xl bg-[#2D3277] px-3 py-2 text-xs font-bold text-[#FFE600] hover:bg-[#22265d] disabled:opacity-60';
 const field = 'w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900';
 
-async function request<T>(user: User, domain: string, action: string, payload?: object, signal?: AbortSignal): Promise<T> {
-  const token = await user.getIdToken();
-  const timeout = AbortSignal.timeout(action === 'cadastro' ? 25000 : 12000);
-  const response = await fetch(`${driveOrigin}/api/empresa/${encodeURIComponent(domain)}/${action}`, {
-    method: payload ? 'POST' : 'GET',
-    headers: { Authorization: `Bearer ${token}`, ...(payload ? { 'Content-Type': 'application/json' } : {}) },
-    body: payload ? JSON.stringify(payload) : undefined,
-    signal: signal ? AbortSignal.any([timeout, signal]) : timeout
-  });
-  const result = await response.json().catch(() => null);
-  if (!response.ok || !result) throw new Error(result?.error || 'Não foi possível acessar a gestão do MapsBrasil Drive.');
-  return result;
-}
-
 export default function CompanyDriversTab({ domain, user }: { domain: string; user: User }) {
   const [directory, setDirectory] = useState<Directory>();
   const [email, setEmail] = useState('');
+  const [driverName, setDriverName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [editing, setEditing] = useState<Member>();
   const [mode, setMode] = useState<'invite' | 'register'>('invite');
   const [password, setPassword] = useState('');
   const [registration, setRegistration] = useState<{ email: string; password: string }>();
@@ -78,9 +60,13 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
       setInviteUrl('');
       setRegistration(undefined);
       if (mode === 'register') {
-        const result = await request<{ email: string; verificationSent: boolean; linked: boolean }>(user, domain, 'cadastro', { email, password });
+        const result = await request<{ email: string; verificationSent: boolean; linked: boolean }>(
+          user, domain, 'cadastro', { email, password, name: driverName, phone }
+        );
         setRegistration({ email: result.email, password });
         setPassword('');
+        setDriverName('');
+        setPhone('');
         setEmail('');
         if (result.linked) setRefresh(value => value + 1);
         setStatus(result.verificationSent
@@ -89,12 +75,25 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
         if (!result.linked) setError('A conta foi criada. Para completar o vínculo, gere um convite para esse e-mail.');
         return;
       }
-      const { token } = await request<{ token: string }>(user, domain, 'convite', { email });
+      const { token } = await request<{ token: string }>(user, domain, 'convite', { email, name: driverName, phone });
       const link = new URL('/', driveOrigin!);
       link.searchParams.set('convite', token);
       setInviteUrl(link.href);
       setEmail('');
+      setDriverName('');
+      setPhone('');
       setStatus('Convite gerado. Compartilhe o link com o motorista.');
+    });
+  }
+
+  function saveContact(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editing) return;
+    void change(async () => {
+      const { uid, driverName: name, driverPhone: phone } = editing;
+      setDirectory(await request<Directory>(user, domain, 'perfil', { uid, name, phone }));
+      setEditing(undefined);
+      setStatus('Dados do motorista atualizados.');
     });
   }
 
@@ -145,6 +144,7 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
       {status && <p role="status" className="text-sm text-emerald-800">{status}</p>}
       {driveOrigin && !directory && !error && <p role="status" className="text-sm text-slate-600">Carregando motoristas…</p>}
       {directory && <>
+        <CompanyTrackingMap user={user} domain={domain} drivers={directory.members} />
         <div className="grid gap-4 md:grid-cols-2">
           <form onSubmit={submit} className="space-y-2 rounded-xl border border-slate-200 p-3">
             <div className="flex flex-wrap gap-2" role="group" aria-label="Forma de cadastrar motorista">
@@ -156,6 +156,12 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
             <label htmlFor="drive-driver-email" className="block text-sm font-bold">E-mail do motorista</label>
             <input id="drive-driver-email" type="email" placeholder="motorista@email.com" className={field}
               maxLength={254} value={email} onChange={event => setEmail(event.target.value)} required />
+            <label htmlFor="drive-driver-name" className="block text-sm font-bold">Nome do motorista</label>
+            <input id="drive-driver-name" className={field} maxLength={100} value={driverName}
+              onChange={event => setDriverName(event.target.value)} required={mode === 'register'} />
+            <label htmlFor="drive-driver-phone" className="block text-sm font-bold">Telefone do motorista</label>
+            <input id="drive-driver-phone" type="tel" autoComplete="tel" placeholder="(21) 99999-9999"
+              className={field} maxLength={25} value={phone} onChange={event => setPhone(event.target.value)} />
             {mode === 'register' && <>
               <label htmlFor="drive-driver-password" className="block text-sm font-bold">Senha inicial</label>
               <input id="drive-driver-password" type="password" autoComplete="new-password" className={field} minLength={8}
@@ -194,10 +200,13 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
           <ul className="divide-y divide-slate-200">
             {directory.members.map(member => <li key={member.uid} className="flex flex-wrap items-center justify-between gap-2 py-3">
               <div className="min-w-0">
+                {member.driverName && <p className="break-words text-sm font-semibold">{member.driverName}</p>}
                 <p className="break-all text-sm font-semibold">{member.email}</p>
+                {member.driverPhone && <p className="text-xs text-slate-600">{member.driverPhone}</p>}
                 <span className="text-xs text-slate-600">{labels[member.status]}</span>
               </div>
               <div className="flex flex-wrap gap-2">
+                <button type="button" disabled={busy} className={button} onClick={() => setEditing(member)}>Editar contato</button>
                 {member.status === 'pending' && <>
                   <button type="button" disabled={busy} className={primary} onClick={() => decide(member.uid, 'approved')}>Aprovar</button>
                   <button type="button" disabled={busy} className={button} onClick={() => decide(member.uid, 'rejected')}>Recusar</button>
@@ -207,6 +216,16 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
                 {(member.status === 'rejected' || member.status === 'revoked') && <button type="button" disabled={busy}
                   className={button} onClick={() => decide(member.uid, 'approved')}>Restaurar acesso</button>}
               </div>
+              {editing?.uid === member.uid && <form onSubmit={saveContact} className="grid w-full gap-2 rounded-xl bg-slate-50 p-3 md:grid-cols-2">
+                <label className="text-xs font-bold">Nome para exibição<input className={field} value={editing.driverName ?? ''}
+                  maxLength={100} required onChange={event => setEditing({ ...editing, driverName: event.target.value })} /></label>
+                <label className="text-xs font-bold">Telefone com DDD<input className={field} type="tel" value={editing.driverPhone ?? ''}
+                  maxLength={25} onChange={event => setEditing({ ...editing, driverPhone: event.target.value })} /></label>
+                <div className="flex gap-2">
+                  <button type="submit" className={primary} disabled={busy}>Salvar contato</button>
+                  <button type="button" className={button} disabled={busy} onClick={() => setEditing(undefined)}>Cancelar</button>
+                </div>
+              </form>}
             </li>)}
           </ul>
         </div>

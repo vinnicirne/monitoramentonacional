@@ -481,6 +481,7 @@ function App() {
         }}
         map={route?.tab === 'map' && (
           <MapWorkspace
+            fleetUser={isAdmin || isCompanyAdmin ? firebaseUser ?? undefined : undefined}
             sidebarProps={{
               registry,
               estadoScope,
