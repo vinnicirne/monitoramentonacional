@@ -33,7 +33,7 @@ export default function CompanyTrackingMap({ user, domain, drivers }: { user: Us
     };
   }, []);
 
-  useCompanyVehicleLayer(map, positions, setSelected);
+  useCompanyVehicleLayer(map, positions, driver, setSelected);
 
   useEffect(() => {
     if (!positions.length || centered.current) return;

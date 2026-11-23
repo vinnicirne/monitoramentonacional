@@ -77,6 +77,7 @@ interface MapContainerProps {
   onSelectCorporateIncident?: (incident: CorporatePackageIncident) => void;
   onRequestRegisterIncident?: (coords?: { lat: number; lng: number }) => void;
   vehicles?: DriverPosition[];
+  selectedVehicle?: DriverPosition;
   onSelectDriver?: (uid: string) => void;
   vehicleExtent?: number[];
 }
@@ -116,6 +117,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onSelectCorporateIncident,
   onRequestRegisterIncident,
   vehicles = noVehicles,
+  selectedVehicle,
   onSelectDriver,
   vehicleExtent
 }) => {
@@ -320,7 +322,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     setTooltip
   });
 
-  useCompanyVehicleLayer(mapInstance, vehicles, onSelectDriver);
+  useCompanyVehicleLayer(mapInstance, vehicles, selectedVehicle, onSelectDriver);
   useEffect(() => {
     const map = mapInstance.current;
     if (!map || !vehicleExtent) return;

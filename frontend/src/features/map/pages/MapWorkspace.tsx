@@ -84,7 +84,7 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
 
     <div className="flex-1 h-full relative overflow-hidden">
       <Suspense fallback={<div className="absolute inset-0 grid place-items-center text-xs text-slate-500" role="status">Carregando mapa…</div>}>
-        <MapContainer {...mapProps} vehicles={positions} onSelectDriver={selectDriver}
+        <MapContainer {...mapProps} vehicles={positions} selectedVehicle={driver} onSelectDriver={selectDriver}
           vehicleExtent={vehicleFocus?.domain === domain && vehicleFocus.user === fleetUser?.uid ? vehicleFocus.extent : undefined} />
       </Suspense>
 
