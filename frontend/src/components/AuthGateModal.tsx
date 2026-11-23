@@ -111,7 +111,7 @@ export const AuthGateModal: React.FC<AuthGateModalProps> = ({
 
   useEffect(() => {
     setIsSubmitting(false);
-  }, [firebaseUser]);
+  }, [firebaseUser, firebaseUser?.emailVerified]);
 
   if (!isAuthModalOpen) return null;
 

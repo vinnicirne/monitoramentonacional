@@ -75,7 +75,7 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, message: string):
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [{ user: firebaseUser }, setFirebaseSession] = useState<{ user: FirebaseUser | null }>({ user: null });
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -135,7 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       firebaseUserRef.current = fbUser;
-      setFirebaseUser(fbUser);
+      setFirebaseSession({ user: fbUser });
       userProfileRef.current = null;
       setUserProfile(null);
       setAuthLoading(Boolean(fbUser));
@@ -309,11 +309,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshAuthUser = async () => {
     setAuthError(null);
-    if (!auth.currentUser) return;
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
     try {
-      await reload(auth.currentUser);
-      setFirebaseUser({ ...auth.currentUser } as FirebaseUser);
-      await ensureUserProfile(auth.currentUser);
+      const wasVerified = currentUser.emailVerified;
+      await reload(currentUser);
+      if (auth.currentUser !== currentUser) return;
+      if (!wasVerified && currentUser.emailVerified) await currentUser.getIdToken(true);
+      if (auth.currentUser !== currentUser) return;
+      firebaseUserRef.current = currentUser;
+      setFirebaseSession({ user: currentUser });
+      await ensureUserProfile(currentUser);
     } catch (err: any) {
       console.error('Refresh Auth error:', err);
       setAuthError(mapAuthErrorToPortuguese(err));
