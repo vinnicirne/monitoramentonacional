@@ -20,26 +20,32 @@ export function vehicleColor(uid: string) {
 
 function car(color: string) {
   const icon = document.createElement('canvas');
+  icon.setAttribute('aria-hidden', 'true');
   icon.width = 48;
-  icon.height = 58;
-  icon.className = 'h-5 w-4';
+  icon.height = 48;
+  icon.style.cssText = 'display:block;width:16px;height:16px';
   const ctx = icon.getContext('2d')!;
   ctx.scale(2, 2);
-  ctx.fillStyle = '#1e293b';
-  for (const x of [2, 18]) {
-    ctx.fillRect(x, 6, 4, 6);
-    ctx.fillRect(x, 17, 4, 6);
-  }
-  ctx.beginPath();
-  ctx.roundRect(4, 2, 16, 25, 5);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.strokeStyle = '#fff';
+  ctx.strokeStyle = color;
   ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(4, 11);
+  ctx.lineTo(6.4, 5.5);
+  ctx.quadraticCurveTo(7, 4, 9, 4);
+  ctx.lineTo(15, 4);
+  ctx.quadraticCurveTo(17, 4, 17.6, 5.5);
+  ctx.lineTo(20, 11);
+  ctx.roundRect(3, 10, 18, 9, 3);
+  ctx.moveTo(5, 19);
+  ctx.lineTo(5, 21);
+  ctx.moveTo(19, 19);
+  ctx.lineTo(19, 21);
   ctx.stroke();
-  ctx.fillStyle = '#e0f2fe';
-  ctx.fillRect(7, 7, 10, 5);
-  ctx.fillRect(7, 18, 10, 4);
+  ctx.fillStyle = color;
+  ctx.fillRect(6, 13, 3, 2);
+  ctx.fillRect(15, 13, 3, 2);
   return icon;
 }
 
@@ -161,7 +167,11 @@ export function useCompanyVehicleLayer(
           button.className = count === 1
             ? 'grid h-6 w-6 place-items-center rounded-full border border-slate-200 bg-white shadow hover:ring-2 hover:ring-blue-500 focus-visible:ring-2 focus-visible:ring-blue-600'
             : 'grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-blue-800 text-[10px] font-bold tabular-nums text-white shadow hover:ring-2 hover:ring-blue-500 focus-visible:ring-2 focus-visible:ring-blue-600';
-          if (count === 1) button.append(car(vehicleColor(uid)));
+          if (count === 1) {
+            button.style.width = '24px';
+            button.style.height = '24px';
+            button.append(car(vehicleColor(uid)));
+          }
           else button.textContent = count > 999 ? '999+' : String(count);
 
           overlay = new Overlay({ element: button, positioning: 'center-center', stopEvent: true });
