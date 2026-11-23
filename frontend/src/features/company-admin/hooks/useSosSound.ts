@@ -44,12 +44,12 @@ export function useSosSound(pendingKeys: string[]) {
   useEffect(() => {
     if (!supported) return;
     const controller = new AbortController();
-    const options = { capture: true, signal: controller.signal };
+    const options = { signal: controller.signal };
     function enableAfterInteraction(event: Event) {
       if (!(event.target instanceof Element && event.target.closest('[data-sos-audio-enable]'))) enable();
     }
-    window.addEventListener('pointerdown', enableAfterInteraction, options);
-    window.addEventListener('keydown', enableAfterInteraction, options);
+    window.addEventListener('click', enableAfterInteraction, options);
+    window.addEventListener('keyup', enableAfterInteraction, options);
     return () => {
       controller.abort();
       const context = contextRef.current;
