@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import type { User } from 'firebase/auth';
+import CompanySosHistory from './CompanySosHistory';
 import { BarChart3 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { CorporatePackageIncident } from '../../../types/admin';
@@ -6,6 +8,9 @@ import type { CorporatePackageIncident } from '../../../types/admin';
 interface CarrierAnalyticsTabProps {
   incidents: CorporatePackageIncident[];
   companyDomain: string;
+  sosUser?: User;
+  includeBranches?: boolean;
+  sosRevision?: number;
 }
 
 type CarrierSummary = {
@@ -33,7 +38,7 @@ function summarizePackages(incident: CorporatePackageIncident, quantity: number)
   return { delivered, recovered, lost };
 }
 
-export function CarrierAnalyticsTab({ incidents, companyDomain }: CarrierAnalyticsTabProps) {
+export function CarrierAnalyticsTab({ incidents, companyDomain, sosUser, includeBranches = false, sosRevision = 0 }: CarrierAnalyticsTabProps) {
   const analytics = useMemo(() => {
     const byCarrier = new Map<string, CarrierSummary>();
     incidents.forEach(incident => {
@@ -100,6 +105,8 @@ export function CarrierAnalyticsTab({ incidents, companyDomain }: CarrierAnalyti
 
   return (
     <>
+      {sosUser && <CompanySosHistory key={sosUser.uid + ':' + companyDomain} user={sosUser} domain={companyDomain}
+        includeBranches={includeBranches} revision={sosRevision} />}
       <div className="p-4 rounded-2xl bg-gradient-to-r from-[#2D3277] to-[#1E2258] text-white shadow-sm">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-[#FFE600]" />

@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import type { User } from 'firebase/auth';
-import { AlertTriangle, MapPin, Phone } from 'lucide-react';
+import { AlertTriangle, MapPin, Phone, Volume2, VolumeX } from 'lucide-react';
 import { driveOrigin, requestDrive } from '../services/driveCompanyApi';
 
+import { useSosSound } from '../hooks/useSosSound';
 import { watchCompanySos, type SosAlert } from '../services/companySosStream';
 
-export default function CompanySosAlerts({ user, domain, includeBranches, onLocate }: {
+export default function CompanySosAlerts({ user, domain, includeBranches, onLocate, mode, onAlertsChanged }: {
   user: User;
   domain: string;
   includeBranches: boolean;
+  mode: 'map' | 'panel';
+  onAlertsChanged?: () => void;
   onLocate?: (lat: number, lng: number) => void;
 }) {
   const [alerts, setAlerts] = useState<SosAlert[]>([]);
@@ -16,6 +19,10 @@ export default function CompanySosAlerts({ user, domain, includeBranches, onLoca
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState<string>();
   const acknowledged = useRef(new Set<string>());
+  const pendingKeys = alerts.map(alert => alert.companyDomain + '/' + alert.id);
+  const pendingSignature = pendingKeys.join('\n');
+  const sound = useSosSound(pendingKeys);
+  useEffect(() => { onAlertsChanged?.(); }, [pendingSignature, onAlertsChanged]);
 
   useEffect(() => {
     if (!driveOrigin) return;
@@ -95,10 +102,23 @@ export default function CompanySosAlerts({ user, domain, includeBranches, onLoca
     }
   }
 
-  return <section aria-label="Alertas SOS" aria-live="polite">
-    {unavailable && <p className="mb-2 text-sm font-medium text-rose-800">Monitor de SOS sem atualização. Tentando reconectar.</p>}
-    {alerts.length > 0 && <div className="space-y-3 rounded-2xl border border-rose-300 bg-rose-50 p-4 text-rose-950">
-      <h3 className="flex items-center gap-2 text-base font-extrabold"><AlertTriangle size={20} aria-hidden="true" /> Alertas SOS ({alerts.length})</h3>
+  const canEnable = sound.supported && !sound.enabled;
+  if (!driveOrigin || (!alerts.length && !unavailable && !canEnable)) return null;
+
+  return <section aria-label="Alertas SOS" className={mode === 'map'
+    ? 'absolute bottom-14 right-3 z-40 w-[min(27rem,calc(100%-1.5rem))] space-y-2'
+    : 'z-10 shrink-0 space-y-2 px-3 pt-2 md:px-5'}>
+    {unavailable && <p role="status" className="rounded-xl border border-rose-200 bg-white px-3 py-2 text-sm font-medium text-rose-800">Monitor de SOS sem atualização. Tentando reconectar.</p>}
+    {alerts.length > 0 && <div className="sos-priority max-h-[min(42dvh,28rem)] space-y-3 overflow-y-auto rounded-2xl border-2 border-rose-400 bg-rose-50 p-4 text-rose-950 shadow-lg">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 role="alert" className="flex items-center gap-2 text-base font-extrabold">
+          <AlertTriangle size={20} aria-hidden="true" /> SOS prioritário ({alerts.length})
+        </h3>
+        {sound.enabled && sound.ringing && <button type="button" onClick={sound.silence}
+          className="inline-flex items-center gap-1 rounded-lg border border-rose-300 bg-white px-2 py-1.5 text-xs font-bold">
+          <VolumeX size={15} aria-hidden="true" /> Silenciar alertas atuais
+        </button>}
+      </div>
       {error && <p role="alert" className="text-sm">{error}</p>}
       <ul className="divide-y divide-rose-200">
         {alerts.map(alert => {
@@ -123,6 +143,12 @@ export default function CompanySosAlerts({ user, domain, includeBranches, onLoca
           </li>;
         })}
       </ul>
+    </div>}
+    {canEnable && <div className="flex justify-end">
+      <button type="button" data-sos-audio-enable onClick={sound.enable}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-xs font-bold text-rose-900 shadow-sm">
+        <Volume2 size={15} aria-hidden="true" /> Ativar som SOS
+      </button>
     </div>}
   </section>;
 }

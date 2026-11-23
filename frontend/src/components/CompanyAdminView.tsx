@@ -3,7 +3,6 @@ import { onSnapshot } from 'firebase/firestore';
 import { firestoreRefs } from '../shared/firebase/firestoreRefs';
 import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3, Truck, Network } from 'lucide-react';
 import { CompanyIncidentSummary } from '../features/company-admin/components/CompanyIncidentSummary';
-import CompanySosAlerts from '../features/company-admin/components/CompanySosAlerts';
 import { CompanyIncidentForm } from '../features/company-admin/components/CompanyIncidentForm';
 import { IncidentRoster } from '../features/company-admin/components/IncidentRoster';
 import { IncidentAuditTab } from '../features/company-admin/components/IncidentAuditTab';
@@ -25,6 +24,7 @@ interface CompanyAdminViewProps {
   registry?: TerritorialRegistry | null;
   availableCompanies?: CorporateCompany[];
   overrideDomain?: string;
+  sosRevision?: number;
   onSelectOverrideDomain?: (domain: string) => void;
   onGoToAdminCompanies?: () => void;
   onOpenIncidentModal?: (incident?: CorporatePackageIncident | null) => void;
@@ -85,7 +85,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
 function CompanyWorkspace({
   registry, activeDomain, availableCompanies: allCompanies, onSelectOverrideDomain,
-  onGoToAdminCompanies, onOpenIncidentModal, onViewIncidentDossier, onLocateOnMap, subTab, setSubTab, delegated, onOpenCompany
+  onGoToAdminCompanies, onOpenIncidentModal, onViewIncidentDossier, onLocateOnMap, subTab, setSubTab, delegated, onOpenCompany, sosRevision
 }: CompanyAdminViewProps & {
   activeDomain: string;
   delegated: boolean;
@@ -367,10 +367,6 @@ function CompanyWorkspace({
       {/* =================================================================== */}
       {/* SUBTAB 1: USUÁRIOS & LICENÇAS                                       */}
       {/* =================================================================== */}
-      {firebaseUser && activeDomain && (isAdmin || isCompanyAdmin) && (
-        <CompanySosAlerts key={firebaseUser.uid + ':' + activeDomain} user={firebaseUser} domain={activeDomain}
-          includeBranches={!delegated} onLocate={onLocateOnMap} />
-      )}
       {loadError && <p role="alert" className="text-sm text-rose-700">Parte dos dados da empresa não pôde ser carregada.</p>}
       {subTab === 'network' && !delegated && firebaseUser && company && (
         <Suspense fallback={<p role="status">Carregando rede…</p>}>
@@ -420,7 +416,7 @@ function CompanyWorkspace({
       {/* =================================================================== */}
       {subTab === 'carriers' && (
         <Suspense fallback={<p role="status" className="text-sm text-slate-600">Carregando indicadores…</p>}>
-          <CarrierAnalyticsTab incidents={incidents} companyDomain={activeDomain} />
+          <CarrierAnalyticsTab incidents={incidents} companyDomain={activeDomain} sosUser={isAdmin || isCompanyAdmin ? firebaseUser ?? undefined : undefined} includeBranches={!delegated} sosRevision={sosRevision} />
         </Suspense>
       )}
       {subTab === 'incidents' && (

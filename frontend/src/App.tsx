@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import type Map from 'ol/Map';
 import { fromLonLat } from 'ol/proj';
 import { getSedeDelegacia } from './data/delegaciaSedes';
@@ -31,6 +31,7 @@ import {
   INITIAL_RELACIONAMENTO_TERRITORIAL
 } from './data/mgEsData';
 
+const CompanySosAlerts = React.lazy(() => import('./features/company-admin/components/CompanySosAlerts'));
 const MapWorkspace = React.lazy(() => import('./features/map/pages/MapWorkspace').then(module => ({ default: module.MapWorkspace })));
 
 const PUBLIC_EMAIL_DOMAINS = new Set([
@@ -51,6 +52,8 @@ const PUBLIC_EMAIL_DOMAINS = new Set([
 function App() {
   const { firebaseUser, userProfile, hasFullAccess, authLoading, isAdmin, isCompanyAdmin, openAuthModal, logLocationAccess } = useAuth();
   const { activeTab, setActiveTab, location, navigate, route } = useAppNavigation();
+  const [sosRevision, setSosRevision] = useState(0);
+  const refreshSosHistory = useCallback(() => setSosRevision(value => value + 1), []);
   const [registry, setRegistry] = useState<TerritorialRegistry | null>(null);
   const [estadoScope, setEstadoScope] = useState<EstadoScope>('RJ');
   const [companyAdminDomainOverride, setCompanyAdminDomainOverride] = useState<string>('');
@@ -433,6 +436,17 @@ function App() {
         />
       }
     >
+      {!authLoading && firebaseUser && effectiveCompanyDomain && (isAdmin || isCompanyAdmin) &&
+        (route?.tab === 'map' || route?.tab === 'company_admin') && (
+          <React.Suspense fallback={null}>
+            <CompanySosAlerts key={firebaseUser.uid + ':' + effectiveCompanyDomain} user={firebaseUser}
+              domain={effectiveCompanyDomain} includeBranches onAlertsChanged={refreshSosHistory} mode={route.tab === 'map' ? 'map' : 'panel'}
+              onLocate={(lat, lng) => {
+                setActiveTab('map');
+                setFocusTarget({ lat, lng, zoom: 16, ts: Date.now() });
+              }} />
+          </React.Suspense>
+      )}
       <AppRoutes
         route={route}
         canRenderRoute={canRenderRoute}
@@ -463,6 +477,7 @@ function App() {
           onOpenCompanyRegister: openCompanyRegister
         }}
         companyPanel={{
+          sosRevision,
           registry,
           availableCompanies,
           overrideDomain: companyAdminDomainOverride,

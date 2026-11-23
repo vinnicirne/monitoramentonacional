@@ -127,3 +127,13 @@ button, a, select, input, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+
+@keyframes sos-priority-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgb(190 18 60 / 22%), 0 8px 22px rgb(76 5 25 / 18%); }
+  50% { box-shadow: 0 0 0 4px rgb(190 18 60 / 48%), 0 8px 22px rgb(76 5 25 / 28%); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sos-priority { animation: sos-priority-pulse 1.6s ease-in-out infinite; }
+}
