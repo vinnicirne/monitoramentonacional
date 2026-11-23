@@ -17,7 +17,7 @@ interface CompanyDirectory {
 
 const emptyDirectory: CompanyDirectory = { company: null, licenses: [], companyUsers: [] };
 const emptyIncidents: CorporatePackageIncident[] = [];
-type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers' | 'network';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers' | 'network' | 'sos_history';
 
 export function useCompanyAdminData(activeDomain: string, canReadAudit: boolean, subTab: CompanyPanelSubTab) {
   const needsIncidents = subTab === 'incidents' || subTab === 'carriers';

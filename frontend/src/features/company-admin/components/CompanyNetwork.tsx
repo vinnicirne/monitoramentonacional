@@ -113,7 +113,7 @@ export default function CompanyNetwork({ domain, name, user, onOpenCompany }: {
               {item.status === 'pending' ? 'Cancelar solicitação' : 'Desvincular'}
             </button>
           </div>
-          {branch?.domain === item.domain && <CompanyDriversTab domain={branch.domain} user={user} />}
+          {branch?.domain === item.domain && <CompanyDriversTab domain={branch.domain} networkDomain={domain} user={user} />}
         </li>)}
         {branches.length === 0 && <li className="text-sm text-slate-600">Nenhuma transportadora vinculada.</li>}
       </ul>

@@ -7,19 +7,22 @@ import { driveOrigin, requestDrive as request } from '../services/driveCompanyAp
 const labels = { pending: 'Pendente', approved: 'Aprovado', rejected: 'Recusado', revoked: 'Revogado' };
 type Status = keyof typeof labels;
 type Decision = Exclude<Status, 'pending'>;
-type Member = { uid: string; email: string; status: Status; driverName?: string; driverPhone?: string };
-type Directory = { joinCode: string; members: Member[] };
+type Member = { uid: string; email: string; status: Status; driverName?: string; driverPhone?: string; transferredTo?: string };
+type Destination = { domain: string; name: string };
+type Directory = { joinCode: string; members: Member[]; destinations?: Destination[] };
 
 const button = 'rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#2D3277] hover:bg-slate-100 disabled:opacity-60';
 const primary = 'rounded-xl bg-[#2D3277] px-3 py-2 text-xs font-bold text-[#FFE600] hover:bg-[#22265d] disabled:opacity-60';
 const field = 'w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900';
 
-export default function CompanyDriversTab({ domain, user, includeBranches = false }: { domain: string; user: User; includeBranches?: boolean }) {
+export default function CompanyDriversTab({ domain, user, includeBranches = false, networkDomain = domain }: { domain: string; user: User; includeBranches?: boolean; networkDomain?: string }) {
   const [directory, setDirectory] = useState<Directory>();
   const [email, setEmail] = useState('');
   const [driverName, setDriverName] = useState('');
   const [phone, setPhone] = useState('');
   const [editing, setEditing] = useState<Member>();
+  const [registerDomain, setRegisterDomain] = useState(domain);
+  const [editDomain, setEditDomain] = useState(domain);
   const [mode, setMode] = useState<'invite' | 'register'>('invite');
   const [password, setPassword] = useState('');
   const [registration, setRegistration] = useState<{ email: string; password: string }>();
@@ -30,15 +33,18 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
   const [status, setStatus] = useState('');
   const [codeCopy, setCodeCopy] = useState('');
   const codeField = useRef<HTMLInputElement>(null);
+  const networkQuery = 'rede=' + encodeURIComponent(networkDomain);
+  const destinations = directory?.destinations ?? [{ domain, name: domain }];
+  const availableDestination = (value: string) => destinations.some(item => item.domain === value) ? value : domain;
 
   useEffect(() => {
     if (!driveOrigin) return;
     const controller = new AbortController();
-    request<Directory>(user, domain, 'motoristas', undefined, controller.signal)
+    request<Directory>(user, domain, 'motoristas?opcoes=1&' + networkQuery, undefined, controller.signal)
       .then(setDirectory)
       .catch((error: Error) => { if (!controller.signal.aborted) setError(error.message); });
     return () => controller.abort();
-  }, [domain, refresh, user]);
+  }, [domain, networkQuery, refresh, user]);
 
   async function change(operation: () => Promise<void>) {
     if (busy) return;
@@ -59,9 +65,10 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
     void change(async () => {
       setInviteUrl('');
       setRegistration(undefined);
+      const targetDomain = availableDestination(registerDomain);
       if (mode === 'register') {
         const result = await request<{ email: string; verificationSent: boolean; linked: boolean }>(
-          user, domain, 'cadastro', { email, password, name: driverName, phone }
+          user, domain, 'cadastro?' + networkQuery, { email, password, name: driverName, phone, targetDomain }
         );
         setRegistration({ email: result.email, password });
         setPassword('');
@@ -75,7 +82,7 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
         if (!result.linked) setError('A conta foi criada. Para completar o vínculo, gere um convite para esse e-mail.');
         return;
       }
-      const { token } = await request<{ token: string }>(user, domain, 'convite', { email, name: driverName, phone });
+      const { token } = await request<{ token: string }>(user, domain, 'convite?' + networkQuery, { email, name: driverName, phone, targetDomain });
       const link = new URL('/', driveOrigin!);
       link.searchParams.set('convite', token);
       setInviteUrl(link.href);
@@ -91,15 +98,18 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
     if (!editing) return;
     void change(async () => {
       const { uid, driverName: name, driverPhone: phone } = editing;
-      setDirectory(await request<Directory>(user, domain, 'perfil', { uid, name, phone }));
+      const targetDomain = availableDestination(editDomain);
+      const result = await request<Directory>(user, domain, 'perfil?' + networkQuery, { uid, name, phone, targetDomain });
+      setDirectory(current => ({ ...current, ...result }));
       setEditing(undefined);
-      setStatus('Dados do motorista atualizados.');
+      setStatus(targetDomain === domain ? 'Dados do motorista atualizados.' : 'Motorista transferido para a empresa escolhida.');
     });
   }
 
   function decide(uid: string, status: Decision) {
     void change(async () => {
-      setDirectory(await request<Directory>(user, domain, 'decisao', { uid, status }));
+      const result = await request<Directory>(user, domain, 'decisao', { uid, status });
+      setDirectory(current => ({ ...current, ...result }));
       setStatus('Vínculo atualizado.');
     });
   }
@@ -144,7 +154,7 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
       {status && <p role="status" className="text-sm text-emerald-800">{status}</p>}
       {driveOrigin && !directory && !error && <p role="status" className="text-sm text-slate-600">Carregando motoristas…</p>}
       {directory && <>
-        <CompanyTrackingMap user={user} domain={domain} drivers={directory.members} includeBranches={includeBranches} />
+        <CompanyTrackingMap user={user} domain={domain} drivers={directory.members.filter(member => !member.transferredTo)} includeBranches={includeBranches} />
         <div className="grid gap-4 md:grid-cols-2">
           <form onSubmit={submit} className="space-y-2 rounded-xl border border-slate-200 p-3">
             <div className="flex flex-wrap gap-2" role="group" aria-label="Forma de cadastrar motorista">
@@ -153,6 +163,11 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
               <button type="button" disabled={busy} aria-pressed={mode === 'register'} className={mode === 'register' ? primary : button}
                 onClick={() => { setMode('register'); setInviteUrl(''); }}>Com e-mail e senha</button>
             </div>
+            <label className="block text-sm font-bold" htmlFor="drive-driver-company">Empresa ou transportadora</label>
+            <select id="drive-driver-company" className={field} value={availableDestination(registerDomain)}
+              disabled={busy || destinations.length === 1} onChange={event => setRegisterDomain(event.target.value)}>
+              {destinations.map(item => <option key={item.domain} value={item.domain}>{item.name}</option>)}
+            </select>
             <label htmlFor="drive-driver-email" className="block text-sm font-bold">E-mail do motorista</label>
             <input id="drive-driver-email" type="email" placeholder="motorista@email.com" className={field}
               maxLength={254} value={email} onChange={event => setEmail(event.target.value)} required />
@@ -203,10 +218,13 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
                 {member.driverName && <p className="break-words text-sm font-semibold">{member.driverName}</p>}
                 <p className="break-all text-sm font-semibold">{member.email}</p>
                 {member.driverPhone && <p className="text-xs text-slate-600">{member.driverPhone}</p>}
-                <span className="text-xs text-slate-600">{labels[member.status]}</span>
+                <span className="text-xs text-slate-600">{member.transferredTo ? 'Transferido' : labels[member.status]}</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={busy} className={button} onClick={() => setEditing(member)}>Editar contato</button>
+              {!member.transferredTo && <div className="flex flex-wrap gap-2">
+                <button type="button" disabled={busy} className={button} onClick={() => {
+                  setEditDomain(domain);
+                  setEditing(member);
+                }}>Editar motorista</button>
                 {member.status === 'pending' && <>
                   <button type="button" disabled={busy} className={primary} onClick={() => decide(member.uid, 'approved')}>Aprovar</button>
                   <button type="button" disabled={busy} className={button} onClick={() => decide(member.uid, 'rejected')}>Recusar</button>
@@ -215,14 +233,21 @@ export default function CompanyDriversTab({ domain, user, includeBranches = fals
                   onClick={() => decide(member.uid, 'revoked')}>Revogar</button>}
                 {(member.status === 'rejected' || member.status === 'revoked') && <button type="button" disabled={busy}
                   className={button} onClick={() => decide(member.uid, 'approved')}>Restaurar acesso</button>}
-              </div>
+              </div>}
               {editing?.uid === member.uid && <form onSubmit={saveContact} className="grid w-full gap-2 rounded-xl bg-slate-50 p-3 md:grid-cols-2">
                 <label className="text-xs font-bold">Nome para exibição<input className={field} value={editing.driverName ?? ''}
                   maxLength={100} required onChange={event => setEditing({ ...editing, driverName: event.target.value })} /></label>
                 <label className="text-xs font-bold">Telefone com DDD<input className={field} type="tel" value={editing.driverPhone ?? ''}
                   maxLength={25} onChange={event => setEditing({ ...editing, driverPhone: event.target.value })} /></label>
+                <label className="text-xs font-bold">Empresa ou transportadora do motorista
+                  <select aria-label="Empresa ou transportadora do motorista" className={field} value={availableDestination(editDomain)}
+                    disabled={busy || destinations.length === 1 || !['pending', 'approved'].includes(editing.status)}
+                    onChange={event => setEditDomain(event.target.value)}>
+                    {destinations.map(item => <option key={item.domain} value={item.domain}>{item.name}</option>)}
+                  </select>
+                </label>
                 <div className="flex gap-2">
-                  <button type="submit" className={primary} disabled={busy}>Salvar contato</button>
+                  <button type="submit" className={primary} disabled={busy}>Salvar motorista</button>
                   <button type="button" className={button} disabled={busy} onClick={() => setEditing(undefined)}>Cancelar</button>
                 </div>
               </form>}

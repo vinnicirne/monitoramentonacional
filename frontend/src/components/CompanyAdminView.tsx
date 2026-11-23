@@ -14,10 +14,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCompanyMembers } from '../features/company-admin/hooks/useCompanyMembers';
 import { useCompanyIncidentActions } from '../features/company-admin/hooks/useCompanyIncidentActions';
 
-type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers' | 'network';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers' | 'network' | 'sos_history';
 const CarrierAnalyticsTab = lazy(() => import('../features/company-admin/components/CarrierAnalyticsTab').then(module => ({ default: module.CarrierAnalyticsTab })));
 const CompanyDriversTab = lazy(() => import('../features/company-admin/components/CompanyDriversTab'));
 
+const CompanySosHistory = lazy(() => import('../features/company-admin/components/CompanySosHistory'));
 const CompanyNetwork = lazy(() => import('../features/company-admin/components/CompanyNetwork'));
 
 interface CompanyAdminViewProps {
@@ -69,6 +70,7 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       key={activeDomain}
       {...actions}
       activeDomain={activeDomain}
+      homeDomain={homeDomain}
       availableCompanies={availableCompanies}
       onOpenIncidentModal={delegatedCompany ? undefined : actions.onOpenIncidentModal}
       onSelectOverrideDomain={delegatedCompany ? undefined : onSelectOverrideDomain}
@@ -84,10 +86,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 };
 
 function CompanyWorkspace({
-  registry, activeDomain, availableCompanies: allCompanies, onSelectOverrideDomain,
+  registry, activeDomain, homeDomain, availableCompanies: allCompanies, onSelectOverrideDomain,
   onGoToAdminCompanies, onOpenIncidentModal, onViewIncidentDossier, onLocateOnMap, subTab, setSubTab, delegated, onOpenCompany, sosRevision
 }: CompanyAdminViewProps & {
   activeDomain: string;
+  homeDomain: string;
   delegated: boolean;
   onOpenCompany: (domain: string) => void;
   subTab: CompanyPanelSubTab;
@@ -351,6 +354,15 @@ function CompanyWorkspace({
             </button>
           )}
 
+          {(isAdmin || isCompanyAdmin) && firebaseUser && (
+            <button type="button" aria-pressed={subTab === 'sos_history'} onClick={() => setSubTab('sos_history')}
+              className={subTab === 'sos_history'
+                ? 'flex items-center gap-2 rounded-xl bg-[#2D3277] px-3.5 py-2 text-xs font-bold text-[#FFE600]'
+                : 'flex items-center gap-2 rounded-xl bg-slate-100 px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-200'}>
+              <History className="h-4 w-4" aria-hidden="true" /> Histórico de alertas
+            </button>
+          )}
+
           {(isAdmin || currentAdmin?.companyRole === 'company_admin') && (
             <button
               type="button"
@@ -375,7 +387,7 @@ function CompanyWorkspace({
       )}
       {subTab === 'drivers' && (isAdmin || isCompanyAdmin) && firebaseUser && (
         <Suspense fallback={<p role="status" className="text-sm text-slate-600">Carregando gestão de motoristas…</p>}>
-          <CompanyDriversTab key={firebaseUser.uid} domain={activeDomain} user={firebaseUser} includeBranches={!delegated} />
+          <CompanyDriversTab key={firebaseUser.uid} domain={activeDomain} networkDomain={homeDomain} user={firebaseUser} includeBranches={!delegated} />
         </Suspense>
       )}
       {subTab === 'users' && (
@@ -414,6 +426,13 @@ function CompanyWorkspace({
       {/* =================================================================== */}
       {/* SUBTAB 2: PACOTES EXTRAVIADOS / FRAUDES & OCORRÊNCIAS EM DELEGACIAS */}
       {/* =================================================================== */}
+      {subTab === 'sos_history' && firebaseUser && (isAdmin || isCompanyAdmin) && (
+        <Suspense fallback={<p role="status">Carregando histórico de alertas…</p>}>
+          <CompanySosHistory key={firebaseUser.uid + ':' + activeDomain} user={firebaseUser} domain={activeDomain}
+            includeBranches={!delegated} revision={sosRevision ?? 0} mode="history" />
+        </Suspense>
+      )}
+
       {subTab === 'carriers' && (
         <Suspense fallback={<p role="status" className="text-sm text-slate-600">Carregando indicadores…</p>}>
           <CarrierAnalyticsTab incidents={incidents} companyDomain={activeDomain} sosUser={isAdmin || isCompanyAdmin ? firebaseUser ?? undefined : undefined} includeBranches={!delegated} sosRevision={sosRevision} />

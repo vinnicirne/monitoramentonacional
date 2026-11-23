@@ -15,8 +15,8 @@ type HistoryRow = {
 
 const formatDate = (value: number) => new Date(value).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-export default function CompanySosHistory({ user, domain, includeBranches, revision }: {
-  user: User; domain: string; includeBranches: boolean; revision: number;
+export default function CompanySosHistory({ user, domain, includeBranches, revision, mode = 'analytics' }: {
+  user: User; domain: string; includeBranches: boolean; revision: number; mode?: 'analytics' | 'history';
 }) {
   const [month, setMonth] = useState(() => {
     const today = new Date();
@@ -52,7 +52,7 @@ export default function CompanySosHistory({ user, domain, includeBranches, revis
   return <section aria-labelledby="sos-history" className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 id="sos-history" className="flex items-center gap-2 text-sm font-extrabold text-rose-900">
-        <AlertTriangle size={17} aria-hidden="true" /> SOS por transportadora
+        <AlertTriangle size={17} aria-hidden="true" /> {mode === 'history' ? 'Histórico de alertas' : 'SOS por transportadora'}
       </h3>
       <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">Mês
         <input type="month" className="rounded-lg border border-slate-300 bg-white px-2 py-1" value={month}
@@ -63,7 +63,7 @@ export default function CompanySosHistory({ user, domain, includeBranches, revis
     {current && !current.rows && <p role="alert" className="text-sm text-rose-800">Não foi possível carregar o histórico de SOS.</p>}
     {current?.rows?.length === 0 && <p className="text-sm text-slate-600">Nenhum SOS neste mês.</p>}
     {rows.length > 0 && <>
-      <div className="max-h-80 overflow-y-auto" aria-label="Gráfico de SOS pendentes e atendidos">
+      {mode === 'analytics' && <div className="max-h-80 overflow-y-auto" aria-label="Gráfico de SOS pendentes e atendidos">
         <div style={{ height: Math.max(160, chart.length * 34 + 66) }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart layout="vertical" data={chart} margin={{ right: 15 }}>
@@ -77,7 +77,7 @@ export default function CompanySosHistory({ user, domain, includeBranches, revis
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div>}
       <div className="max-h-72 overflow-auto rounded-xl border border-slate-200">
         <table className="w-full min-w-[530px] text-left text-xs">
           <caption className="sr-only">Histórico de SOS</caption>
