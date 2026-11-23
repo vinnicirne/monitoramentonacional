@@ -31,6 +31,6 @@ export async function requestDrive<T>(user: User, domain: string, action: string
     signal: signal ? AbortSignal.any([timeout, signal]) : timeout
   });
   const result = await response.json().catch(() => null);
-  if (!response.ok || !result) throw new Error(result?.error || 'Não foi possível acessar a gestão do MapsBrasil Drive.');
+  if (!response.ok || !result) throw Object.assign(new Error(result?.error || 'Não foi possível acessar a gestão do MapsBrasil Drive.'), { status: response.status });
   return result;
 }

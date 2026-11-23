@@ -3,6 +3,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { firestoreRefs } from '../shared/firebase/firestoreRefs';
 import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3, Truck, Network } from 'lucide-react';
 import { CompanyIncidentSummary } from '../features/company-admin/components/CompanyIncidentSummary';
+import CompanySosAlerts from '../features/company-admin/components/CompanySosAlerts';
 import { CompanyIncidentForm } from '../features/company-admin/components/CompanyIncidentForm';
 import { IncidentRoster } from '../features/company-admin/components/IncidentRoster';
 import { IncidentAuditTab } from '../features/company-admin/components/IncidentAuditTab';
@@ -366,6 +367,10 @@ function CompanyWorkspace({
       {/* =================================================================== */}
       {/* SUBTAB 1: USUÁRIOS & LICENÇAS                                       */}
       {/* =================================================================== */}
+      {firebaseUser && activeDomain && (isAdmin || isCompanyAdmin) && (
+        <CompanySosAlerts key={firebaseUser.uid + ':' + activeDomain} user={firebaseUser} domain={activeDomain}
+          includeBranches={!delegated} onLocate={onLocateOnMap} />
+      )}
       {loadError && <p role="alert" className="text-sm text-rose-700">Parte dos dados da empresa não pôde ser carregada.</p>}
       {subTab === 'network' && !delegated && firebaseUser && company && (
         <Suspense fallback={<p role="status">Carregando rede…</p>}>
