@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { User } from 'firebase/auth';
 import { Copy, RefreshCw, Truck } from 'lucide-react';
 
@@ -46,6 +46,8 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const [codeCopy, setCodeCopy] = useState('');
+  const codeField = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!driveOrigin) return;
@@ -110,6 +112,22 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
     });
   }
 
+  async function copyCode() {
+    const input = codeField.current;
+    if (!input) return;
+    try {
+      if (!navigator.clipboard?.writeText) throw Error();
+      await navigator.clipboard.writeText(input.value);
+      setCodeCopy('Código copiado.');
+    } catch {
+      input.focus();
+      input.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch { /* leave the code selected */ }
+      setCodeCopy(copied ? 'Código copiado.' : 'Código selecionado. Use Ctrl+C ou toque e segure para copiar.');
+    }
+  }
+
   return (
     <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5" aria-labelledby="drivers-title">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -160,10 +178,14 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
             </div>}
           </form>
           <div className="space-y-2 rounded-xl border border-slate-200 p-3">
-            <h4 className="text-sm font-bold">Código para autocadastro</h4>
+            <label htmlFor="drive-join-code" className="block text-sm font-bold">Código para autocadastro</label>
             <p className="text-xs text-slate-600">O motorista informa o código no Drive e aguarda a aprovação da empresa.</p>
-            <output className="block break-all text-sm font-bold text-[#2D3277]">{directory.joinCode}</output>
-            <button type="button" disabled={busy} className={button} onClick={() => copy(directory.joinCode)}>Copiar código</button>
+            <input id="drive-join-code" ref={codeField} value={directory.joinCode} readOnly className={field} onFocus={event => event.currentTarget.select()} />
+            <div className="flex flex-wrap gap-2">
+              <button type="button" className={button} onClick={() => void copyCode()}>Copiar código</button>
+              <a className={button} href={`${driveOrigin}/?codigo=${encodeURIComponent(directory.joinCode)}`} target="_blank" rel="noopener noreferrer">Abrir autocadastro no Drive</a>
+            </div>
+            <p role="status" className="text-xs text-slate-600">{codeCopy}</p>
           </div>
         </div>
         <div className="space-y-2">
