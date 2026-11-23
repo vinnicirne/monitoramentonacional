@@ -61,7 +61,7 @@ export const MapWorkspace: React.FC<MapWorkspaceProps> = ({
   fleetUser
 }) => {
   const domain = mapProps.companyDomain ?? '';
-  const { positions } = useCompanyDriverPositions(fleetUser, domain);
+  const { positions } = useCompanyDriverPositions(fleetUser, domain, true);
   const [selection, setSelection] = useState<{ uid: string; domain: string; user: string }>();
   const [vehicleFocus, setVehicleFocus] = useState<{ extent: number[]; domain: string; user: string }>();
   const driver = selection?.domain === domain && selection?.user === fleetUser?.uid

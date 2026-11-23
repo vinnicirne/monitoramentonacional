@@ -13,6 +13,7 @@ export default function DriverDetails({ driver, onClose }: { driver: DriverPosit
       </button>
     </div>
     <dl className="mt-4 space-y-2 text-sm">
+      {driver.companyName && <div><dt className="font-semibold">Empresa</dt><dd>{driver.companyName}</dd></div>}
       <div><dt className="font-semibold">Telefone</dt><dd>{driver.phone
         ? <a className="inline-flex items-center gap-1 text-blue-800 underline" href={'tel:' + driver.phone}><Phone className="h-3.5 w-3.5" aria-hidden="true" />{driver.phone}</a>
         : 'Não informado'}</dd></div>

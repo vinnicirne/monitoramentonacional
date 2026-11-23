@@ -4,7 +4,7 @@ import { driveOrigin, requestDrive, type DriverPosition } from '../services/driv
 
 const empty: DriverPosition[] = [];
 
-export function useCompanyDriverPositions(user: User | undefined, domain: string) {
+export function useCompanyDriverPositions(user: User | undefined, domain: string, includeBranches = false) {
   const scope = user && domain && driveOrigin ? `${user.uid}:${domain}` : '';
   const [snapshot, setSnapshot] = useState<{ scope: string; positions: DriverPosition[]; unavailable?: boolean }>();
 
@@ -15,7 +15,7 @@ export function useCompanyDriverPositions(user: User | undefined, domain: string
       if (document.hidden || running) return;
       const controller = running = new AbortController();
       try {
-        const positions = await requestDrive<DriverPosition[]>(user!, domain, 'localizacoes', undefined, controller.signal);
+        const positions = await requestDrive<DriverPosition[]>(user!, domain, includeBranches ? 'localizacoes?tree=1' : 'localizacoes', undefined, controller.signal);
         if (!controller.signal.aborted) setSnapshot({ scope, positions });
       } catch {
         if (!controller.signal.aborted) setSnapshot({ scope, positions: empty, unavailable: true });
@@ -31,7 +31,7 @@ export function useCompanyDriverPositions(user: User | undefined, domain: string
       window.clearInterval(timer);
       document.removeEventListener('visibilitychange', poll);
     };
-  }, [scope, domain, user]);
+  }, [scope, domain, user, includeBranches]);
 
   return snapshot?.scope === scope ? snapshot : { positions: empty, unavailable: false };
 }

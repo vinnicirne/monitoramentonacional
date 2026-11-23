@@ -4,6 +4,8 @@ export type DriverPosition = {
   uid: string;
   name: string;
   phone?: string;
+  companyName?: string;
+  companyDomain?: string;
   position: [number, number];
   route: number[];
   accuracy?: number;

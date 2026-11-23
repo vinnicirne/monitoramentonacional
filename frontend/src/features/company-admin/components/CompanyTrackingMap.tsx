@@ -11,12 +11,12 @@ import DriverDetails from './DriverDetails';
 
 type RegisteredDriver = { uid: string; email: string; driverName?: string };
 
-export default function CompanyTrackingMap({ user, domain, drivers }: { user: User; domain: string; drivers: RegisteredDriver[] }) {
+export default function CompanyTrackingMap({ user, domain, drivers, includeBranches }: { user: User; domain: string; drivers: RegisteredDriver[]; includeBranches: boolean }) {
   const target = useRef<HTMLDivElement>(null);
   const map = useRef<Map | null>(null);
   const centered = useRef(false);
   const [selected, setSelected] = useState<string>();
-  const { positions, unavailable } = useCompanyDriverPositions(user, domain);
+  const { positions, unavailable } = useCompanyDriverPositions(user, domain, includeBranches);
   const driver = positions.find(position => position.uid === selected);
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3, Truck } from 'lucide-react';
+import { onSnapshot } from 'firebase/firestore';
+import { firestoreRefs } from '../shared/firebase/firestoreRefs';
+import { Building2, Copy, Check, Users, ShieldCheck, PackageX, Plus, History, Crown, BarChart3, Truck, Network } from 'lucide-react';
 import { CompanyIncidentSummary } from '../features/company-admin/components/CompanyIncidentSummary';
 import { CompanyIncidentForm } from '../features/company-admin/components/CompanyIncidentForm';
 import { IncidentRoster } from '../features/company-admin/components/IncidentRoster';
@@ -12,9 +14,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCompanyMembers } from '../features/company-admin/hooks/useCompanyMembers';
 import { useCompanyIncidentActions } from '../features/company-admin/hooks/useCompanyIncidentActions';
 
-type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers';
+type CompanyPanelSubTab = 'users' | 'incidents' | 'carriers' | 'audit' | 'drivers' | 'network';
 const CarrierAnalyticsTab = lazy(() => import('../features/company-admin/components/CarrierAnalyticsTab').then(module => ({ default: module.CarrierAnalyticsTab })));
 const CompanyDriversTab = lazy(() => import('../features/company-admin/components/CompanyDriversTab'));
+
+const CompanyNetwork = lazy(() => import('../features/company-admin/components/CompanyNetwork'));
 
 interface CompanyAdminViewProps {
   registry?: TerritorialRegistry | null;
@@ -35,15 +39,29 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 }) => {
   const { userProfile: currentAdmin, isAdmin } = useAuth();
   const [subTab, setSubTab] = useState<CompanyPanelSubTab>('users');
-  const activeDomain = isAdmin
+  const [delegation, setDelegation] = useState<{ domain: string; parent: string; uid?: string }>();
+  const homeDomain = isAdmin
     ? overrideDomain || availableCompanies.find(company => company.active)?.domain || availableCompanies[0]?.domain || ''
     : (currentAdmin?.companyDomain || currentAdmin?.domain || '').trim().toLowerCase();
 
+  const delegatedCompany = delegation?.parent === homeDomain && delegation.uid === currentAdmin?.uid ? delegation.domain : '';
+  const activeDomain = delegatedCompany || homeDomain;
+
   useEffect(() => {
-    if (isAdmin && activeDomain && activeDomain !== overrideDomain && onSelectOverrideDomain) {
+    if (!delegatedCompany) return;
+    const closeDelegated = () => { setDelegation(undefined); setSubTab('network'); };
+    return onSnapshot(firestoreRefs.fleetLink(delegatedCompany), snapshot => {
+      if (snapshot.metadata.fromCache) return;
+      const grant = snapshot.data();
+      if (grant?.parentDomain !== homeDomain || grant.status !== 'approved' || grant.scope !== 'full') closeDelegated();
+    }, closeDelegated);
+  }, [delegatedCompany, homeDomain]);
+
+  useEffect(() => {
+    if (isAdmin && !delegatedCompany && activeDomain && activeDomain !== overrideDomain && onSelectOverrideDomain) {
       onSelectOverrideDomain(activeDomain);
     }
-  }, [isAdmin, activeDomain, overrideDomain, onSelectOverrideDomain]);
+  }, [isAdmin, delegatedCompany, activeDomain, overrideDomain, onSelectOverrideDomain]);
 
   return (
     <CompanyWorkspace
@@ -51,7 +69,13 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
       {...actions}
       activeDomain={activeDomain}
       availableCompanies={availableCompanies}
-      onSelectOverrideDomain={onSelectOverrideDomain}
+      onOpenIncidentModal={delegatedCompany ? undefined : actions.onOpenIncidentModal}
+      onSelectOverrideDomain={delegatedCompany ? undefined : onSelectOverrideDomain}
+      delegated={!!delegatedCompany}
+      onOpenCompany={domain => {
+        setDelegation(domain ? { domain, parent: homeDomain, uid: currentAdmin?.uid } : undefined);
+        setSubTab(domain ? 'users' : 'network');
+      }}
       subTab={subTab}
       setSubTab={setSubTab}
     />
@@ -60,9 +84,11 @@ export const CompanyAdminView: React.FC<CompanyAdminViewProps> = ({
 
 function CompanyWorkspace({
   registry, activeDomain, availableCompanies: allCompanies, onSelectOverrideDomain,
-  onGoToAdminCompanies, onOpenIncidentModal, onViewIncidentDossier, onLocateOnMap, subTab, setSubTab
+  onGoToAdminCompanies, onOpenIncidentModal, onViewIncidentDossier, onLocateOnMap, subTab, setSubTab, delegated, onOpenCompany
 }: CompanyAdminViewProps & {
   activeDomain: string;
+  delegated: boolean;
+  onOpenCompany: (domain: string) => void;
   subTab: CompanyPanelSubTab;
   setSubTab: (next: CompanyPanelSubTab) => void;
 }) {
@@ -223,7 +249,8 @@ function CompanyWorkspace({
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {isAdmin && allCompanies.length > 0 && (
+            {delegated && <button type="button" className="rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold" onClick={() => onOpenCompany('')}>Voltar à rede de empresas</button>}
+            {isAdmin && !delegated && allCompanies.length > 0 && (
               <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs shadow-2xs">
                 <span className="font-bold text-slate-500 text-[10px] uppercase">Empresa:</span>
                 <select
@@ -316,6 +343,13 @@ function CompanyWorkspace({
             </button>
           )}
 
+          {!delegated && (isAdmin || isCompanyAdmin) && firebaseUser && (
+            <button type="button" aria-pressed={subTab === 'network'} onClick={() => setSubTab('network')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 ${subTab === 'network' ? 'bg-[#2D3277] text-[#FFE600]' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+              <Network className="h-4 w-4" aria-hidden="true" /> Rede de empresas
+            </button>
+          )}
+
           {(isAdmin || currentAdmin?.companyRole === 'company_admin') && (
             <button
               type="button"
@@ -333,9 +367,14 @@ function CompanyWorkspace({
       {/* SUBTAB 1: USUÁRIOS & LICENÇAS                                       */}
       {/* =================================================================== */}
       {loadError && <p role="alert" className="text-sm text-rose-700">Parte dos dados da empresa não pôde ser carregada.</p>}
+      {subTab === 'network' && !delegated && firebaseUser && company && (
+        <Suspense fallback={<p role="status">Carregando rede…</p>}>
+          <CompanyNetwork domain={activeDomain} name={company.companyName} user={firebaseUser} onOpenCompany={onOpenCompany} />
+        </Suspense>
+      )}
       {subTab === 'drivers' && (isAdmin || isCompanyAdmin) && firebaseUser && (
         <Suspense fallback={<p role="status" className="text-sm text-slate-600">Carregando gestão de motoristas…</p>}>
-          <CompanyDriversTab key={firebaseUser.uid} domain={activeDomain} user={firebaseUser} />
+          <CompanyDriversTab key={firebaseUser.uid} domain={activeDomain} user={firebaseUser} includeBranches={!delegated} />
         </Suspense>
       )}
       {subTab === 'users' && (

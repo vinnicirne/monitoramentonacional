@@ -14,7 +14,7 @@ const button = 'rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs fo
 const primary = 'rounded-xl bg-[#2D3277] px-3 py-2 text-xs font-bold text-[#FFE600] hover:bg-[#22265d] disabled:opacity-60';
 const field = 'w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900';
 
-export default function CompanyDriversTab({ domain, user }: { domain: string; user: User }) {
+export default function CompanyDriversTab({ domain, user, includeBranches = false }: { domain: string; user: User; includeBranches?: boolean }) {
   const [directory, setDirectory] = useState<Directory>();
   const [email, setEmail] = useState('');
   const [driverName, setDriverName] = useState('');
@@ -144,7 +144,7 @@ export default function CompanyDriversTab({ domain, user }: { domain: string; us
       {status && <p role="status" className="text-sm text-emerald-800">{status}</p>}
       {driveOrigin && !directory && !error && <p role="status" className="text-sm text-slate-600">Carregando motoristas…</p>}
       {directory && <>
-        <CompanyTrackingMap user={user} domain={domain} drivers={directory.members} />
+        <CompanyTrackingMap user={user} domain={domain} drivers={directory.members} includeBranches={includeBranches} />
         <div className="grid gap-4 md:grid-cols-2">
           <form onSubmit={submit} className="space-y-2 rounded-xl border border-slate-200 p-3">
             <div className="flex flex-wrap gap-2" role="group" aria-label="Forma de cadastrar motorista">

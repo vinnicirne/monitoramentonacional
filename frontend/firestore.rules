@@ -133,8 +133,23 @@ service cloud.firestore {
         profileIsCompanyMember(myProfile(), domain);
     }
 
-    function isCompanyAdmin(domain) {
+    function isDirectCompanyAdmin(domain) {
       return isCompanyMember(domain) && myProfile().get('companyRole', 'member') == 'company_admin';
+    }
+
+    function fleetLink(domain) {
+      return /databases/$(database)/documents/corporate_fleet_links/$(domain);
+    }
+
+    function isDelegatedCompanyAdmin(domain) {
+      let link = get(fleetLink(domain)).data;
+      return link.status == 'approved' && link.scope == 'full' &&
+        isCorporateCompanyActive(link.parentDomain) && isDirectCompanyAdmin(link.parentDomain);
+    }
+
+    function isCompanyAdmin(domain) {
+      return isDirectCompanyAdmin(domain) || (isEmailVerified() &&
+        isCorporateCompanyActive(domain) && exists(fleetLink(domain)) && isDelegatedCompanyAdmin(domain));
     }
 
     function myEmailLicenseId() {
@@ -179,11 +194,12 @@ service cloud.firestore {
         isCorporateCompanyActive(domain) &&
         isCompanyMember(domain) &&
         profileCanEditIncidents(myProfile(), domain)
-      );
+      ) || (isEmailVerified() && isCorporateCompanyActive(domain) &&
+        exists(fleetLink(domain)) && isDelegatedCompanyAdmin(domain));
     }
 
     function canReadCompanyIncidents(domain) {
-      return isAdmin() || (isCorporateCompanyActive(domain) && isCompanyMember(domain));
+      return isAdmin() || (isCorporateCompanyActive(domain) && (isCompanyMember(domain) || isCompanyAdmin(domain)));
     }
 
     // 3. Entity Validation Blueprints
@@ -492,8 +508,7 @@ service cloud.firestore {
       );
       allow list: if isAdmin() || (
         isEmailVerified() &&
-        isCompanyAdmin(myCompanyDomain()) &&
-        resource.data.companyDomain == myCompanyDomain()
+        isCompanyAdmin(resource.data.companyDomain)
       );
 
       allow create: if isValidId(userId) &&
@@ -809,12 +824,56 @@ service cloud.firestore {
       allow delete: if isValidDomainId(domainId) && isAdmin();
     }
 
+    // A company establishes itself as the principal before sending requests.
+    // Principals cannot be approved as carriers, keeping this tree two company levels deep.
+    match /corporate_fleet_roots/{domain} {
+      allow get: if isAdmin() || isDirectCompanyAdmin(domain);
+      allow list, update, delete: if false;
+      allow create: if isValidDomainId(domain) && isCorporateCompanyActive(domain) &&
+        (isAdmin() || isDirectCompanyAdmin(domain)) &&
+        (!exists(fleetLink(domain)) || get(fleetLink(domain)).data.status != 'approved') &&
+        incoming().keys().hasOnly(['createdAt']) && incoming().createdAt == request.time;
+    }
+
+    match /corporate_fleet_links/{child} {
+      function manages(domain) {
+        return isAdmin() || isDirectCompanyAdmin(domain);
+      }
+
+      function canRequest(parent) {
+        return isValidDomainId(parent) && isValidDomainId(child) && parent != child &&
+          manages(parent) && isCorporateCompanyActive(parent) && isCorporateCompanyActive(child) &&
+          existsAfter(/databases/$(database)/documents/corporate_fleet_roots/$(parent)) &&
+          !existsAfter(/databases/$(database)/documents/corporate_fleet_roots/$(child));
+      }
+
+      allow get: if isValidDomainId(child) && (manages(child) ||
+        (manages(existing().parentDomain) && isCorporateCompanyActive(existing().parentDomain) && isCorporateCompanyActive(child)));
+      allow list: if isAdmin() || (isEmailVerified() && isDirectCompanyAdmin(myCompanyDomain()) &&
+        resource.data.parentDomain == myCompanyDomain());
+
+      allow create: if canRequest(incoming().parentDomain) &&
+        incoming().keys().hasOnly(['parentDomain', 'status', 'createdAt', 'updatedAt']) &&
+        incoming().status == 'pending' && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+
+      allow update: if manages(child) && isCorporateCompanyActive(child) &&
+        isCorporateCompanyActive(existing().parentDomain) &&
+        !existsAfter(/databases/$(database)/documents/corporate_fleet_roots/$(child)) &&
+        existing().status in ['pending', 'approved'] &&
+        incoming().status == 'approved' && incoming().scope in ['drivers', 'full'] &&
+        incoming().childName == get(/databases/$(database)/documents/corporate_companies/$(child)).data.companyName &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'scope', 'childName', 'updatedAt']) &&
+        incoming().updatedAt == request.time;
+
+      allow delete: if manages(child) || manages(existing().parentDomain);
+    }
+
     // /corporate_companies/{domainId}
     match /corporate_companies/{domainId} {
       allow get: if isValidDomainId(domainId) && (
         isAdmin() ||
         (isSignedIn() && userEmailDomain() == domainId) ||
-        isCompanyMember(domainId)
+        isCompanyMember(domainId) || isCompanyAdmin(domainId)
       );
       allow list: if isAdmin();
 
